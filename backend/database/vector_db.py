@@ -1,8 +1,8 @@
-"""Vector database integration using Qdrant."""
+"""Vector database integration using Qdrant Cloud."""
 
 from __future__ import annotations
 
-from pathlib import Path
+import os
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
@@ -12,18 +12,20 @@ COLLECTION_NAME = "chatbot_documents"
 VECTOR_SIZE = 384
 
 
-# Persistent local Qdrant database
-QDRANT_PATH = Path("backend/data/qdrant")
+# Qdrant Cloud configuration
+QDRANT_URL = os.getenv("QDRANT_URL")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
 
-QDRANT_PATH.mkdir(
-    parents=True,
-    exist_ok=True,
-)
+if not QDRANT_URL:
+    raise RuntimeError(
+        "QDRANT_URL environment variable is not set."
+    )
 
 
 client = QdrantClient(
-    path=str(QDRANT_PATH),
+    url=QDRANT_URL,
+    api_key=QDRANT_API_KEY,
 )
 
 
