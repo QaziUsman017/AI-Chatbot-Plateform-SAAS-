@@ -1,0 +1,4791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Chatbot Settings - AI Chatbot Platform</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --sidebar: #111827;
+      --sidebar-hover: #1f2937;
+      --bg: #f5f7fb;
+      --border: #e5e7eb;
+      --text: #172033;
+      --muted: #6b7280;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: 250px;
+      background: var(--sidebar);
+      color: white;
+      padding: 24px 16px;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 30px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .brand h2 {
+      font-size: 17px;
+    }
+
+    .brand span {
+      display: block;
+      margin-top: 3px;
+      color: #9ca3af;
+      font-size: 11px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav a {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: #9ca3af;
+      text-decoration: none;
+      padding: 12px 13px;
+      border-radius: 9px;
+      font-size: 14px;
+      transition: .2s;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: var(--sidebar-hover);
+      color: white;
+    }
+
+    .nav-icon {
+      width: 20px;
+      text-align: center;
+    }
+
+    .main {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      min-height: 100vh;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-button {
+      border: 1px solid var(--border);
+      background: white;
+      color: #374151;
+      border-radius: 9px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: .2s;
+    }
+
+    .back-button:hover {
+      background: #f8fafc;
+      border-color: #d1d5db;
+    }
+
+    .title h1 {
+      font-size: 27px;
+      margin-bottom: 5px;
+    }
+
+    .title p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .user-box {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 13px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .user-info strong {
+      display: block;
+      font-size: 12px;
+    }
+
+    .user-info span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px rgba(15, 23, 42, .025);
+    }
+
+    .card-header {
+      margin-bottom: 18px;
+    }
+
+    .card-header h2 {
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+
+    .card-header p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 19px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: 650;
+      color: #374151;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #dbe0e7;
+      border-radius: 9px;
+      padding: 11px 12px;
+      font: inherit;
+      font-size: 13px;
+      outline: none;
+      background: white;
+      color: var(--text);
+      transition: .2s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+    }
+
+    textarea {
+      min-height: 170px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .help-text {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .color-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .color-control input[type="color"] {
+      width: 48px;
+      height: 42px;
+      padding: 3px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .color-control input[type="text"] {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .color-section {
+      border: 1px solid #edf0f4;
+      border-radius: 12px;
+      padding: 17px;
+      margin-bottom: 18px;
+      background: #fbfcfe;
+    }
+
+    .color-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+
+    .color-section-description {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+
+    .color-section .color-grid {
+      margin-bottom: 0;
+    }
+
+    .logo-preview {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid #edf0f4;
+      background: #f8fafc;
+      border-radius: 10px;
+    }
+
+    .logo-preview.visible {
+      display: flex;
+    }
+
+    .logo-preview img {
+      width: 42px;
+      height: 42px;
+      border-radius: 9px;
+      object-fit: contain;
+      background: white;
+      border: 1px solid #e5e7eb;
+      padding: 4px;
+    }
+
+    .logo-preview span {
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    .logo-upload-box {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .logo-file-input {
+      width: 100%;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .logo-clear-button {
+      border: 1px solid #fecaca;
+      background: white;
+      color: #b91c1c;
+      border-radius: 9px;
+      padding: 10px 13px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .logo-upload-status {
+      margin-top: 7px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .position-preview {
+      margin-top: 10px;
+      height: 130px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background:
+        linear-gradient(
+          135deg,
+          #f8fafc 25%,
+          #f1f5f9 25%,
+          #f1f5f9 50%,
+          #f8fafc 50%,
+          #f8fafc 75%,
+          #f1f5f9 75%
+        );
+      background-size: 18px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .position-widget {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 5px 15px rgba(15, 23, 42, .18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      transition: .25s;
+      overflow: hidden;
+    }
+
+    .position-widget img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .position-bottom-right {
+      right: 14px;
+      bottom: 14px;
+    }
+
+    .position-bottom-left {
+      left: 14px;
+      bottom: 14px;
+    }
+
+    .position-top-right {
+      right: 14px;
+      top: 14px;
+    }
+
+    .position-top-left {
+      left: 14px;
+      top: 14px;
+    }
+
+    .client-info {
+      display: none;
+      margin-top: 16px;
+      padding: 15px;
+      border-radius: 11px;
+      background: #f8fafc;
+      border: 1px solid #edf0f4;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 7px 0;
+      border-bottom: 1px solid #edf0f4;
+      font-size: 12px;
+    }
+
+    .info-row:last-child {
+      border-bottom: 0;
+    }
+
+    .info-row strong {
+      color: #374151;
+    }
+
+    .info-row span {
+      color: var(--muted);
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .save-button {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 18px;
+      background: var(--primary);
+      color: white;
+      font-size: 13px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .save-button:hover {
+      background: var(--primary-dark);
+    }
+
+    .save-button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .status-message {
+      display: none;
+      flex: 1;
+      padding: 11px 13px;
+      border-radius: 9px;
+      font-size: 12px;
+    }
+
+    .status-success {
+      display: block;
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-error {
+      display: block;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: #edf0f4;
+      margin: 4px 0 22px;
+    }
+
+    /* ================================
+       LIVE PREVIEW - COMPACT
+    ================================= */
+
+    .preview-card {
+      position: sticky;
+      top: 20px;
+    }
+
+    .preview-shell {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      background: #e5e7eb;
+      padding: 8px;
+      height: 480px;
+      min-height: 480px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .preview-shell iframe {
+      display: block;
+      width: 100%;
+      height: 464px;
+      min-height: 464px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+    }
+
+    .settings-preview-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .preview-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 12px;
+      padding: 6px 9px;
+      background: #f8fafc;
+      border: 1px solid #edf0f4;
+      border-radius: 7px;
+    }
+
+    .preview-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .widget-form-card {
+      min-width: 0;
+    }
+
+    @media (max-width: 1250px) {
+
+      .settings-preview-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-card {
+        position: relative;
+        top: auto;
+      }
+
+      .preview-shell {
+        height: 480px;
+        min-height: 480px;
+      }
+
+      .preview-shell iframe {
+        height: 464px;
+        min-height: 464px;
+      }
+
+    }
+
+    @media (max-width: 1000px) {
+
+      .color-grid {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
+    @media (max-width: 900px) {
+
+      .sidebar {
+        width: 215px;
+      }
+
+      .main {
+        margin-left: 215px;
+        width: calc(100% - 215px);
+      }
+
+    }
+
+    @media (max-width: 700px) {
+
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+        padding: 18px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .user-box {
+        width: 100%;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .color-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
+
+      .save-button {
+        width: 100%;
+      }
+
+      .info-row {
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .info-row span {
+        text-align: left;
+      }
+
+      .logo-upload-box {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-shell {
+        height: 450px;
+        min-height: 450px;
+      }
+
+      .preview-shell iframe {
+        height: 434px;
+        min-height: 434px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+
+<aside class="sidebar">
+
+  <div class="brand">
+
+    <div class="brand-icon">
+      AI
+    </div>
+
+    <div>
+      <h2>AI Chatbot</h2>
+      <span>Admin Platform</span>
+    </div>
+
+  </div>
+
+
+  <nav class="nav">
+
+    <a href="index.html">
+      <span class="nav-icon">📊</span>
+      <span>Dashboard</span>
+    </a>
+
+    <a href="clients.html">
+      <span class="nav-icon">👥</span>
+      <span>Clients</span>
+    </a>
+
+    <a href="chatbot-settings.html" class="active">
+      <span class="nav-icon">🤖</span>
+      <span>Chatbot Settings</span>
+    </a>
+
+    <a href="knowledge-base.html">
+      <span class="nav-icon">📚</span>
+      <span>Knowledge Base</span>
+    </a>
+
+    <a href="conversations.html">
+      <span class="nav-icon">💬</span>
+      <span>Conversations</span>
+    </a>
+
+    <a href="analytics.html">
+      <span class="nav-icon">📈</span>
+      <span>Analytics</span>
+    </a>
+
+  </nav>
+
+</aside>
+
+
+<main class="main">
+
+
+  <div class="topbar">
+
+    <div class="title-row">
+
+      <button
+        class="back-button"
+        onclick="goBack()"
+      >
+        ← Back
+      </button>
+
+      <div class="title">
+
+        <h1>
+          Chatbot Settings
+        </h1>
+
+        <p>
+          Configure the AI agent and widget for each client.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="user-box">
+
+      <div
+        class="user-avatar"
+        id="userAvatar"
+      >
+        U
+      </div>
+
+      <div class="user-info">
+
+        <strong id="userName">
+          Loading...
+        </strong>
+
+        <span id="userRole">
+          Authenticated
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- CLIENT -->
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h2>
+        Client
+      </h2>
+
+      <p>
+        Select the client whose chatbot you want to configure.
+      </p>
+
+    </div>
+
+
+    <div class="form-group">
+
+      <label for="client-select">
+        Select Client
+      </label>
+
+      <select id="client-select">
+
+        <option value="">
+          Loading clients...
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div
+      id="client-info"
+      class="client-info"
+    >
+
+      <div class="info-row">
+
+        <strong>
+          Business
+        </strong>
+
+        <span id="business-name">
+          -
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <strong>
+          Client ID
+        </strong>
+
+        <span id="client-id-display">
+          -
+        </span>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <strong>
+          Website
+        </strong>
+
+        <span id="client-website">
+          -
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- AGENT CONFIGURATION -->
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h2>
+        Agent Configuration
+      </h2>
+
+      <p>
+        Define how the AI assistant behaves and responds.
+      </p>
+
+    </div>
+
+
+    <form id="agent-settings-form">
+
+
+      <div class="form-group">
+
+        <label for="agent-name">
+          Agent Name
+        </label>
+
+        <input
+          type="text"
+          id="agent-name"
+          placeholder="e.g. Urban Bites Assistant"
+          required
+        />
+
+        <div class="help-text">
+          The name your AI assistant will use.
+        </div>
+
+      </div>
+
+
+      <div class="form-group">
+
+        <label for="system-prompt">
+          System Prompt
+        </label>
+
+        <textarea
+          id="system-prompt"
+          placeholder="Describe how this chatbot should behave..."
+          required
+        ></textarea>
+
+        <div class="help-text">
+          Instructions that control the chatbot's behavior and role.
+        </div>
+
+      </div>
+
+
+      <div class="grid">
+
+        <div class="form-group">
+
+          <label for="language">
+            Language
+          </label>
+
+          <select id="language">
+
+            <option value="same_as_user">
+              Same as user
+            </option>
+
+            <option value="English">
+              English
+            </option>
+
+            <option value="Urdu">
+              Urdu
+            </option>
+
+            <option value="Roman Urdu">
+              Roman Urdu
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="tone">
+            Tone
+          </label>
+
+          <select id="tone">
+
+            <option value="professional">
+              Professional
+            </option>
+
+            <option value="friendly">
+              Friendly
+            </option>
+
+            <option value="casual">
+              Casual
+            </option>
+
+            <option value="formal">
+              Formal
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <div class="grid">
+
+        <div class="form-group">
+
+          <label for="max-tokens">
+            Max Tokens
+          </label>
+
+          <input
+            type="number"
+            id="max-tokens"
+            min="1"
+            max="8192"
+            value="300"
+            required
+          />
+
+          <div class="help-text">
+            Maximum length of the AI response.
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="temperature">
+            Temperature
+          </label>
+
+          <input
+            type="number"
+            id="temperature"
+            min="0"
+            max="2"
+            step="0.1"
+            value="0.1"
+            required
+          />
+
+          <div class="help-text">
+            Lower values make responses more consistent.
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="actions">
+
+        <div
+          id="status-message"
+          class="status-message"
+        ></div>
+
+        <button
+          type="submit"
+          id="save-button"
+          class="save-button"
+        >
+          Save Configuration
+        </button>
+
+      </div>
+
+
+    </form>
+
+  </div>
+
+
+  <!-- WIDGET CONFIGURATION -->
+
+  <div class="settings-preview-layout">
+
+    <div class="widget-form-card">
+
+      <div class="card">
+
+        <div class="card-header">
+
+          <h2>
+            Widget Configuration &amp; Branding
+          </h2>
+
+          <p>
+            Customize the appearance and behavior of the chatbot widget for this client.
+          </p>
+
+        </div>
+
+
+        <form id="widget-settings-form">
+
+
+          <!-- BRAND COLORS -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Brand Colors
+            </div>
+
+            <div class="color-section-description">
+              Core brand colors used throughout the chatbot interface.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+
+                <label for="primary-color-text">
+                  Primary Color
+                </label>
+
+                <div class="color-control">
+
+                  <input
+                    type="color"
+                    id="primary-color-picker"
+                    value="#0ea5e9"
+                    aria-label="Primary color picker"
+                  />
+
+                  <input
+                    type="text"
+                    id="primary-color-text"
+                    value="#0ea5e9"
+                    placeholder="#0ea5e9"
+                    maxlength="60"
+                  />
+
+                </div>
+
+                <div class="help-text">
+                  Main accent and brand color.
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="secondary-color-text">
+                  Secondary Color
+                </label>
+
+                <div class="color-control">
+
+                  <input
+                    type="color"
+                    id="secondary-color-picker"
+                    value="#0f172a"
+                    aria-label="Secondary color picker"
+                  />
+
+                  <input
+                    type="text"
+                    id="secondary-color-text"
+                    value="#0f172a"
+                    placeholder="#0f172a"
+                    maxlength="60"
+                  />
+
+                </div>
+
+                <div class="help-text">
+                  Secondary brand/header color.
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+
+                <label for="text-color-text">
+                  Text Color
+                </label>
+
+                <div class="color-control">
+
+                  <input
+                    type="color"
+                    id="text-color-picker"
+                    value="#0f172a"
+                    aria-label="Text color picker"
+                  />
+
+                  <input
+                    type="text"
+                    id="text-color-text"
+                    value="#0f172a"
+                    placeholder="#0f172a"
+                    maxlength="60"
+                  />
+
+                </div>
+
+                <div class="help-text">
+                  Base text color.
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- WIDGET BACKGROUNDS -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Widget Backgrounds
+            </div>
+
+            <div class="color-section-description">
+              Control the different background surfaces inside the widget.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="background-color-text">Widget Background</label>
+                <div class="color-control">
+                  <input type="color" id="background-color-picker" value="#0b0d0c" />
+                  <input type="text" id="background-color-text" value="#0b0d0c" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="surface-color-text">Surface</label>
+                <div class="color-control">
+                  <input type="color" id="surface-color-picker" value="#111513" />
+                  <input type="text" id="surface-color-text" value="#111513" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="surface-secondary-color-text">Secondary Surface</label>
+                <div class="color-control">
+                  <input type="color" id="surface-secondary-color-picker" value="#161a18" />
+                  <input type="text" id="surface-secondary-color-text" value="#161a18" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="surface-tertiary-color-text">Tertiary Surface</label>
+                <div class="color-control">
+                  <input type="color" id="surface-tertiary-color-picker" value="#1c211f" />
+                  <input type="text" id="surface-tertiary-color-text" value="#1c211f" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- TEXT COLORS -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Text Colors
+            </div>
+
+            <div class="color-section-description">
+              Independently control primary, secondary and muted text.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="text-primary-color-text">Primary Text</label>
+                <div class="color-control">
+                  <input type="color" id="text-primary-color-picker" value="#f5f7f6" />
+                  <input type="text" id="text-primary-color-text" value="#f5f7f6" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="text-secondary-color-text">Secondary Text</label>
+                <div class="color-control">
+                  <input type="color" id="text-secondary-color-picker" value="#d8dedb" />
+                  <input type="text" id="text-secondary-color-text" value="#d8dedb" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="text-muted-color-text">Muted Text</label>
+                <div class="color-control">
+                  <input type="color" id="text-muted-color-picker" value="#929b97" />
+                  <input type="text" id="text-muted-color-text" value="#929b97" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="text-muted-dark-color-text">Dark Muted Text</label>
+                <div class="color-control">
+                  <input type="color" id="text-muted-dark-color-picker" value="#68716d" />
+                  <input type="text" id="text-muted-dark-color-text" value="#68716d" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- BORDERS -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Borders
+            </div>
+
+            <div class="color-section-description">
+              Customize widget outlines, separators and subtle borders.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="border-color-text">Border</label>
+                <div class="color-control">
+                  <input type="color" id="border-color-picker" value="#ffffff" />
+                  <input type="text" id="border-color-text" value="rgba(255,255,255,0.08)" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="border-light-color-text">Light Border</label>
+                <div class="color-control">
+                  <input type="color" id="border-light-color-picker" value="#ffffff" />
+                  <input type="text" id="border-light-color-text" value="rgba(255,255,255,0.12)" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- HEADER -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Header
+            </div>
+
+            <div class="color-section-description">
+              Control the chatbot header background, text and header controls.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="header-background-color-text">Header Background</label>
+                <div class="color-control">
+                  <input type="color" id="header-background-color-picker" value="#111513" />
+                  <input type="text" id="header-background-color-text" value="#111513" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="header-text-color-text">Header Text</label>
+                <div class="color-control">
+                  <input type="color" id="header-text-color-picker" value="#f5f7f6" />
+                  <input type="text" id="header-text-color-text" value="#f5f7f6" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="header-secondary-text-color-text">Header Secondary Text</label>
+                <div class="color-control">
+                  <input type="color" id="header-secondary-text-color-picker" value="#929b97" />
+                  <input type="text" id="header-secondary-text-color-text" value="#929b97" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="header-button-color-text">Header Button</label>
+                <div class="color-control">
+                  <input type="color" id="header-button-color-picker" value="#929b97" />
+                  <input type="text" id="header-button-color-text" value="#929b97" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="header-button-background-color-text">Header Button Background</label>
+                <div class="color-control">
+                  <input type="color" id="header-button-background-color-picker" value="#ffffff" />
+                  <input type="text" id="header-button-background-color-text" value="rgba(255,255,255,0.06)" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="header-button-border-color-text">Header Button Border</label>
+                <div class="color-control">
+                  <input type="color" id="header-button-border-color-picker" value="#ffffff" />
+                  <input type="text" id="header-button-border-color-text" value="rgba(255,255,255,0.08)" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- AVATAR -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Avatar &amp; Welcome Icon
+            </div>
+
+            <div class="color-section-description">
+              Customize assistant avatar and welcome icon appearance.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="avatar-background-color-text">Avatar Background</label>
+                <div class="color-control">
+                  <input type="color" id="avatar-background-color-picker" value="#10b981" />
+                  <input type="text" id="avatar-background-color-text" value="#10b981" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="avatar-text-color-text">Avatar Text</label>
+                <div class="color-control">
+                  <input type="color" id="avatar-text-color-picker" value="#ffffff" />
+                  <input type="text" id="avatar-text-color-text" value="#ffffff" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="welcome-icon-background-color-text">Welcome Icon Background</label>
+                <div class="color-control">
+                  <input type="color" id="welcome-icon-background-color-picker" value="#10b981" />
+                  <input type="text" id="welcome-icon-background-color-text" value="#10b981" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="welcome-icon-text-color-text">Welcome Icon Text</label>
+                <div class="color-control">
+                  <input type="color" id="welcome-icon-text-color-picker" value="#ffffff" />
+                  <input type="text" id="welcome-icon-text-color-text" value="#ffffff" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- STATUS -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Status
+            </div>
+
+            <div class="color-section-description">
+              Customize online/status indicator colors.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="status-dot-color-text">Status Dot</label>
+                <div class="color-control">
+                  <input type="color" id="status-dot-color-picker" value="#22c55e" />
+                  <input type="text" id="status-dot-color-text" value="#22c55e" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="status-text-color-text">Status Text</label>
+                <div class="color-control">
+                  <input type="color" id="status-text-color-picker" value="#929b97" />
+                  <input type="text" id="status-text-color-text" value="#929b97" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- USER MESSAGE -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              User Message
+            </div>
+
+            <div class="color-section-description">
+              Independently style visitor/user message bubbles.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="user-message-background-color-text">Background</label>
+                <div class="color-control">
+                  <input type="color" id="user-message-background-color-picker" value="#242a27" />
+                  <input type="text" id="user-message-background-color-text" value="#242a27" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="user-message-text-color-text">Text</label>
+                <div class="color-control">
+                  <input type="color" id="user-message-text-color-picker" value="#f2f5f3" />
+                  <input type="text" id="user-message-text-color-text" value="#f2f5f3" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="user-message-border-color-text">Border</label>
+                <div class="color-control">
+                  <input type="color" id="user-message-border-color-picker" value="#ffffff" />
+                  <input type="text" id="user-message-border-color-text" value="rgba(255,255,255,0.09)" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ASSISTANT MESSAGE -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Assistant Message
+            </div>
+
+            <div class="color-section-description">
+              Independently style AI assistant message bubbles.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="assistant-message-background-color-text">Background</label>
+                <div class="color-control">
+                  <input type="color" id="assistant-message-background-color-picker" value="#1b211f" />
+                  <input type="text" id="assistant-message-background-color-text" value="#1b211f" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="assistant-message-text-color-text">Text</label>
+                <div class="color-control">
+                  <input type="color" id="assistant-message-text-color-picker" value="#e7ece9" />
+                  <input type="text" id="assistant-message-text-color-text" value="#e7ece9" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="assistant-message-border-color-text">Border</label>
+                <div class="color-control">
+                  <input type="color" id="assistant-message-border-color-picker" value="#ffffff" />
+                  <input type="text" id="assistant-message-border-color-text" value="rgba(255,255,255,0.10)" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- INPUT / COMPOSER -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Input &amp; Composer
+            </div>
+
+            <div class="color-section-description">
+              Customize the message composer, input field and focus state.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="composer-background-color-text">Composer Background</label>
+                <div class="color-control">
+                  <input type="color" id="composer-background-color-picker" value="#111513" />
+                  <input type="text" id="composer-background-color-text" value="#111513" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-background-color-text">Input Background</label>
+                <div class="color-control">
+                  <input type="color" id="input-background-color-picker" value="#161a18" />
+                  <input type="text" id="input-background-color-text" value="#161a18" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-text-color-text">Input Text</label>
+                <div class="color-control">
+                  <input type="color" id="input-text-color-picker" value="#f5f7f6" />
+                  <input type="text" id="input-text-color-text" value="#f5f7f6" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-placeholder-color-text">Placeholder</label>
+                <div class="color-control">
+                  <input type="color" id="input-placeholder-color-picker" value="#929b97" />
+                  <input type="text" id="input-placeholder-color-text" value="#929b97" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-border-color-text">Input Border</label>
+                <div class="color-control">
+                  <input type="color" id="input-border-color-picker" value="#ffffff" />
+                  <input type="text" id="input-border-color-text" value="rgba(255,255,255,0.10)" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-focus-border-color-text">Focus Border</label>
+                <div class="color-control">
+                  <input type="color" id="input-focus-border-color-picker" value="#10b981" />
+                  <input type="text" id="input-focus-border-color-text" value="#10b981" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- BUTTONS -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Buttons &amp; Launcher
+            </div>
+
+            <div class="color-section-description">
+              Customize the send button and floating chatbot launcher.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="send-button-background-color-text">Send Button Background</label>
+                <div class="color-control">
+                  <input type="color" id="send-button-background-color-picker" value="#10b981" />
+                  <input type="text" id="send-button-background-color-text" value="#10b981" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="send-button-text-color-text">Send Button Text</label>
+                <div class="color-control">
+                  <input type="color" id="send-button-text-color-picker" value="#ffffff" />
+                  <input type="text" id="send-button-text-color-text" value="#ffffff" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="launcher-background-color-text">Launcher Background</label>
+                <div class="color-control">
+                  <input type="color" id="launcher-background-color-picker" value="#10b981" />
+                  <input type="text" id="launcher-background-color-text" value="#10b981" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="launcher-icon-color-text">Launcher Icon</label>
+                <div class="color-control">
+                  <input type="color" id="launcher-icon-color-picker" value="#ffffff" />
+                  <input type="text" id="launcher-icon-color-text" value="#ffffff" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- OTHER -->
+
+          <div class="color-section">
+
+            <div class="color-section-title">
+              Other Elements
+            </div>
+
+            <div class="color-section-description">
+              Colors for typing indicators, code blocks and system states.
+            </div>
+
+            <div class="color-grid">
+
+              <div class="form-group">
+                <label for="typing-background-color-text">Typing Background</label>
+                <div class="color-control">
+                  <input type="color" id="typing-background-color-picker" value="#161a18" />
+                  <input type="text" id="typing-background-color-text" value="#161a18" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="typing-dot-color-text">Typing Dots</label>
+                <div class="color-control">
+                  <input type="color" id="typing-dot-color-picker" value="#929b97" />
+                  <input type="text" id="typing-dot-color-text" value="#929b97" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="code-background-color-text">Code Background</label>
+                <div class="color-control">
+                  <input type="color" id="code-background-color-picker" value="#0b0e0d" />
+                  <input type="text" id="code-background-color-text" value="#0b0e0d" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="code-text-color-text">Code Text</label>
+                <div class="color-control">
+                  <input type="color" id="code-text-color-picker" value="#e7ece9" />
+                  <input type="text" id="code-text-color-text" value="#e7ece9" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="danger-color-text">Danger</label>
+                <div class="color-control">
+                  <input type="color" id="danger-color-picker" value="#ef4444" />
+                  <input type="text" id="danger-color-text" value="#ef4444" maxlength="60" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="success-color-text">Success</label>
+                <div class="color-control">
+                  <input type="color" id="success-color-picker" value="#22c55e" />
+                  <input type="text" id="success-color-text" value="#22c55e" maxlength="60" />
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- BOT NAME -->
+
+          <div class="form-group">
+
+            <label for="bot-name">
+              Bot Name
+            </label>
+
+            <input
+              type="text"
+              id="bot-name"
+              placeholder="e.g. Urban Bites AI"
+              maxlength="100"
+            />
+
+            <div class="help-text">
+              The name displayed in the chatbot widget.
+            </div>
+
+          </div>
+
+
+          <!-- LOGO -->
+
+          <div class="form-group">
+
+            <label for="widget-logo">
+              Logo
+            </label>
+
+            <input
+              type="url"
+              id="widget-logo"
+              placeholder="https://example.com/logo.png"
+            />
+
+            <div class="help-text">
+              Enter a publicly accessible logo image URL, or upload an image below.
+            </div>
+
+            <div class="logo-upload-box">
+
+              <input
+                type="file"
+                id="widget-logo-file"
+                class="logo-file-input"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+              />
+
+              <button
+                type="button"
+                id="logo-clear-button"
+                class="logo-clear-button"
+              >
+                Remove Logo
+              </button>
+
+            </div>
+
+            <div
+              id="logo-upload-status"
+              class="logo-upload-status"
+            >
+              Supported: PNG, JPG/JPEG, WebP, GIF. Maximum size: 2 MB.
+            </div>
+
+            <div
+              id="logo-preview"
+              class="logo-preview"
+            >
+
+              <img
+                id="logo-preview-image"
+                src=""
+                alt="Widget logo preview"
+              />
+
+              <span id="logo-preview-text">
+                Logo preview
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- POSITION -->
+
+          <div class="form-group">
+
+            <label for="widget-position">
+              Widget Position
+            </label>
+
+            <select id="widget-position">
+
+              <option value="bottom-right">
+                Bottom Right
+              </option>
+
+              <option value="bottom-left">
+                Bottom Left
+              </option>
+
+              <option value="top-right">
+                Top Right
+              </option>
+
+              <option value="top-left">
+                Top Left
+              </option>
+
+            </select>
+
+
+            <div class="position-preview">
+
+              <div
+                id="position-widget"
+                class="position-widget position-bottom-right"
+              >
+                AI
+              </div>
+
+            </div>
+
+
+            <div class="help-text">
+              Choose where the chatbot widget appears on the client website.
+            </div>
+
+          </div>
+
+
+          <!-- WELCOME MESSAGE -->
+
+          <div class="form-group">
+
+            <label for="welcome-message">
+              Welcome Message
+            </label>
+
+            <textarea
+              id="welcome-message"
+              placeholder="Hi! How can I help you today?"
+              maxlength="500"
+              style="min-height: 110px;"
+            ></textarea>
+
+            <div class="help-text">
+              Message displayed when a visitor opens the chatbot.
+            </div>
+
+          </div>
+
+
+          <!-- ACTIONS -->
+
+          <div class="actions">
+
+            <div
+              id="widget-status-message"
+              class="status-message"
+            ></div>
+
+            <button
+              type="submit"
+              id="widget-save-button"
+              class="save-button"
+            >
+              Save Widget Settings
+            </button>
+
+          </div>
+
+
+        </form>
+
+      </div>
+
+    </div>
+
+
+    <!-- LIVE PREVIEW -->
+
+    <div class="card preview-card">
+
+      <div class="card-header">
+
+        <h2>
+          Live Preview
+        </h2>
+
+        <p>
+          Changes are reflected here instantly before saving.
+        </p>
+
+      </div>
+
+      <div class="preview-label">
+        <span class="preview-dot"></span>
+        Live Widget Preview
+      </div>
+
+      <div class="preview-shell">
+
+        <iframe
+          id="widget-live-preview"
+          title="Live chatbot preview"
+          src="../frontend/widget/widget.html?preview=1"
+          loading="eager"
+        ></iframe>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+</main>
+
+
+<script>
+
+"use strict";
+
+
+/* =========================================================
+   API
+========================================================= */
+
+const API_BASE_URL =
+  "http://127.0.0.1:8000";
+
+
+/* =========================================================
+   CLIENT ELEMENTS
+========================================================= */
+
+const clientSelect =
+  document.getElementById("client-select");
+
+const clientInfo =
+  document.getElementById("client-info");
+
+const businessName =
+  document.getElementById("business-name");
+
+const clientIdDisplay =
+  document.getElementById("client-id-display");
+
+const clientWebsite =
+  document.getElementById("client-website");
+
+
+/* =========================================================
+   AGENT ELEMENTS
+========================================================= */
+
+const agentForm =
+  document.getElementById("agent-settings-form");
+
+const agentNameInput =
+  document.getElementById("agent-name");
+
+const systemPromptInput =
+  document.getElementById("system-prompt");
+
+const languageSelect =
+  document.getElementById("language");
+
+const toneSelect =
+  document.getElementById("tone");
+
+const maxTokensInput =
+  document.getElementById("max-tokens");
+
+const temperatureInput =
+  document.getElementById("temperature");
+
+const saveButton =
+  document.getElementById("save-button");
+
+const statusMessage =
+  document.getElementById("status-message");
+
+
+/* =========================================================
+   WIDGET ELEMENTS
+========================================================= */
+
+const widgetForm =
+  document.getElementById("widget-settings-form");
+
+const botNameInput =
+  document.getElementById("bot-name");
+
+const widgetLogoInput =
+  document.getElementById("widget-logo");
+
+const widgetLogoFileInput =
+  document.getElementById("widget-logo-file");
+
+const logoClearButton =
+  document.getElementById("logo-clear-button");
+
+const logoUploadStatus =
+  document.getElementById("logo-upload-status");
+
+const logoPreview =
+  document.getElementById("logo-preview");
+
+const logoPreviewImage =
+  document.getElementById("logo-preview-image");
+
+const logoPreviewText =
+  document.getElementById("logo-preview-text");
+
+const widgetPositionSelect =
+  document.getElementById("widget-position");
+
+const positionWidget =
+  document.getElementById("position-widget");
+
+const welcomeMessageInput =
+  document.getElementById("welcome-message");
+
+const widgetSaveButton =
+  document.getElementById("widget-save-button");
+
+const widgetStatusMessage =
+  document.getElementById("widget-status-message");
+
+const livePreview =
+  document.getElementById("widget-live-preview");
+
+
+/* =========================================================
+   DEFAULT WIDGET CONFIG
+========================================================= */
+
+const DEFAULT_WIDGET_CONFIG = {
+
+  primary_color: "#0ea5e9",
+  secondary_color: "#0f172a",
+  text_color: "#0f172a",
+
+  bot_name: "AI Assistant",
+
+  logo: "",
+
+  position: "bottom-right",
+
+  welcome_message:
+    "Hi! How can I help you today?",
+
+  background_color: "#0b0d0c",
+
+  surface_color: "#111513",
+
+  surface_secondary_color: "#161a18",
+
+  surface_tertiary_color: "#1c211f",
+
+  text_primary_color: "#f5f7f6",
+
+  text_secondary_color: "#d8dedb",
+
+  text_muted_color: "#929b97",
+
+  text_muted_dark_color: "#68716d",
+
+  border_color:
+    "rgba(255,255,255,0.08)",
+
+  border_light_color:
+    "rgba(255,255,255,0.12)",
+
+  header_background_color: "#111513",
+
+  header_text_color: "#f5f7f6",
+
+  header_secondary_text_color:
+    "#929b97",
+
+  header_button_color: "#929b97",
+
+  header_button_background_color:
+    "rgba(255,255,255,0.06)",
+
+  header_button_border_color:
+    "rgba(255,255,255,0.08)",
+
+  avatar_background_color: "#10b981",
+
+  avatar_text_color: "#ffffff",
+
+  welcome_icon_background_color:
+    "#10b981",
+
+  welcome_icon_text_color:
+    "#ffffff",
+
+  status_dot_color: "#22c55e",
+
+  status_text_color: "#929b97",
+
+  user_message_background_color:
+    "#242a27",
+
+  user_message_text_color:
+    "#f2f5f3",
+
+  user_message_border_color:
+    "rgba(255,255,255,0.09)",
+
+  assistant_message_background_color:
+    "#1b211f",
+
+  assistant_message_text_color:
+    "#e7ece9",
+
+  assistant_message_border_color:
+    "rgba(255,255,255,0.10)",
+
+  composer_background_color:
+    "#111513",
+
+  input_background_color:
+    "#161a18",
+
+  input_text_color:
+    "#f5f7f6",
+
+  input_placeholder_color:
+    "#929b97",
+
+  input_border_color:
+    "rgba(255,255,255,0.10)",
+
+  input_focus_border_color:
+    "#10b981",
+
+  send_button_background_color:
+    "#10b981",
+
+  send_button_text_color:
+    "#ffffff",
+
+  launcher_background_color:
+    "#10b981",
+
+  launcher_icon_color:
+    "#ffffff",
+
+  typing_background_color:
+    "#161a18",
+
+  typing_dot_color:
+    "#929b97",
+
+  code_background_color:
+    "#0b0e0d",
+
+  code_text_color:
+    "#e7ece9",
+
+  danger_color:
+    "#ef4444",
+
+  success_color:
+    "#22c55e"
+
+};
+
+
+/* =========================================================
+   BACK
+========================================================= */
+
+function goBack() {
+
+  if (window.history.length > 1) {
+
+    window.history.back();
+
+  } else {
+
+    window.location.href =
+      "index.html";
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+function getAccessToken() {
+
+  return (
+
+    localStorage.getItem("access_token") ||
+
+    localStorage.getItem("accessToken") ||
+
+    localStorage.getItem("token") ||
+
+    sessionStorage.getItem("access_token") ||
+
+    sessionStorage.getItem("accessToken") ||
+
+    sessionStorage.getItem("token") ||
+
+    ""
+
+  );
+
+}
+
+
+function getHeaders() {
+
+  const token =
+    getAccessToken();
+
+  const headers = {
+    "Content-Type":
+      "application/json"
+  };
+
+  if (token) {
+
+    headers["Authorization"] =
+      `Bearer ${token}`;
+
+  }
+
+  return headers;
+
+}
+
+
+function logout() {
+
+  localStorage.removeItem(
+    "access_token"
+  );
+
+  localStorage.removeItem(
+    "accessToken"
+  );
+
+  localStorage.removeItem(
+    "token"
+  );
+
+  localStorage.removeItem(
+    "user"
+  );
+
+  sessionStorage.removeItem(
+    "access_token"
+  );
+
+  sessionStorage.removeItem(
+    "accessToken"
+  );
+
+  sessionStorage.removeItem(
+    "token"
+  );
+
+  sessionStorage.removeItem(
+    "user"
+  );
+
+  window.location.href =
+    "../frontend/index.html";
+
+}
+
+
+/* =========================================================
+   API FETCH
+========================================================= */
+
+async function apiFetch(
+  url,
+  options = {}
+) {
+
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+
+        headers: {
+          ...getHeaders(),
+          ...(options.headers || {})
+        }
+      }
+    );
+
+  if (
+    response.status === 401
+  ) {
+
+    logout();
+
+    throw new Error(
+      "Not authenticated"
+    );
+
+  }
+
+  return response;
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function showStatus(
+  message,
+  type = "success"
+) {
+
+  statusMessage.textContent =
+    message;
+
+  statusMessage.className =
+    "status-message " +
+    (
+      type === "success"
+        ? "status-success"
+        : "status-error"
+    );
+
+}
+
+
+function hideStatus() {
+
+  statusMessage.textContent =
+    "";
+
+  statusMessage.className =
+    "status-message";
+
+}
+
+
+function showWidgetStatus(
+  message,
+  type = "success"
+) {
+
+  widgetStatusMessage.textContent =
+    message;
+
+  widgetStatusMessage.className =
+    "status-message " +
+    (
+      type === "success"
+        ? "status-success"
+        : "status-error"
+    );
+
+}
+
+
+function hideWidgetStatus() {
+
+  widgetStatusMessage.textContent =
+    "";
+
+  widgetStatusMessage.className =
+    "status-message";
+
+}
+
+
+/* =========================================================
+   CLIENT HELPERS
+========================================================= */
+
+function getClientId(client) {
+
+  return (
+    client.client_id ||
+    client.id ||
+    client._id ||
+    ""
+  );
+
+}
+
+
+function getBusinessName(client) {
+
+  return (
+    client.business_name ||
+    client.businessName ||
+    client.name ||
+    "Unnamed Client"
+  );
+
+}
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+async function loadUser() {
+
+  try {
+
+    const response =
+      await apiFetch(
+        `${API_BASE_URL}/auth/me`
+      );
+
+    if (!response.ok) {
+      return;
+    }
+
+    const user =
+      await response.json();
+
+    const name =
+      user.full_name ||
+      user.email ||
+      user.username ||
+      "User";
+
+    document.getElementById(
+      "userName"
+    ).textContent =
+      name;
+
+    document.getElementById(
+      "userRole"
+    ).textContent =
+      user.role ||
+      "Authenticated";
+
+    document.getElementById(
+      "userAvatar"
+    ).textContent =
+      String(name)
+        .charAt(0)
+        .toUpperCase();
+
+  } catch (error) {
+
+    console.warn(
+      "User loading failed:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD CLIENTS
+========================================================= */
+
+async function loadClients() {
+
+  clientSelect.innerHTML =
+    `<option value="">Loading clients...</option>`;
+
+  try {
+
+    const response =
+      await apiFetch(
+        `${API_BASE_URL}/clients`
+      );
+
+    if (!response.ok) {
+
+      throw new Error(
+        `Failed to load clients (${response.status})`
+      );
+
+    }
+
+    const data =
+      await response.json();
+
+    let clients = [];
+
+    if (
+      Array.isArray(data)
+    ) {
+
+      clients = data;
+
+    } else if (
+      Array.isArray(data.clients)
+    ) {
+
+      clients = data.clients;
+
+    } else if (
+      Array.isArray(data.data)
+    ) {
+
+      clients = data.data;
+
+    }
+
+    clientSelect.innerHTML =
+      `<option value="">Select a client</option>`;
+
+    if (!clients.length) {
+
+      clientSelect.innerHTML =
+        `<option value="">No clients found</option>`;
+
+      return;
+
+    }
+
+    clients.forEach(
+      client => {
+
+        const clientId =
+          getClientId(client);
+
+        const name =
+          getBusinessName(client);
+
+        if (!clientId) {
+          return;
+        }
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          clientId;
+
+        option.textContent =
+          name;
+
+        clientSelect.appendChild(
+          option
+        );
+
+      }
+    );
+
+    if (
+      clientSelect.options.length > 1
+    ) {
+
+      clientSelect.selectedIndex =
+        1;
+
+      await handleClientChange();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load clients:",
+      error
+    );
+
+    clientSelect.innerHTML =
+      `<option value="">Failed to load clients</option>`;
+
+    showStatus(
+      error.message ||
+      "Failed to load clients.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CLIENT INFO
+========================================================= */
+
+async function loadClientInfo(
+  clientId
+) {
+
+  if (!clientId) {
+
+    clientInfo.style.display =
+      "none";
+
+    return;
+
+  }
+
+  try {
+
+    const response =
+      await apiFetch(
+        `${API_BASE_URL}/clients/${encodeURIComponent(clientId)}`
+      );
+
+    if (!response.ok) {
+
+      clientInfo.style.display =
+        "block";
+
+      clientIdDisplay.textContent =
+        clientId;
+
+      return;
+
+    }
+
+    const client =
+      await response.json();
+
+    businessName.textContent =
+      getBusinessName(client);
+
+    clientIdDisplay.textContent =
+      clientId;
+
+    clientWebsite.textContent =
+      client.website ||
+      "-";
+
+    clientInfo.style.display =
+      "block";
+
+  } catch (error) {
+
+    console.warn(
+      "Client info error:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOAD AGENT
+========================================================= */
+
+async function loadAgentConfiguration(
+  clientId
+) {
+
+  if (!clientId) {
+    return;
+  }
+
+  hideStatus();
+
+  try {
+
+    const response =
+      await apiFetch(
+        `${API_BASE_URL}/agents/${encodeURIComponent(clientId)}`
+      );
+
+    if (
+      response.status === 404
+    ) {
+
+      agentNameInput.value =
+        "";
+
+      systemPromptInput.value =
+        "";
+
+      languageSelect.value =
+        "same_as_user";
+
+      toneSelect.value =
+        "professional";
+
+      maxTokensInput.value =
+        "300";
+
+      temperatureInput.value =
+        "0.1";
+
+      return;
+
+    }
+
+    if (!response.ok) {
+
+      throw new Error(
+        `Failed to load agent configuration (${response.status})`
+      );
+
+    }
+
+    const config =
+      await response.json();
+
+    agentNameInput.value =
+      config.agent_name ||
+      "";
+
+    systemPromptInput.value =
+      config.system_prompt ||
+      "";
+
+    languageSelect.value =
+      config.language ||
+      "same_as_user";
+
+    toneSelect.value =
+      config.tone ||
+      "professional";
+
+    maxTokensInput.value =
+      config.max_tokens ??
+      300;
+
+    temperatureInput.value =
+      config.temperature ??
+      0.1;
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load configuration:",
+      error
+    );
+
+    showStatus(
+      error.message ||
+      "Failed to load configuration.",
+      "error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   COLOR HELPERS
+========================================================= */
+
+function isValidColor(value) {
+
+  const color =
+    String(value || "")
+      .trim();
+
+  return (
+    /^#[0-9a-fA-F]{6}$/.test(color) ||
+    /^rgba?\(/i.test(color) ||
+    /^hsla?\(/i.test(color)
+  );
+
+}
+
+
+function normalizeColor(
+  value,
+  fallback
+) {
+
+  const color =
+    String(value || "")
+      .trim();
+
+  if (!color) {
+    return fallback;
+  }
+
+  if (
+    /^#[0-9a-fA-F]{6}$/.test(color)
+  ) {
+
+    return color.toLowerCase();
+
+  }
+
+  if (
+    /^rgba?\(/i.test(color) ||
+    /^hsla?\(/i.test(color)
+  ) {
+
+    return color;
+
+  }
+
+  return fallback;
+
+}
+
+
+function colorToPickerValue(
+  value
+) {
+
+  const color =
+    String(value || "")
+      .trim();
+
+  if (
+    /^#[0-9a-fA-F]{6}$/.test(color)
+  ) {
+
+    return color;
+
+  }
+
+  const rgbaMatch =
+    color.match(
+      /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i
+    );
+
+  if (rgbaMatch) {
+
+    const r =
+      Number(rgbaMatch[1]);
+
+    const g =
+      Number(rgbaMatch[2]);
+
+    const b =
+      Number(rgbaMatch[3]);
+
+    return (
+      "#" +
+      [r, g, b]
+        .map(
+          value =>
+            Math.max(
+              0,
+              Math.min(
+                255,
+                value
+              )
+            )
+              .toString(16)
+              .padStart(2, "0")
+        )
+        .join("")
+    );
+
+  }
+
+  return null;
+
+}
+
+
+function setColorValue(
+  picker,
+  textInput,
+  value,
+  fallback
+) {
+
+  const color =
+    normalizeColor(
+      value,
+      fallback
+    );
+
+  const pickerValue =
+    colorToPickerValue(
+      color
+    );
+
+  if (pickerValue) {
+
+    picker.value =
+      pickerValue;
+
+  }
+
+  textInput.value =
+    color;
+
+}
+
+
+function getColorValue(
+  textId,
+  fallback
+) {
+
+  const input =
+    document.getElementById(
+      textId
+    );
+
+  return normalizeColor(
+    input?.value,
+    fallback
+  );
+
+}
+
+
+/* =========================================================
+   CURRENT WIDGET CONFIG
+========================================================= */
+
+function getCurrentWidgetConfig() {
+
+  const config = {
+    ...DEFAULT_WIDGET_CONFIG
+  };
+
+  const colorMappings = {
+
+    primary_color:
+      "primary-color-text",
+
+    secondary_color:
+      "secondary-color-text",
+
+    text_color:
+      "text-color-text",
+
+    background_color:
+      "background-color-text",
+
+    surface_color:
+      "surface-color-text",
+
+    surface_secondary_color:
+      "surface-secondary-color-text",
+
+    surface_tertiary_color:
+      "surface-tertiary-color-text",
+
+    text_primary_color:
+      "text-primary-color-text",
+
+    text_secondary_color:
+      "text-secondary-color-text",
+
+    text_muted_color:
+      "text-muted-color-text",
+
+    text_muted_dark_color:
+      "text-muted-dark-color-text",
+
+    border_color:
+      "border-color-text",
+
+    border_light_color:
+      "border-light-color-text",
+
+    header_background_color:
+      "header-background-color-text",
+
+    header_text_color:
+      "header-text-color-text",
+
+    header_secondary_text_color:
+      "header-secondary-text-color-text",
+
+    header_button_color:
+      "header-button-color-text",
+
+    header_button_background_color:
+      "header-button-background-color-text",
+
+    header_button_border_color:
+      "header-button-border-color-text",
+
+    avatar_background_color:
+      "avatar-background-color-text",
+
+    avatar_text_color:
+      "avatar-text-color-text",
+
+    welcome_icon_background_color:
+      "welcome-icon-background-color-text",
+
+    welcome_icon_text_color:
+      "welcome-icon-text-color-text",
+
+    status_dot_color:
+      "status-dot-color-text",
+
+    status_text_color:
+      "status-text-color-text",
+
+    user_message_background_color:
+      "user-message-background-color-text",
+
+    user_message_text_color:
+      "user-message-text-color-text",
+
+    user_message_border_color:
+      "user-message-border-color-text",
+
+    assistant_message_background_color:
+      "assistant-message-background-color-text",
+
+    assistant_message_text_color:
+      "assistant-message-text-color-text",
+
+    assistant_message_border_color:
+      "assistant-message-border-color-text",
+
+    composer_background_color:
+      "composer-background-color-text",
+
+    input_background_color:
+      "input-background-color-text",
+
+    input_text_color:
+      "input-text-color-text",
+
+    input_placeholder_color:
+      "input-placeholder-color-text",
+
+    input_border_color:
+      "input-border-color-text",
+
+    input_focus_border_color:
+      "input-focus-border-color-text",
+
+    send_button_background_color:
+      "send-button-background-color-text",
+
+    send_button_text_color:
+      "send-button-text-color-text",
+
+    launcher_background_color:
+      "launcher-background-color-text",
+
+    launcher_icon_color:
+      "launcher-icon-color-text",
+
+    typing_background_color:
+      "typing-background-color-text",
+
+    typing_dot_color:
+      "typing-dot-color-text",
+
+    code_background_color:
+      "code-background-color-text",
+
+    code_text_color:
+      "code-text-color-text",
+
+    danger_color:
+      "danger-color-text",
+
+    success_color:
+      "success-color-text"
+
+  };
+
+  Object.entries(
+    colorMappings
+  ).forEach(
+    ([key, id]) => {
+
+      config[key] =
+        getColorValue(
+          id,
+          DEFAULT_WIDGET_CONFIG[key]
+        );
+
+    }
+  );
+
+  config.bot_name =
+    botNameInput.value.trim() ||
+    DEFAULT_WIDGET_CONFIG.bot_name;
+
+  config.logo =
+    widgetLogoInput.value.trim();
+
+  config.position =
+    widgetPositionSelect.value ||
+    DEFAULT_WIDGET_CONFIG.position;
+
+  config.welcome_message =
+    welcomeMessageInput.value.trim() ||
+    DEFAULT_WIDGET_CONFIG.welcome_message;
+
+  return config;
+
+}
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+function sendPreviewConfig() {
+
+  if (
+    !livePreview ||
+    !livePreview.contentWindow
+  ) {
+    return;
+  }
+
+  livePreview.contentWindow.postMessage(
+    {
+      type:
+        "widget:preview-config",
+
+      config:
+        getCurrentWidgetConfig()
+    },
+    "*"
+  );
+
+}
+
+
+function openPreview() {
+
+  if (
+    !livePreview ||
+    !livePreview.contentWindow
+  ) {
+    return;
+  }
+
+  livePreview.contentWindow.postMessage(
+    {
+      type:
+        "widget:preview-open"
+    },
+    "*"
+  );
+
+}
+
+
+function updatePreview() {
+
+  updatePositionPreview();
+
+  sendPreviewConfig();
+
+}
+
+
+/* =========================================================
+   APPLY WIDGET FORM CONFIG
+========================================================= */
+
+function applyWidgetFormConfig(
+  config
+) {
+
+  const finalConfig = {
+    ...DEFAULT_WIDGET_CONFIG,
+    ...(config || {})
+  };
+
+  const mappings = {
+
+    primary_color:
+      [
+        "primary-color-picker",
+        "primary-color-text"
+      ],
+
+    secondary_color:
+      [
+        "secondary-color-picker",
+        "secondary-color-text"
+      ],
+
+    text_color:
+      [
+        "text-color-picker",
+        "text-color-text"
+      ],
+
+    background_color:
+      [
+        "background-color-picker",
+        "background-color-text"
+      ],
+
+    surface_color:
+      [
+        "surface-color-picker",
+        "surface-color-text"
+      ],
+
+    surface_secondary_color:
+      [
+        "surface-secondary-color-picker",
+        "surface-secondary-color-text"
+      ],
+
+    surface_tertiary_color:
+      [
+        "surface-tertiary-color-picker",
+        "surface-tertiary-color-text"
+      ],
+
+    text_primary_color:
+      [
+        "text-primary-color-picker",
+        "text-primary-color-text"
+      ],
+
+    text_secondary_color:
+      [
+        "text-secondary-color-picker",
+        "text-secondary-color-text"
+      ],
+
+    text_muted_color:
+      [
+        "text-muted-color-picker",
+        "text-muted-color-text"
+      ],
+
+    text_muted_dark_color:
+      [
+        "text-muted-dark-color-picker",
+        "text-muted-dark-color-text"
+      ],
+
+    border_color:
+      [
+        "border-color-picker",
+        "border-color-text"
+      ],
+
+    border_light_color:
+      [
+        "border-light-color-picker",
+        "border-light-color-text"
+      ],
+
+    header_background_color:
+      [
+        "header-background-color-picker",
+        "header-background-color-text"
+      ],
+
+    header_text_color:
+      [
+        "header-text-color-picker",
+        "header-text-color-text"
+      ],
+
+    header_secondary_text_color:
+      [
+        "header-secondary-text-color-picker",
+        "header-secondary-text-color-text"
+      ],
+
+    header_button_color:
+      [
+        "header-button-color-picker",
+        "header-button-color-text"
+      ],
+
+    header_button_background_color:
+      [
+        "header-button-background-color-picker",
+        "header-button-background-color-text"
+      ],
+
+    header_button_border_color:
+      [
+        "header-button-border-color-picker",
+        "header-button-border-color-text"
+      ],
+
+    avatar_background_color:
+      [
+        "avatar-background-color-picker",
+        "avatar-background-color-text"
+      ],
+
+    avatar_text_color:
+      [
+        "avatar-text-color-picker",
+        "avatar-text-color-text"
+      ],
+
+    welcome_icon_background_color:
+      [
+        "welcome-icon-background-color-picker",
+        "welcome-icon-background-color-text"
+      ],
+
+    welcome_icon_text_color:
+      [
+        "welcome-icon-text-color-picker",
+        "welcome-icon-text-color-text"
+      ],
+
+    status_dot_color:
+      [
+        "status-dot-color-picker",
+        "status-dot-color-text"
+      ],
+
+    status_text_color:
+      [
+        "status-text-color-picker",
+        "status-text-color-text"
+      ],
+
+    user_message_background_color:
+      [
+        "user-message-background-color-picker",
+        "user-message-background-color-text"
+      ],
+
+    user_message_text_color:
+      [
+        "user-message-text-color-picker",
+        "user-message-text-color-text"
+      ],
+
+    user_message_border_color:
+      [
+        "user-message-border-color-picker",
+        "user-message-border-color-text"
+      ],
+
+    assistant_message_background_color:
+      [
+        "assistant-message-background-color-picker",
+        "assistant-message-background-color-text"
+      ],
+
+    assistant_message_text_color:
+      [
+        "assistant-message-text-color-picker",
+        "assistant-message-text-color-text"
+      ],
+
+    assistant_message_border_color:
+      [
+        "assistant-message-border-color-picker",
+        "assistant-message-border-color-text"
+      ],
+
+    composer_background_color:
+      [
+        "composer-background-color-picker",
+        "composer-background-color-text"
+      ],
+
+    input_background_color:
+      [
+        "input-background-color-picker",
+        "input-background-color-text"
+      ],
+
+    input_text_color:
+      [
+        "input-text-color-picker",
+        "input-text-color-text"
+      ],
+
+    input_placeholder_color:
+      [
+        "input-placeholder-color-picker",
+        "input-placeholder-color-text"
+      ],
+
+    input_border_color:
+      [
+        "input-border-color-picker",
+        "input-border-color-text"
+      ],
+
+    input_focus_border_color:
+      [
+        "input-focus-border-color-picker",
+        "input-focus-border-color-text"
+      ],
+
+    send_button_background_color:
+      [
+        "send-button-background-color-picker",
+        "send-button-background-color-text"
+      ],
+
+    send_button_text_color:
+      [
+        "send-button-text-color-picker",
+        "send-button-text-color-text"
+      ],
+
+    launcher_background_color:
+      [
+        "launcher-background-color-picker",
+        "launcher-background-color-text"
+      ],
+
+    launcher_icon_color:
+      [
+        "launcher-icon-color-picker",
+        "launcher-icon-color-text"
+      ],
+
+    typing_background_color:
+      [
+        "typing-background-color-picker",
+        "typing-background-color-text"
+      ],
+
+    typing_dot_color:
+      [
+        "typing-dot-color-picker",
+        "typing-dot-color-text"
+      ],
+
+    code_background_color:
+      [
+        "code-background-color-picker",
+        "code-background-color-text"
+      ],
+
+    code_text_color:
+      [
+        "code-text-color-picker",
+        "code-text-color-text"
+      ],
+
+    danger_color:
+      [
+        "danger-color-picker",
+        "danger-color-text"
+      ],
+
+    success_color:
+      [
+        "success-color-picker",
+        "success-color-text"
+      ]
+
+  };
+
+  Object.entries(
+    mappings
+  ).forEach(
+    ([key, ids]) => {
+
+      const picker =
+        document.getElementById(
+          ids[0]
+        );
+
+      const text =
+        document.getElementById(
+          ids[1]
+        );
+
+      if (
+        picker &&
+        text
+      ) {
+
+        setColorValue(
+          picker,
+          text,
+          finalConfig[key],
+          DEFAULT_WIDGET_CONFIG[key]
+        );
+
+      }
+
+    }
+  );
+
+  botNameInput.value =
+    finalConfig.bot_name ||
+    DEFAULT_WIDGET_CONFIG.bot_name;
+
+  widgetLogoInput.value =
+    finalConfig.logo ||
+    "";
+
+  widgetPositionSelect.value =
+    [
+      "bottom-right",
+      "bottom-left",
+      "top-right",
+      "top-left"
+    ].includes(
+      finalConfig.position
+    )
+      ? finalConfig.position
+      : "bottom-right";
+
+  welcomeMessageInput.value =
+    finalConfig.welcome_message ||
+    DEFAULT_WIDGET_CONFIG.welcome_message;
+
+  logoUploadStatus.textContent =
+    widgetLogoInput.value
+      ? (
+          widgetLogoInput.value.startsWith("data:")
+            ? "Uploaded logo loaded from saved configuration."
+            : "Using saved logo URL."
+        )
+      : "Supported: PNG, JPG/JPEG, WebP, GIF. Maximum size: 2 MB.";
+
+  updateLogoPreview();
+
+  updatePositionPreview();
+
+  updatePreview();
+
+}
+
+
+/* =========================================================
+   LOAD WIDGET CONFIG
+========================================================= */
+
+async function loadWidgetConfiguration(
+  clientId
+) {
+
+  if (!clientId) {
+    return;
+  }
+
+  hideWidgetStatus();
+
+  try {
+
+    const response =
+      await apiFetch(
+        `${API_BASE_URL}/clients/${encodeURIComponent(clientId)}/widget-config`
+      );
+
+    if (
+      response.status === 404
+    ) {
+
+      applyWidgetFormConfig(
+        DEFAULT_WIDGET_CONFIG
+      );
+
+      return;
+
+    }
+
+    if (!response.ok) {
+
+      throw new Error(
+        `Failed to load widget configuration (${response.status})`
+      );
+
+    }
+
+    const raw =
+      await response.json();
+
+    const config =
+      raw?.config &&
+      typeof raw.config === "object"
+        ? raw.config
+        : raw;
+
+    applyWidgetFormConfig(
+      {
+        ...DEFAULT_WIDGET_CONFIG,
+        ...(config || {})
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load widget configuration:",
+      error
+    );
+
+    showWidgetStatus(
+      error.message ||
+      "Failed to load widget configuration.",
+      "error"
+    );
+
+    applyWidgetFormConfig(
+      DEFAULT_WIDGET_CONFIG
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGO PREVIEW
+========================================================= */
+
+function updateLogoPreview() {
+
+  const logo =
+    widgetLogoInput.value.trim();
+
+  if (!logo) {
+
+    logoPreview.classList.remove(
+      "visible"
+    );
+
+    logoPreviewImage.src =
+      "";
+
+    logoPreviewText.textContent =
+      "Logo preview";
+
+    return;
+
+  }
+
+  logoPreviewImage.onload =
+    () => {
+
+      logoPreview.classList.add(
+        "visible"
+      );
+
+      logoPreviewText.textContent =
+        logo.startsWith("data:")
+          ? "Uploaded logo"
+          : logo;
+
+    };
+
+  logoPreviewImage.onerror =
+    () => {
+
+      logoPreview.classList.remove(
+        "visible"
+      );
+
+      logoPreviewImage.src =
+        "";
+
+      logoPreviewText.textContent =
+        "Unable to load logo image.";
+
+    };
+
+  logoPreviewImage.src =
+    logo;
+
+}
+
+
+/* =========================================================
+   POSITION PREVIEW
+========================================================= */
+
+function updatePositionPreview() {
+
+  const position =
+    widgetPositionSelect.value;
+
+  positionWidget.className =
+    "position-widget";
+
+  if (
+    position === "bottom-left"
+  ) {
+
+    positionWidget.classList.add(
+      "position-bottom-left"
+    );
+
+  } else if (
+    position === "top-right"
+  ) {
+
+    positionWidget.classList.add(
+      "position-top-right"
+    );
+
+  } else if (
+    position === "top-left"
+  ) {
+
+    positionWidget.classList.add(
+      "position-top-left"
+    );
+
+  } else {
+
+    positionWidget.classList.add(
+      "position-bottom-right"
+    );
+
+  }
+
+  const config =
+    getCurrentWidgetConfig();
+
+  positionWidget.style.background =
+    config.launcher_background_color;
+
+  positionWidget.style.color =
+    config.launcher_icon_color;
+
+  if (config.logo) {
+
+    positionWidget.innerHTML =
+      `<img src="${escapeAttribute(
+        config.logo
+      )}" alt="">`;
+
+  } else {
+
+    positionWidget.textContent =
+      getInitials(
+        config.bot_name
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+function escapeHtml(value) {
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+function escapeAttribute(value) {
+
+  return escapeHtml(value);
+
+}
+
+
+function getInitials(name) {
+
+  const words =
+    String(name || "AI")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+  if (!words.length) {
+    return "AI";
+  }
+
+  if (words.length === 1) {
+
+    return words[0]
+      .substring(0, 2)
+      .toUpperCase();
+
+  }
+
+  return (
+    words[0][0] +
+    words[1][0]
+  ).toUpperCase();
+
+}
+
+
+/* =========================================================
+   COLOR EVENTS
+========================================================= */
+
+const colorControlDefinitions = [
+
+  ["primary-color-picker", "primary-color-text", DEFAULT_WIDGET_CONFIG.primary_color],
+  ["secondary-color-picker", "secondary-color-text", DEFAULT_WIDGET_CONFIG.secondary_color],
+  ["text-color-picker", "text-color-text", DEFAULT_WIDGET_CONFIG.text_color],
+
+  ["background-color-picker", "background-color-text", DEFAULT_WIDGET_CONFIG.background_color],
+  ["surface-color-picker", "surface-color-text", DEFAULT_WIDGET_CONFIG.surface_color],
+  ["surface-secondary-color-picker", "surface-secondary-color-text", DEFAULT_WIDGET_CONFIG.surface_secondary_color],
+  ["surface-tertiary-color-picker", "surface-tertiary-color-text", DEFAULT_WIDGET_CONFIG.surface_tertiary_color],
+
+  ["text-primary-color-picker", "text-primary-color-text", DEFAULT_WIDGET_CONFIG.text_primary_color],
+  ["text-secondary-color-picker", "text-secondary-color-text", DEFAULT_WIDGET_CONFIG.text_secondary_color],
+  ["text-muted-color-picker", "text-muted-color-text", DEFAULT_WIDGET_CONFIG.text_muted_color],
+  ["text-muted-dark-color-picker", "text-muted-dark-color-text", DEFAULT_WIDGET_CONFIG.text_muted_dark_color],
+
+  ["border-color-picker", "border-color-text", DEFAULT_WIDGET_CONFIG.border_color],
+  ["border-light-color-picker", "border-light-color-text", DEFAULT_WIDGET_CONFIG.border_light_color],
+
+  ["header-background-color-picker", "header-background-color-text", DEFAULT_WIDGET_CONFIG.header_background_color],
+  ["header-text-color-picker", "header-text-color-text", DEFAULT_WIDGET_CONFIG.header_text_color],
+  ["header-secondary-text-color-picker", "header-secondary-text-color-text", DEFAULT_WIDGET_CONFIG.header_secondary_text_color],
+  ["header-button-color-picker", "header-button-color-text", DEFAULT_WIDGET_CONFIG.header_button_color],
+  ["header-button-background-color-picker", "header-button-background-color-text", DEFAULT_WIDGET_CONFIG.header_button_background_color],
+  ["header-button-border-color-picker", "header-button-border-color-text", DEFAULT_WIDGET_CONFIG.header_button_border_color],
+
+  ["avatar-background-color-picker", "avatar-background-color-text", DEFAULT_WIDGET_CONFIG.avatar_background_color],
+  ["avatar-text-color-picker", "avatar-text-color-text", DEFAULT_WIDGET_CONFIG.avatar_text_color],
+  ["welcome-icon-background-color-picker", "welcome-icon-background-color-text", DEFAULT_WIDGET_CONFIG.welcome_icon_background_color],
+  ["welcome-icon-text-color-picker", "welcome-icon-text-color-text", DEFAULT_WIDGET_CONFIG.welcome_icon_text_color],
+
+  ["status-dot-color-picker", "status-dot-color-text", DEFAULT_WIDGET_CONFIG.status_dot_color],
+  ["status-text-color-picker", "status-text-color-text", DEFAULT_WIDGET_CONFIG.status_text_color],
+
+  ["user-message-background-color-picker", "user-message-background-color-text", DEFAULT_WIDGET_CONFIG.user_message_background_color],
+  ["user-message-text-color-picker", "user-message-text-color-text", DEFAULT_WIDGET_CONFIG.user_message_text_color],
+  ["user-message-border-color-picker", "user-message-border-color-text", DEFAULT_WIDGET_CONFIG.user_message_border_color],
+
+  ["assistant-message-background-color-picker", "assistant-message-background-color-text", DEFAULT_WIDGET_CONFIG.assistant_message_background_color],
+  ["assistant-message-text-color-picker", "assistant-message-text-color-text", DEFAULT_WIDGET_CONFIG.assistant_message_text_color],
+  ["assistant-message-border-color-picker", "assistant-message-border-color-text", DEFAULT_WIDGET_CONFIG.assistant_message_border_color],
+
+  ["composer-background-color-picker", "composer-background-color-text", DEFAULT_WIDGET_CONFIG.composer_background_color],
+  ["input-background-color-picker", "input-background-color-text", DEFAULT_WIDGET_CONFIG.input_background_color],
+  ["input-text-color-picker", "input-text-color-text", DEFAULT_WIDGET_CONFIG.input_text_color],
+  ["input-placeholder-color-picker", "input-placeholder-color-text", DEFAULT_WIDGET_CONFIG.input_placeholder_color],
+  ["input-border-color-picker", "input-border-color-text", DEFAULT_WIDGET_CONFIG.input_border_color],
+  ["input-focus-border-color-picker", "input-focus-border-color-text", DEFAULT_WIDGET_CONFIG.input_focus_border_color],
+
+  ["send-button-background-color-picker", "send-button-background-color-text", DEFAULT_WIDGET_CONFIG.send_button_background_color],
+  ["send-button-text-color-picker", "send-button-text-color-text", DEFAULT_WIDGET_CONFIG.send_button_text_color],
+  ["launcher-background-color-picker", "launcher-background-color-text", DEFAULT_WIDGET_CONFIG.launcher_background_color],
+  ["launcher-icon-color-picker", "launcher-icon-color-text", DEFAULT_WIDGET_CONFIG.launcher_icon_color],
+
+  ["typing-background-color-picker", "typing-background-color-text", DEFAULT_WIDGET_CONFIG.typing_background_color],
+  ["typing-dot-color-picker", "typing-dot-color-text", DEFAULT_WIDGET_CONFIG.typing_dot_color],
+  ["code-background-color-picker", "code-background-color-text", DEFAULT_WIDGET_CONFIG.code_background_color],
+  ["code-text-color-picker", "code-text-color-text", DEFAULT_WIDGET_CONFIG.code_text_color],
+  ["danger-color-picker", "danger-color-text", DEFAULT_WIDGET_CONFIG.danger_color],
+  ["success-color-picker", "success-color-text", DEFAULT_WIDGET_CONFIG.success_color]
+
+];
+
+
+function setupColorControl(
+  pickerId,
+  textId,
+  fallback
+) {
+
+  const picker =
+    document.getElementById(
+      pickerId
+    );
+
+  const text =
+    document.getElementById(
+      textId
+    );
+
+  if (!picker || !text) {
+    return;
+  }
+
+  picker.addEventListener(
+    "input",
+    () => {
+
+      text.value =
+        picker.value.toLowerCase();
+
+      updatePreview();
+
+    }
+  );
+
+  text.addEventListener(
+    "input",
+    () => {
+
+      const value =
+        text.value.trim();
+
+      if (isValidColor(value)) {
+
+        const pickerValue =
+          colorToPickerValue(value);
+
+        if (pickerValue) {
+
+          picker.value =
+            pickerValue;
+
+        }
+
+        updatePreview();
+
+      }
+
+    }
+  );
+
+  text.addEventListener(
+    "blur",
+    () => {
+
+      if (
+        !isValidColor(text.value)
+      ) {
+
+        text.value =
+          fallback;
+
+        const pickerValue =
+          colorToPickerValue(
+            fallback
+          );
+
+        if (pickerValue) {
+
+          picker.value =
+            pickerValue;
+
+        }
+
+        updatePreview();
+
+      }
+
+    }
+  );
+
+}
+
+
+colorControlDefinitions.forEach(
+  definition => {
+
+    setupColorControl(
+      definition[0],
+      definition[1],
+      definition[2]
+    );
+
+  }
+);
+
+
+/* =========================================================
+   BOT / LOGO / POSITION EVENTS
+========================================================= */
+
+botNameInput.addEventListener(
+  "input",
+  () => {
+
+    updatePositionPreview();
+
+    updatePreview();
+
+  }
+);
+
+
+widgetLogoInput.addEventListener(
+  "input",
+  () => {
+
+    widgetLogoFileInput.value =
+      "";
+
+    logoUploadStatus.textContent =
+      widgetLogoInput.value.trim()
+        ? "Using logo URL."
+        : "Supported: PNG, JPG/JPEG, WebP, GIF. Maximum size: 2 MB.";
+
+    updateLogoPreview();
+
+    updatePositionPreview();
+
+    updatePreview();
+
+  }
+);
+
+
+welcomeMessageInput.addEventListener(
+  "input",
+  updatePreview
+);
+
+
+widgetPositionSelect.addEventListener(
+  "change",
+  () => {
+
+    updatePositionPreview();
+
+    updatePreview();
+
+  }
+);
+
+
+/* =========================================================
+   LOGO FILE
+========================================================= */
+
+widgetLogoFileInput.addEventListener(
+  "change",
+  event => {
+
+    const file =
+      event.target.files &&
+      event.target.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    const allowedTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+      "image/gif"
+    ];
+
+    if (
+      !allowedTypes.includes(
+        file.type
+      )
+    ) {
+
+      showWidgetStatus(
+        "Please upload a PNG, JPG/JPEG, WebP, or GIF image.",
+        "error"
+      );
+
+      event.target.value =
+        "";
+
+      return;
+
+    }
+
+    if (
+      file.size >
+      2 * 1024 * 1024
+    ) {
+
+      showWidgetStatus(
+        "Logo image must be 2 MB or smaller.",
+        "error"
+      );
+
+      event.target.value =
+        "";
+
+      return;
+
+    }
+
+    const reader =
+      new FileReader();
+
+    reader.onload =
+      () => {
+
+        widgetLogoInput.value =
+          String(
+            reader.result || ""
+          );
+
+        logoUploadStatus.textContent =
+          `Uploaded: ${file.name} (${Math.ceil(
+            file.size / 1024
+          )} KB)`;
+
+        updateLogoPreview();
+
+        updatePositionPreview();
+
+        updatePreview();
+
+        hideWidgetStatus();
+
+      };
+
+    reader.onerror =
+      () => {
+
+        showWidgetStatus(
+          "Failed to read the selected logo.",
+          "error"
+        );
+
+      };
+
+    reader.readAsDataURL(file);
+
+  }
+);
+
+
+/* =========================================================
+   CLEAR LOGO
+========================================================= */
+
+logoClearButton.addEventListener(
+  "click",
+  () => {
+
+    widgetLogoInput.value =
+      "";
+
+    widgetLogoFileInput.value =
+      "";
+
+    logoUploadStatus.textContent =
+      "Logo will be removed when you save widget settings.";
+
+    updateLogoPreview();
+
+    updatePositionPreview();
+
+    updatePreview();
+
+  }
+);
+
+
+/* =========================================================
+   CLIENT CHANGE
+========================================================= */
+
+async function handleClientChange() {
+
+  const clientId =
+    clientSelect.value;
+
+  if (!clientId) {
+
+    clientInfo.style.display =
+      "none";
+
+    return;
+
+  }
+
+  await loadClientInfo(
+    clientId
+  );
+
+  await loadAgentConfiguration(
+    clientId
+  );
+
+  await loadWidgetConfiguration(
+    clientId
+  );
+
+}
+
+
+clientSelect.addEventListener(
+  "change",
+  handleClientChange
+);
+
+
+/* =========================================================
+   SAVE AGENT
+========================================================= */
+
+agentForm.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    hideStatus();
+
+    const clientId =
+      clientSelect.value.trim();
+
+    const agentName =
+      agentNameInput.value.trim();
+
+    const systemPrompt =
+      systemPromptInput.value.trim();
+
+    const language =
+      languageSelect.value;
+
+    const tone =
+      toneSelect.value;
+
+    const maxTokens =
+      Number(
+        maxTokensInput.value
+      );
+
+    const temperature =
+      Number(
+        temperatureInput.value
+      );
+
+    if (!clientId) {
+
+      showStatus(
+        "Please select a client.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    if (!agentName) {
+
+      showStatus(
+        "Please enter an agent name.",
+        "error"
+      );
+
+      agentNameInput.focus();
+
+      return;
+
+    }
+
+    if (!systemPrompt) {
+
+      showStatus(
+        "Please enter a system prompt.",
+        "error"
+      );
+
+      systemPromptInput.focus();
+
+      return;
+
+    }
+
+    if (
+      !Number.isFinite(maxTokens) ||
+      maxTokens <= 0
+    ) {
+
+      showStatus(
+        "Max tokens must be greater than 0.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    if (
+      !Number.isFinite(temperature) ||
+      temperature < 0 ||
+      temperature > 2
+    ) {
+
+      showStatus(
+        "Temperature must be between 0 and 2.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      "Saving...";
+
+    try {
+
+      const response =
+        await apiFetch(
+          `${API_BASE_URL}/agents`,
+          {
+            method:
+              "POST",
+
+            headers:
+              getHeaders(),
+
+            body:
+              JSON.stringify({
+
+                client_id:
+                  clientId,
+
+                agent_name:
+                  agentName,
+
+                system_prompt:
+                  systemPrompt,
+
+                language:
+                  language,
+
+                tone:
+                  tone,
+
+                max_tokens:
+                  maxTokens,
+
+                temperature:
+                  temperature
+
+              })
+
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.detail ||
+          "Failed to save agent configuration."
+        );
+
+      }
+
+      showStatus(
+        "Agent configuration saved successfully.",
+        "success"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Save configuration error:",
+        error
+      );
+
+      showStatus(
+        error.message ||
+        "Failed to save configuration.",
+        "error"
+      );
+
+    } finally {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        "Save Configuration";
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SAVE WIDGET
+========================================================= */
+
+widgetForm.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    hideWidgetStatus();
+
+    const clientId =
+      clientSelect.value.trim();
+
+    if (!clientId) {
+
+      showWidgetStatus(
+        "Please select a client.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    const config =
+      getCurrentWidgetConfig();
+
+    const requiredColorKeys = [
+
+      "primary_color",
+      "secondary_color",
+      "text_color",
+
+      "background_color",
+      "surface_color",
+      "surface_secondary_color",
+      "surface_tertiary_color",
+
+      "text_primary_color",
+      "text_secondary_color",
+      "text_muted_color",
+      "text_muted_dark_color",
+
+      "border_color",
+      "border_light_color",
+
+      "header_background_color",
+      "header_text_color",
+      "header_secondary_text_color",
+      "header_button_color",
+      "header_button_background_color",
+      "header_button_border_color",
+
+      "avatar_background_color",
+      "avatar_text_color",
+
+      "welcome_icon_background_color",
+      "welcome_icon_text_color",
+
+      "status_dot_color",
+      "status_text_color",
+
+      "user_message_background_color",
+      "user_message_text_color",
+      "user_message_border_color",
+
+      "assistant_message_background_color",
+      "assistant_message_text_color",
+      "assistant_message_border_color",
+
+      "composer_background_color",
+      "input_background_color",
+      "input_text_color",
+      "input_placeholder_color",
+      "input_border_color",
+      "input_focus_border_color",
+
+      "send_button_background_color",
+      "send_button_text_color",
+
+      "launcher_background_color",
+      "launcher_icon_color",
+
+      "typing_background_color",
+      "typing_dot_color",
+
+      "code_background_color",
+      "code_text_color",
+
+      "danger_color",
+      "success_color"
+
+    ];
+
+    for (
+      const key of requiredColorKeys
+    ) {
+
+      if (
+        !isValidColor(
+          config[key]
+        )
+      ) {
+
+        showWidgetStatus(
+          `Invalid color for ${key.replaceAll("_", " ")}.`,
+          "error"
+        );
+
+        return;
+
+      }
+
+    }
+
+    if (!config.bot_name) {
+
+      showWidgetStatus(
+        "Please enter a bot name.",
+        "error"
+      );
+
+      botNameInput.focus();
+
+      return;
+
+    }
+
+    if (!config.welcome_message) {
+
+      showWidgetStatus(
+        "Please enter a welcome message.",
+        "error"
+      );
+
+      welcomeMessageInput.focus();
+
+      return;
+
+    }
+
+    if (
+      ![
+        "bottom-right",
+        "bottom-left",
+        "top-right",
+        "top-left"
+      ].includes(
+        config.position
+      )
+    ) {
+
+      showWidgetStatus(
+        "Please select a valid widget position.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    widgetSaveButton.disabled =
+      true;
+
+    widgetSaveButton.textContent =
+      "Saving...";
+
+    try {
+
+      const response =
+        await apiFetch(
+          `${API_BASE_URL}/clients/${encodeURIComponent(clientId)}/widget-config`,
+          {
+            method:
+              "PUT",
+
+            headers:
+              getHeaders(),
+
+            body:
+              JSON.stringify(config)
+
+          }
+        );
+
+      let data = {};
+
+      try {
+
+        data =
+          await response.json();
+
+      } catch {}
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.detail ||
+          data.message ||
+          "Failed to save widget configuration."
+        );
+
+      }
+
+      showWidgetStatus(
+        "Widget configuration saved successfully.",
+        "success"
+      );
+
+      updatePreview();
+
+    } catch (error) {
+
+      console.error(
+        "Save widget configuration error:",
+        error
+      );
+
+      showWidgetStatus(
+        error.message ||
+        "Failed to save widget configuration.",
+        "error"
+      );
+
+    } finally {
+
+      widgetSaveButton.disabled =
+        false;
+
+      widgetSaveButton.textContent =
+        "Save Widget Settings";
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   LIVE PREVIEW LOAD
+========================================================= */
+
+livePreview.addEventListener(
+  "load",
+  () => {
+
+    sendPreviewConfig();
+
+    setTimeout(
+      () => {
+
+        sendPreviewConfig();
+
+        openPreview();
+
+      },
+      100
+    );
+
+  }
+);
+
+
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
+
+    if (!getAccessToken()) {
+
+      window.location.href =
+        "../frontend/index.html";
+
+      return;
+
+    }
+
+    await loadUser();
+
+    await loadClients();
+
+    updatePreview();
+
+  }
+);
+
+</script>
+
+</body>
+</html>

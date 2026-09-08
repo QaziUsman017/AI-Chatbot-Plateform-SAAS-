@@ -1,0 +1,2754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Knowledge Base - AI Chatbot Platform</title>
+
+<style>
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0
+}
+
+:root{
+ --navy:#0f172a;
+ --navy-hover:#172033;
+ --cyan:#0ea5e9;
+ --cyan-light:#e0f2fe;
+ --bg:#f8fafc;
+ --white:#fff;
+ --border:#e2e8f0;
+ --text:#0f172a;
+ --muted:#64748b;
+ --green:#16a34a;
+ --green-bg:#dcfce7;
+ --red:#dc2626;
+ --red-bg:#fee2e2;
+ --red-border:#fecaca;
+}
+
+body{
+ font-family:Inter,Arial,sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
+}
+
+.sidebar{
+ position:fixed;
+ inset:0 auto 0 0;
+ width:248px;
+ background:var(--navy);
+ color:#fff;
+ padding:24px 16px;
+ z-index:100;
+}
+
+.brand{
+ display:flex;
+ align-items:center;
+ gap:11px;
+ padding:0 8px 30px;
+}
+
+.brand-icon{
+ width:30px;
+ height:30px;
+ border-radius:9px;
+ background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:11px;
+ font-weight:800;
+}
+
+.brand h2{
+ font-size:16px
+}
+
+.brand h2 span{
+ color:#38bdf8
+}
+
+.brand small{
+ display:block;
+ color:#94a3b8;
+ font-size:10px;
+ margin-top:5px;
+}
+
+.menu-label{
+ padding:0 10px 9px;
+ color:#64748b;
+ font-size:9px;
+ font-weight:700;
+ text-transform:uppercase;
+ letter-spacing:.08em;
+}
+
+.nav{
+ display:flex;
+ flex-direction:column;
+ gap:4px;
+}
+
+.nav a{
+ position:relative;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ color:#94a3b8;
+ text-decoration:none;
+ padding:10px 11px;
+ border-radius:9px;
+ font-size:12px;
+}
+
+.nav a:hover,
+.nav a.active{
+ background:var(--navy-hover);
+ color:#fff;
+}
+
+.nav a.active:before{
+ content:"";
+ position:absolute;
+ left:0;
+ top:8px;
+ bottom:8px;
+ width:3px;
+ border-radius:4px;
+ background:#38bdf8;
+}
+
+.nav-icon{
+ width:19px;
+ text-align:center;
+}
+
+.main{
+ margin-left:248px;
+ width:calc(100% - 248px);
+ min-height:100vh;
+ padding:30px 32px 40px;
+}
+
+.topbar{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:20px;
+ margin-bottom:22px;
+}
+
+.title-row{
+ display:flex;
+ align-items:center;
+ gap:12px;
+}
+
+.back-button{
+ border:1px solid var(--border);
+ background:#fff;
+ color:#334155;
+ border-radius:9px;
+ padding:9px 12px;
+ cursor:pointer;
+ font-size:11px;
+ font-weight:650;
+}
+
+.back-button:hover{
+ background:#f1f5f9;
+}
+
+.title h1{
+ font-size:29px;
+ letter-spacing:-.6px;
+ margin-bottom:5px;
+}
+
+.title p{
+ color:var(--muted);
+ font-size:12px;
+}
+
+.user-box{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:11px;
+ padding:8px 12px;
+}
+
+.user-avatar{
+ width:32px;
+ height:32px;
+ border-radius:50%;
+ background:var(--cyan-light);
+ color:#0284c7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:12px;
+ font-weight:700;
+}
+
+.user-info strong{
+ display:block;
+ font-size:11px;
+}
+
+.user-info span{
+ display:block;
+ color:var(--muted);
+ font-size:9px;
+ margin-top:3px;
+}
+
+.card{
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:14px;
+ padding:21px;
+ margin-bottom:17px;
+ box-shadow:0 3px 12px rgba(15,23,42,.025);
+}
+
+.card-header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:15px;
+ margin-bottom:17px;
+}
+
+.card-header h2{
+ font-size:15px;
+}
+
+.card-header p{
+ color:var(--muted);
+ font-size:10px;
+ margin-top:4px;
+}
+
+select,
+input[type=file]{
+ width:100%;
+ padding:11px 12px;
+ border:1px solid #dbe3ec;
+ border-radius:9px;
+ background:#fff;
+ color:var(--text);
+ font-size:11px;
+ outline:none;
+}
+
+select:focus{
+ border-color:#38bdf8;
+ box-shadow:0 0 0 3px rgba(14,165,233,.08);
+}
+
+.client-info{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:12px;
+ margin-top:15px;
+}
+
+.info-box{
+ background:#f8fafc;
+ border:1px solid #edf2f7;
+ border-radius:10px;
+ padding:13px;
+}
+
+.info-box small{
+ display:block;
+ color:var(--muted);
+ font-size:9px;
+ margin-bottom:5px;
+}
+
+.info-box strong{
+ font-size:11px;
+ word-break:break-word;
+}
+
+.upload-area{
+ border:2px dashed #cbd5e1;
+ border-radius:13px;
+ padding:35px 25px;
+ text-align:center;
+ background:#fbfdff;
+}
+
+.upload-icon{
+ width:48px;
+ height:48px;
+ margin:0 auto 12px;
+ border-radius:12px;
+ background:var(--cyan-light);
+ color:#0284c7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:21px;
+}
+
+.upload-area h3{
+ font-size:14px;
+ margin-bottom:6px;
+}
+
+.upload-area p{
+ color:var(--muted);
+ font-size:10px;
+ line-height:1.6;
+ max-width:580px;
+ margin:0 auto 17px;
+}
+
+.file-input-wrap{
+ max-width:520px;
+ margin:auto;
+}
+
+.btn{
+ border:0;
+ border-radius:9px;
+ padding:10px 14px;
+ cursor:pointer;
+ font-size:10px;
+ font-weight:700;
+ transition:.2s;
+}
+
+.btn-primary{
+ background:var(--navy);
+ color:#fff;
+}
+
+.btn-primary:hover{
+ background:#1e293b;
+}
+
+.btn-secondary{
+ background:#fff;
+ color:#334155;
+ border:1px solid var(--border);
+}
+
+.btn-secondary:hover{
+ background:#f8fafc;
+}
+
+.btn-danger{
+ background:var(--red-bg);
+ color:#b91c1c;
+ border:1px solid var(--red-border);
+ padding:8px 11px;
+ font-size:9px;
+}
+
+.btn-danger:hover{
+ background:#fecaca;
+ color:#991b1b;
+}
+
+.btn:disabled{
+ opacity:.5;
+ cursor:not-allowed;
+}
+
+.upload-actions{
+ margin-top:12px;
+}
+
+.message{
+ display:none;
+ padding:10px 12px;
+ border-radius:9px;
+ font-size:10px;
+ margin-top:13px;
+}
+
+.message.show{
+ display:block;
+}
+
+.message.success{
+ background:var(--green-bg);
+ color:#166534;
+}
+
+.message.error{
+ background:#fee2e2;
+ color:#991b1b;
+}
+
+.documents{
+ display:grid;
+ grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+ gap:13px;
+}
+
+.document-card{
+ border:1px solid var(--border);
+ border-radius:12px;
+ padding:15px;
+ background:#fff;
+ transition:.2s;
+}
+
+.document-card:hover{
+ border-color:#bae6fd;
+ transform:translateY(-1px);
+ box-shadow:0 6px 16px rgba(15,23,42,.05);
+}
+
+.document-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:flex-start;
+ gap:10px;
+}
+
+.document-icon{
+ width:38px;
+ height:38px;
+ border-radius:10px;
+ background:var(--cyan-light);
+ color:#0284c7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+.document-card h3{
+ font-size:11px;
+ margin-top:12px;
+ line-height:1.45;
+ word-break:break-word;
+}
+
+.document-card p{
+ color:var(--muted);
+ font-size:9px;
+ margin-top:5px;
+}
+
+.document-actions{
+ display:flex;
+ justify-content:flex-end;
+ align-items:center;
+ margin-top:14px;
+ padding-top:11px;
+ border-top:1px solid #f1f5f9;
+}
+
+.badge{
+ display:inline-flex;
+ padding:4px 7px;
+ border-radius:20px;
+ background:var(--green-bg);
+ color:#166534;
+ font-size:8px;
+ font-weight:700;
+}
+
+.empty{
+ text-align:center;
+ padding:40px 20px;
+ color:var(--muted);
+ border:1px dashed #cbd5e1;
+ border-radius:11px;
+ font-size:10px;
+}
+
+.empty-icon{
+ font-size:27px;
+ margin-bottom:8px;
+}
+
+.empty strong{
+ display:block;
+ color:#334155;
+ font-size:12px;
+}
+
+.loading{
+ text-align:center;
+ padding:28px;
+ color:var(--muted);
+ font-size:10px;
+}
+
+.delete-overlay{
+ position:fixed;
+ inset:0;
+ background:rgba(15,23,42,.45);
+ display:none;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+ z-index:1000;
+}
+
+.delete-overlay.show{
+ display:flex;
+}
+
+.delete-modal{
+ width:min(420px,100%);
+ background:#fff;
+ border-radius:15px;
+ padding:22px;
+ box-shadow:0 20px 50px rgba(15,23,42,.2);
+}
+
+.delete-modal-icon{
+ width:42px;
+ height:42px;
+ border-radius:11px;
+ background:var(--red-bg);
+ color:#dc2626;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:19px;
+ margin-bottom:13px;
+}
+
+.delete-modal h3{
+ font-size:15px;
+ margin-bottom:7px;
+}
+
+.delete-modal p{
+ color:var(--muted);
+ font-size:10px;
+ line-height:1.6;
+}
+
+.delete-file-name{
+ color:#334155;
+ font-weight:700;
+ word-break:break-word;
+}
+
+.modal-actions{
+ display:flex;
+ justify-content:flex-end;
+ gap:8px;
+ margin-top:18px;
+}
+
+.modal-cancel{
+ background:#fff;
+ color:#334155;
+ border:1px solid var(--border);
+}
+
+.modal-cancel:hover{
+ background:#f8fafc;
+}
+
+.modal-delete{
+ background:#dc2626;
+ color:#fff;
+}
+
+.modal-delete:hover{
+ background:#b91c1c;
+}
+
+.modal-delete:disabled{
+ opacity:.6;
+ cursor:not-allowed;
+}
+
+@media(max-width:900px){
+
+ .sidebar{
+  width:215px;
+ }
+
+ .main{
+  margin-left:215px;
+  width:calc(100% - 215px);
+ }
+
+ .client-info{
+  grid-template-columns:1fr;
+ }
+}
+
+@media(max-width:700px){
+
+ .sidebar{
+  position:relative;
+  width:100%;
+  height:auto;
+ }
+
+ .main{
+  margin-left:0;
+  width:100%;
+  padding:22px 18px 35px;
+ }
+
+ .topbar{
+  flex-direction:column;
+  align-items:flex-start;
+ }
+
+ .user-box{
+  width:100%;
+ }
+
+ .card-header{
+  align-items:flex-start;
+  flex-direction:column;
+ }
+
+ .card-header .btn{
+  width:100%;
+ }
+
+ .upload-area{
+  padding:27px 15px;
+ }
+
+ .documents{
+  grid-template-columns:1fr;
+ }
+
+ .modal-actions{
+  flex-direction:column-reverse;
+ }
+
+ .modal-actions .btn{
+  width:100%;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+ <div class="brand">
+
+  <div class="brand-icon">
+   AI
+  </div>
+
+  <div>
+
+   <h2>
+    AI <span>Chatbot</span>
+   </h2>
+
+   <small>
+    Admin Platform
+   </small>
+
+  </div>
+
+ </div>
+
+ <div class="menu-label">
+  Main Menu
+ </div>
+
+ <nav class="nav">
+
+  <a href="index.html">
+   <span class="nav-icon">📊</span>
+   <span>Dashboard</span>
+  </a>
+
+  <a href="clients.html">
+   <span class="nav-icon">👥</span>
+   <span>Clients</span>
+  </a>
+
+  <a href="chatbot-settings.html">
+   <span class="nav-icon">🤖</span>
+   <span>Chatbot Settings</span>
+  </a>
+
+  <a href="knowledge-base.html" class="active">
+   <span class="nav-icon">📚</span>
+   <span>Knowledge Base</span>
+  </a>
+
+  <a href="conversations.html">
+   <span class="nav-icon">💬</span>
+   <span>Conversations</span>
+  </a>
+
+  <a href="analytics.html">
+   <span class="nav-icon">📈</span>
+   <span>Analytics</span>
+  </a>
+
+ </nav>
+
+</aside>
+
+
+<main class="main">
+
+ <div class="topbar">
+
+  <div class="title-row">
+
+   <button
+    class="back-button"
+    type="button"
+    id="backButton"
+   >
+    ← Back
+   </button>
+
+   <div class="title">
+
+    <h1>
+     Knowledge Base
+    </h1>
+
+    <p>
+     Upload documents and manage the AI's knowledge.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="user-box">
+
+   <div
+    class="user-avatar"
+    id="userAvatar"
+   >
+    U
+   </div>
+
+   <div class="user-info">
+
+    <strong id="userName">
+     Loading...
+    </strong>
+
+    <span id="userRole">
+     Authenticated
+    </span>
+
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <!-- CLIENT SELECTION -->
+
+ <section class="card">
+
+  <div class="card-header">
+
+   <div>
+
+    <h2>
+     Select Client
+    </h2>
+
+    <p>
+     Choose which client's chatbot knowledge you want to manage.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <select id="clientSelect">
+
+   <option value="">
+    Loading clients...
+   </option>
+
+  </select>
+
+
+  <div
+   id="clientInfo"
+   class="client-info"
+   style="display:none"
+  >
+
+   <div class="info-box">
+
+    <small>
+     Business
+    </small>
+
+    <strong id="businessName">
+     —
+    </strong>
+
+   </div>
+
+
+   <div class="info-box">
+
+    <small>
+     Client ID
+    </small>
+
+    <strong id="clientIdText">
+     —
+    </strong>
+
+   </div>
+
+
+   <div class="info-box">
+
+    <small>
+     Website
+    </small>
+
+    <strong id="websiteText">
+     —
+    </strong>
+
+   </div>
+
+  </div>
+
+ </section>
+
+
+ <!-- UPLOAD -->
+
+ <section class="card">
+
+  <div class="card-header">
+
+   <div>
+
+    <h2>
+     Upload Knowledge
+    </h2>
+
+    <p>
+     Supported formats: PDF, DOCX and TXT.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="upload-area">
+
+   <div class="upload-icon">
+    📄
+   </div>
+
+   <h3>
+    Add a document
+   </h3>
+
+   <p>
+    Upload company information, FAQs, product documentation,
+    policies or other useful content.
+   </p>
+
+
+   <div class="file-input-wrap">
+
+    <input
+     type="file"
+     id="fileInput"
+     accept=".pdf,.docx,.txt"
+    >
+
+
+    <div class="upload-actions">
+
+     <button
+      class="btn btn-primary"
+      id="uploadButton"
+      type="button"
+      disabled
+     >
+      Upload Document
+     </button>
+
+    </div>
+
+   </div>
+
+
+   <div
+    id="message"
+    class="message"
+   ></div>
+
+  </div>
+
+ </section>
+
+
+ <!-- DOCUMENTS -->
+
+ <section class="card">
+
+  <div class="card-header">
+
+   <div>
+
+    <h2>
+     Documents
+    </h2>
+
+    <p id="documentSubtitle">
+     Select a client to view documents.
+    </p>
+
+   </div>
+
+
+   <button
+    class="btn btn-secondary"
+    id="refreshButton"
+    type="button"
+   >
+    ↻ Refresh
+   </button>
+
+  </div>
+
+
+  <div id="documentsContainer">
+
+   <div class="empty">
+
+    <div class="empty-icon">
+     📚
+    </div>
+
+    Select a client to load its knowledge base.
+
+   </div>
+
+  </div>
+
+ </section>
+
+</main>
+
+
+<!-- DELETE CONFIRMATION MODAL -->
+
+<div
+ id="deleteOverlay"
+ class="delete-overlay"
+ role="dialog"
+ aria-modal="true"
+ aria-labelledby="deleteTitle"
+>
+
+ <div class="delete-modal">
+
+  <div class="delete-modal-icon">
+   🗑️
+  </div>
+
+  <h3 id="deleteTitle">
+   Delete document?
+  </h3>
+
+  <p>
+
+   Are you sure you want to delete
+
+   <span
+    id="deleteFileName"
+    class="delete-file-name"
+   ></span>?
+
+   This will remove the document from this client's
+   knowledge base.
+
+  </p>
+
+
+  <div class="modal-actions">
+
+   <button
+    class="btn modal-cancel"
+    id="cancelDeleteButton"
+    type="button"
+   >
+    Cancel
+   </button>
+
+   <button
+    class="btn modal-delete"
+    id="confirmDeleteButton"
+    type="button"
+   >
+    Delete Document
+   </button>
+
+  </div>
+
+ </div>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+
+/* =========================
+   CONFIG
+========================= */
+
+const API_BASE =
+ "http://127.0.0.1:8000";
+
+const SELECTED_CLIENT_STORAGE_KEY =
+ "knowledge_base_selected_client";
+
+
+/* =========================
+   STATE
+========================= */
+
+let clients = [];
+
+let selectedClient = null;
+
+let pendingDelete = {
+ clientId: "",
+ filename: ""
+};
+
+let isUploading = false;
+
+let isDeleting = false;
+
+
+/* =========================
+   DOM
+========================= */
+
+const clientSelect =
+ document.getElementById(
+  "clientSelect"
+ );
+
+const fileInput =
+ document.getElementById(
+  "fileInput"
+ );
+
+const uploadButton =
+ document.getElementById(
+  "uploadButton"
+ );
+
+const refreshButton =
+ document.getElementById(
+  "refreshButton"
+ );
+
+const documentsContainer =
+ document.getElementById(
+  "documentsContainer"
+ );
+
+const documentSubtitle =
+ document.getElementById(
+  "documentSubtitle"
+ );
+
+const clientInfo =
+ document.getElementById(
+  "clientInfo"
+ );
+
+const messageBox =
+ document.getElementById(
+  "message"
+ );
+
+const deleteOverlay =
+ document.getElementById(
+  "deleteOverlay"
+ );
+
+const confirmDeleteButton =
+ document.getElementById(
+  "confirmDeleteButton"
+ );
+
+const cancelDeleteButton =
+ document.getElementById(
+  "cancelDeleteButton"
+ );
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack(){
+
+ if(window.history.length > 1){
+
+  window.history.back();
+
+ }else{
+
+  window.location.href =
+   "index.html";
+
+ }
+
+}
+
+
+/* =========================
+   TOKEN
+========================= */
+
+function getToken(){
+
+ return (
+  localStorage.getItem("access_token") ||
+  localStorage.getItem("accessToken") ||
+  localStorage.getItem("token") ||
+  sessionStorage.getItem("access_token") ||
+  sessionStorage.getItem("accessToken") ||
+  sessionStorage.getItem("token") ||
+  ""
+ );
+
+}
+
+
+/* =========================
+   AUTH HEADERS
+========================= */
+
+function authHeaders(){
+
+ const token =
+  getToken();
+
+ return token
+  ? {
+     Authorization:
+      `Bearer ${token}`
+    }
+  : {};
+
+}
+
+
+/* =========================
+   API FETCH
+========================= */
+
+async function apiFetch(
+ url,
+ options = {}
+){
+
+ const response =
+  await fetch(
+   url,
+   {
+    ...options,
+
+    headers:{
+     ...authHeaders(),
+     ...(options.headers || {})
+    }
+   }
+  );
+
+
+ if(response.status === 401){
+
+  logout();
+
+  throw new Error(
+   "Not authenticated"
+  );
+
+ }
+
+
+ return response;
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(value){
+
+ return String(value ?? "")
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(
+ text,
+ type = "success"
+){
+
+ messageBox.textContent =
+  text;
+
+ messageBox.className =
+  `message show ${type}`;
+
+
+ clearTimeout(
+  showMessage.timer
+ );
+
+
+ showMessage.timer =
+  setTimeout(
+   ()=>{
+    messageBox.classList.remove(
+     "show"
+    );
+   },
+   5000
+  );
+
+}
+
+
+/* =========================
+   SAVE CLIENT STATE
+========================= */
+
+function saveSelectedClient(){
+
+ const clientId =
+  clientSelect.value;
+
+
+ if(!clientId){
+
+  sessionStorage.removeItem(
+   SELECTED_CLIENT_STORAGE_KEY
+  );
+
+  return;
+
+ }
+
+
+ try{
+
+  sessionStorage.setItem(
+   SELECTED_CLIENT_STORAGE_KEY,
+   clientId
+  );
+
+ }catch(error){
+
+  console.warn(
+   "Could not save selected client:",
+   error
+  );
+
+ }
+
+}
+
+
+/* =========================
+   GET SAVED CLIENT
+========================= */
+
+function getSavedClient(){
+
+ try{
+
+  return sessionStorage.getItem(
+   SELECTED_CLIENT_STORAGE_KEY
+  ) || "";
+
+ }catch{
+
+  return "";
+
+ }
+
+}
+
+
+/* =========================
+   CLEAR CLIENT STATE
+========================= */
+
+function clearSelectedClient(){
+
+ try{
+
+  sessionStorage.removeItem(
+   SELECTED_CLIENT_STORAGE_KEY
+  );
+
+ }catch{}
+
+}
+
+
+/* =========================
+   LOAD USER
+========================= */
+
+async function loadUser(){
+
+ try{
+
+  const response =
+   await apiFetch(
+    `${API_BASE}/auth/me`,
+    {
+     cache:"no-store"
+    }
+   );
+
+
+  if(!response.ok){
+
+   return;
+
+  }
+
+
+  const user =
+   await response.json();
+
+
+  const name =
+   user.full_name ||
+   user.email ||
+   user.username ||
+   "User";
+
+
+  document.getElementById(
+   "userName"
+  ).textContent =
+   name;
+
+
+  document.getElementById(
+   "userRole"
+  ).textContent =
+   user.role ||
+   "Authenticated";
+
+
+  document.getElementById(
+   "userAvatar"
+  ).textContent =
+   String(name)
+    .charAt(0)
+    .toUpperCase();
+
+ }catch(error){
+
+  console.warn(
+   "User loading failed:",
+   error
+  );
+
+ }
+
+}
+
+
+/* =========================
+   LOAD CLIENTS
+========================= */
+
+async function loadClients(){
+
+ try{
+
+  const response =
+   await apiFetch(
+    `${API_BASE}/clients`,
+    {
+     cache:"no-store"
+    }
+   );
+
+
+  if(!response.ok){
+
+   throw new Error(
+    "Failed to load clients"
+   );
+
+  }
+
+
+  const data =
+   await response.json();
+
+
+  clients =
+   Array.isArray(data)
+    ? data
+    : (
+      data.clients ||
+      data.items ||
+      data.data ||
+      []
+    );
+
+
+  const savedClientId =
+   getSavedClient();
+
+
+  clientSelect.innerHTML =
+   "";
+
+
+  if(!clients.length){
+
+   clientSelect.innerHTML = `
+    <option value="">
+     No clients found
+    </option>
+   `;
+
+   resetClientUI();
+
+   return;
+
+  }
+
+
+  clientSelect.innerHTML = `
+   <option value="">
+    Select a client
+   </option>
+  `;
+
+
+  let savedClientExists =
+   false;
+
+
+  clients.forEach(
+   client => {
+
+    const id =
+     client.client_id ||
+     client.id ||
+     client._id;
+
+
+    const name =
+     client.business_name ||
+     client.name ||
+     id;
+
+
+    if(!id){
+
+     return;
+
+    }
+
+
+    const option =
+     document.createElement(
+      "option"
+     );
+
+
+    option.value =
+     String(id);
+
+
+    option.textContent =
+     `${name} (${id})`;
+
+
+    if(
+     savedClientId &&
+     String(id) ===
+      String(savedClientId)
+    ){
+
+     option.selected =
+      true;
+
+     savedClientExists =
+      true;
+
+    }
+
+
+    clientSelect.appendChild(
+     option
+    );
+
+   }
+  );
+
+
+  /*
+   * Restore previously selected client
+   * without requiring the user to select it again.
+   */
+
+  if(
+   savedClientExists
+  ){
+
+   await selectClient(
+    savedClientId,
+    true
+   );
+
+  }else{
+
+   clearSelectedClient();
+
+   resetClientUI();
+
+  }
+
+
+ }catch(error){
+
+  clientSelect.innerHTML = `
+   <option value="">
+    Unable to load clients
+   </option>
+  `;
+
+  console.error(
+   "Client loading failed:",
+   error
+  );
+
+ }
+
+}
+
+
+/* =========================
+   RESET CLIENT UI
+========================= */
+
+function resetClientUI(){
+
+ selectedClient =
+  null;
+
+
+ clientInfo.style.display =
+  "none";
+
+
+ uploadButton.disabled =
+  true;
+
+
+ documentsContainer.innerHTML = `
+
+  <div class="empty">
+
+   <div class="empty-icon">
+    📚
+   </div>
+
+   Select a client to load its knowledge base.
+
+  </div>
+
+ `;
+
+
+ documentSubtitle.textContent =
+  "Select a client to view documents.";
+
+}
+
+
+/* =========================
+   SELECT CLIENT
+========================= */
+
+async function selectClient(
+ clientId,
+ restoring = false
+){
+
+ clientId =
+  String(clientId || "").trim();
+
+
+ if(!clientId){
+
+  clearSelectedClient();
+
+  resetClientUI();
+
+  return;
+
+ }
+
+
+ /*
+  * Save immediately.
+  * This guarantees the selected client
+  * survives accidental browser reloads.
+  */
+
+ saveSelectedClient();
+
+
+ selectedClient =
+  clients.find(
+   client =>
+    String(
+     client.client_id ||
+     client.id ||
+     client._id
+    ) ===
+    clientId
+  ) || null;
+
+
+ try{
+
+  const response =
+   await apiFetch(
+    `${API_BASE}/clients/${encodeURIComponent(clientId)}`,
+    {
+     cache:"no-store"
+    }
+   );
+
+
+  if(response.ok){
+
+   const data =
+    await response.json();
+
+
+   selectedClient = {
+    ...(selectedClient || {}),
+    ...(data.client || data)
+   };
+
+  }
+
+ }catch(error){
+
+  console.warn(
+   "Could not load client details:",
+   error
+  );
+
+ }
+
+
+ const client =
+  selectedClient || {};
+
+
+ document.getElementById(
+  "businessName"
+ ).textContent =
+  client.business_name ||
+  client.name ||
+  "—";
+
+
+ document.getElementById(
+  "clientIdText"
+ ).textContent =
+  client.client_id ||
+  client.id ||
+  client._id ||
+  clientId;
+
+
+ document.getElementById(
+  "websiteText"
+ ).textContent =
+  client.website ||
+  "—";
+
+
+ clientInfo.style.display =
+  "grid";
+
+
+ uploadButton.disabled =
+  !fileInput.files.length;
+
+
+ /*
+  * Only refresh the Documents section.
+  * The page itself NEVER reloads.
+  */
+
+ await loadDocuments();
+
+}
+
+
+/* =========================
+   UPDATE UPLOAD BUTTON
+========================= */
+
+function updateUploadButton(){
+
+ if(isUploading){
+
+  uploadButton.disabled =
+   true;
+
+  uploadButton.textContent =
+   "Uploading...";
+
+  return;
+
+ }
+
+
+ const hasClient =
+  Boolean(
+   clientSelect.value
+  );
+
+
+ const hasFile =
+  Boolean(
+   fileInput.files.length
+  );
+
+
+ uploadButton.disabled =
+  !(hasClient && hasFile);
+
+
+ uploadButton.textContent =
+  "Upload Document";
+
+}
+
+
+/* =========================
+   UPLOAD DOCUMENT
+========================= */
+
+async function uploadDocument(){
+
+ if(isUploading){
+
+  return;
+
+ }
+
+
+ const clientId =
+  String(
+   clientSelect.value || ""
+  ).trim();
+
+
+ if(!clientId){
+
+  showMessage(
+   "Please select a client first.",
+   "error"
+  );
+
+  return;
+
+ }
+
+
+ if(!fileInput.files.length){
+
+  showMessage(
+   "Please choose a document.",
+   "error"
+  );
+
+  return;
+
+ }
+
+
+ const file =
+  fileInput.files[0];
+
+
+ const allowed = [
+  ".pdf",
+  ".docx",
+  ".txt"
+ ];
+
+
+ const extension =
+  "." +
+  file.name
+   .split(".")
+   .pop()
+   .toLowerCase();
+
+
+ if(!allowed.includes(extension)){
+
+  showMessage(
+   "Only PDF, DOCX and TXT files are supported.",
+   "error"
+  );
+
+  return;
+
+ }
+
+
+ /*
+  * IMPORTANT:
+  * Keep client selection saved before upload.
+  */
+
+ saveSelectedClient();
+
+
+ const formData =
+  new FormData();
+
+
+ formData.append(
+  "file",
+  file
+ );
+
+
+ formData.append(
+  "client_id",
+  clientId
+ );
+
+
+ isUploading =
+  true;
+
+
+ updateUploadButton();
+
+
+ /*
+  * Immediately show upload state
+  * inside Documents area without reload.
+  */
+
+ const previousDocuments =
+  documentsContainer.innerHTML;
+
+
+ documentsContainer.innerHTML = `
+
+  <div class="loading">
+   Uploading document and processing knowledge...
+  </div>
+
+ `;
+
+
+ try{
+
+  const response =
+   await apiFetch(
+    `${API_BASE}/upload`,
+    {
+     method:"POST",
+     body:formData
+    }
+   );
+
+
+  const data =
+   await response
+    .json()
+    .catch(
+     () => ({})
+    );
+
+
+  if(!response.ok){
+
+   throw new Error(
+    data.detail ||
+    data.message ||
+    "Upload failed"
+   );
+
+  }
+
+
+  /*
+   * Clear only the file input.
+   * Client selection stays untouched.
+   */
+
+  fileInput.value = "";
+
+
+  showMessage(
+   data.message ||
+   "Document uploaded successfully.",
+   "success"
+  );
+
+
+  /*
+   * Refresh ONLY Documents.
+   *
+   * No window.location
+   * No reload()
+   * No navigation
+   */
+
+  await loadDocuments();
+
+
+ }catch(error){
+
+  console.error(
+   "Upload document failed:",
+   error
+  );
+
+
+  /*
+   * Restore the previous document
+   * view if upload failed.
+   */
+
+  if(
+   documentsContainer.innerHTML.includes(
+    "Uploading document"
+   )
+  ){
+
+   documentsContainer.innerHTML =
+    previousDocuments;
+
+  }
+
+
+  showMessage(
+   error.message ||
+   "Upload failed.",
+   "error"
+  );
+
+
+ }finally{
+
+  isUploading =
+   false;
+
+
+  updateUploadButton();
+
+ }
+
+}
+
+
+/* =========================
+   OPEN DELETE MODAL
+========================= */
+
+function openDeleteModal(
+ clientId,
+ filename
+){
+
+ pendingDelete = {
+  clientId:String(clientId),
+  filename:String(filename)
+ };
+
+
+ document.getElementById(
+  "deleteFileName"
+ ).textContent =
+  filename;
+
+
+ deleteOverlay.classList.add(
+  "show"
+ );
+
+
+ confirmDeleteButton.disabled =
+  false;
+
+
+ confirmDeleteButton.textContent =
+  "Delete Document";
+
+}
+
+
+/* =========================
+   CLOSE DELETE MODAL
+========================= */
+
+function closeDeleteModal(){
+
+ pendingDelete = {
+  clientId:"",
+  filename:""
+ };
+
+
+ deleteOverlay.classList.remove(
+  "show"
+ );
+
+
+ confirmDeleteButton.disabled =
+  false;
+
+
+ confirmDeleteButton.textContent =
+  "Delete Document";
+
+}
+
+
+/* =========================
+   CONFIRM DELETE
+========================= */
+
+async function confirmDeleteDocument(){
+
+ if(isDeleting){
+
+  return;
+
+ }
+
+
+ const clientId =
+  pendingDelete.clientId;
+
+
+ const filename =
+  pendingDelete.filename;
+
+
+ if(!clientId || !filename){
+
+  closeDeleteModal();
+
+  return;
+
+ }
+
+
+ isDeleting =
+  true;
+
+
+ confirmDeleteButton.disabled =
+  true;
+
+
+ confirmDeleteButton.textContent =
+  "Deleting...";
+
+
+ try{
+
+  const response =
+   await apiFetch(
+    `${API_BASE}/upload/` +
+    `${encodeURIComponent(clientId)}/` +
+    `${encodeURIComponent(filename)}`,
+    {
+     method:"DELETE"
+    }
+   );
+
+
+  const data =
+   await response
+    .json()
+    .catch(
+     () => ({})
+    );
+
+
+  if(!response.ok){
+
+   throw new Error(
+    data.detail ||
+    data.message ||
+    "Failed to delete document."
+   );
+
+  }
+
+
+  closeDeleteModal();
+
+
+  showMessage(
+   data.message ||
+   "Document deleted successfully.",
+   "success"
+  );
+
+
+  /*
+   * Only refresh Documents.
+   * Client selection remains exactly the same.
+   */
+
+  await loadDocuments();
+
+
+ }catch(error){
+
+  console.error(
+   "Delete document failed:",
+   error
+  );
+
+
+  confirmDeleteButton.disabled =
+   false;
+
+
+  confirmDeleteButton.textContent =
+   "Delete Document";
+
+
+  showMessage(
+   error.message ||
+   "Failed to delete document.",
+   "error"
+  );
+
+ }finally{
+
+  isDeleting =
+   false;
+
+ }
+
+}
+
+
+/* =========================
+   LOAD DOCUMENTS
+========================= */
+
+async function loadDocuments(){
+
+ const clientId =
+  String(
+   clientSelect.value || ""
+  ).trim();
+
+
+ if(!clientId){
+
+  documentsContainer.innerHTML = `
+
+   <div class="empty">
+
+    <div class="empty-icon">
+     📚
+    </div>
+
+    Select a client to view documents.
+
+   </div>
+
+  `;
+
+
+  documentSubtitle.textContent =
+   "Select a client to view documents.";
+
+  return;
+
+ }
+
+
+ documentsContainer.innerHTML = `
+
+  <div class="loading">
+   Loading documents...
+  </div>
+
+ `;
+
+
+ try{
+
+  const response =
+   await apiFetch(
+    `${API_BASE}/upload/` +
+    `${encodeURIComponent(clientId)}`,
+    {
+     cache:"no-store"
+    }
+   );
+
+
+  if(!response.ok){
+
+   const data =
+    await response
+     .json()
+     .catch(
+      () => ({})
+     );
+
+
+   throw new Error(
+    data.detail ||
+    data.message ||
+    "Failed to load documents"
+   );
+
+  }
+
+
+  const data =
+   await response.json();
+
+
+  const documents =
+   Array.isArray(data)
+    ? data
+    : (
+      data.documents ||
+      data.items ||
+      data.results ||
+      []
+    );
+
+
+  /*
+   * Make sure the response still belongs
+   * to the currently selected client.
+   */
+
+  if(
+   String(clientSelect.value) !==
+   String(clientId)
+  ){
+
+   return;
+
+  }
+
+
+  documentSubtitle.textContent =
+   `${documents.length} document` +
+   `${documents.length === 1 ? "" : "s"} found`;
+
+
+  if(!documents.length){
+
+   documentsContainer.innerHTML = `
+
+    <div class="empty">
+
+     <div class="empty-icon">
+      📚
+     </div>
+
+     <strong>
+      No documents yet
+     </strong>
+
+     <p style="margin-top:6px">
+      Upload your first document above.
+     </p>
+
+    </div>
+
+   `;
+
+   return;
+
+  }
+
+
+  const grid =
+   document.createElement(
+    "div"
+   );
+
+
+  grid.className =
+   "documents";
+
+
+  documents.forEach(
+   doc => {
+
+    const name =
+     doc.filename ||
+     doc.file_name ||
+     doc.name ||
+     doc.title ||
+     "Document";
+
+
+    const status =
+     doc.status ||
+     "Processed";
+
+
+    const size =
+     doc.size ||
+     doc.file_size ||
+     "";
+
+
+    const card =
+     document.createElement(
+      "div"
+     );
+
+
+    card.className =
+     "document-card";
+
+
+    card.innerHTML = `
+
+     <div class="document-top">
+
+      <div class="document-icon">
+       📄
+      </div>
+
+      <span class="badge">
+       ${escapeHtml(status)}
+      </span>
+
+     </div>
+
+
+     <h3>
+      ${escapeHtml(name)}
+     </h3>
+
+
+     <p>
+      ${
+       size
+        ? escapeHtml(String(size))
+        : "Knowledge document"
+      }
+     </p>
+
+
+     <div class="document-actions">
+
+      <button
+       class="btn btn-danger"
+       type="button"
+      >
+       🗑 Delete
+      </button>
+
+     </div>
+
+    `;
+
+
+    const deleteButton =
+     card.querySelector(
+      ".btn-danger"
+     );
+
+
+    deleteButton.addEventListener(
+     "click",
+     function(){
+
+      openDeleteModal(
+       clientId,
+       name
+      );
+
+     }
+    );
+
+
+    grid.appendChild(
+     card
+    );
+
+   }
+  );
+
+
+  /*
+   * Replace ONLY the document list.
+   */
+
+  documentsContainer.innerHTML =
+   "";
+
+
+  documentsContainer.appendChild(
+   grid
+  );
+
+
+ }catch(error){
+
+  console.error(
+   "Load documents failed:",
+   error
+  );
+
+
+  documentsContainer.innerHTML = `
+
+   <div class="empty">
+
+    <div class="empty-icon">
+     ⚠️
+    </div>
+
+    <strong>
+     Unable to load documents
+    </strong>
+
+    <p style="margin-top:6px">
+     ${escapeHtml(
+      error.message ||
+      "Unknown error"
+     )}
+    </p>
+
+   </div>
+
+  `;
+
+ }
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout(){
+
+ [
+  "access_token",
+  "accessToken",
+  "token",
+  "user"
+ ].forEach(
+  key => {
+
+   localStorage.removeItem(
+    key
+   );
+
+   sessionStorage.removeItem(
+    key
+   );
+
+  }
+ );
+
+
+ clearSelectedClient();
+
+
+ window.location.href =
+  "../frontend/index.html";
+
+}
+
+
+/* =========================
+   CLIENT CHANGE
+========================= */
+
+clientSelect.addEventListener(
+ "change",
+ async function(event){
+
+  const clientId =
+   event.target.value;
+
+
+  /*
+   * Save selection immediately.
+   */
+
+  if(clientId){
+
+   saveSelectedClient();
+
+  }else{
+
+   clearSelectedClient();
+
+  }
+
+
+  await selectClient(
+   clientId
+  );
+
+ }
+);
+
+
+/* =========================
+   FILE CHANGE
+========================= */
+
+fileInput.addEventListener(
+ "change",
+ function(){
+
+  updateUploadButton();
+
+ }
+);
+
+
+/* =========================
+   UPLOAD BUTTON
+========================= */
+
+uploadButton.addEventListener(
+ "click",
+ function(event){
+
+  /*
+   * Critical:
+   * prevent any accidental default action.
+   */
+
+  event.preventDefault();
+
+  uploadDocument();
+
+ }
+);
+
+
+/* =========================
+   REFRESH BUTTON
+========================= */
+
+refreshButton.addEventListener(
+ "click",
+ async function(event){
+
+  event.preventDefault();
+
+
+  /*
+   * Refresh ONLY the Documents section.
+   */
+
+  await loadDocuments();
+
+ }
+);
+
+
+/* =========================
+   BACK BUTTON
+========================= */
+
+document.getElementById(
+ "backButton"
+).addEventListener(
+ "click",
+ function(event){
+
+  event.preventDefault();
+
+  goBack();
+
+ }
+);
+
+
+/* =========================
+   CANCEL DELETE
+========================= */
+
+cancelDeleteButton.addEventListener(
+ "click",
+ function(){
+
+  closeDeleteModal();
+
+ }
+);
+
+
+/* =========================
+   CONFIRM DELETE
+========================= */
+
+confirmDeleteButton.addEventListener(
+ "click",
+ function(event){
+
+  event.preventDefault();
+
+  confirmDeleteDocument();
+
+ }
+);
+
+
+/* =========================
+   MODAL OVERLAY CLICK
+========================= */
+
+deleteOverlay.addEventListener(
+ "click",
+ function(event){
+
+  if(
+   event.target ===
+   deleteOverlay
+  ){
+
+   closeDeleteModal();
+
+  }
+
+ }
+);
+
+
+/* =========================
+   ESCAPE KEY
+========================= */
+
+document.addEventListener(
+ "keydown",
+ function(event){
+
+  if(
+   event.key ===
+   "Escape"
+  ){
+
+   if(
+    deleteOverlay.classList.contains(
+     "show"
+    )
+   ){
+
+    closeDeleteModal();
+
+   }
+
+  }
+
+ }
+);
+
+
+/* =========================
+   DOM READY
+========================= */
+
+document.addEventListener(
+ "DOMContentLoaded",
+ async function(){
+
+  if(!getToken()){
+
+   window.location.href =
+    "../frontend/index.html";
+
+   return;
+
+  }
+
+
+  await loadUser();
+
+  await loadClients();
+
+ }
+);
+
+</script>
+
+</body>
+</html>

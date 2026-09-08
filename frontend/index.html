@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>AI Chatbot Platform</title>
+
+
+  <!-- ==================================================
+       GLOBAL CSS
+       ================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="./css/global.css"
+  />
+
+
+  <!-- ==================================================
+       CHATBOT CSS
+       ================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="./css/chatbot.css"
+  />
+
+
+  <!-- ==================================================
+       ANIMATIONS CSS
+       ================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="./css/animations.css"
+  />
+
+
+  <!-- ==================================================
+       RESPONSIVE CSS
+       ================================================== -->
+
+  <link
+    rel="stylesheet"
+    href="./css/responsive.css"
+  />
+
+</head>
+
+
+<body>
+
+
+  <!-- ==================================================
+       MAIN APP
+       ================================================== -->
+
+  <main class="app-shell">
+
+
+    <!-- ==================================================
+         TOP BAR
+         ================================================== -->
+
+    <header class="topbar">
+
+      <h1>
+        AI Chatbot Platform
+      </h1>
+
+    </header>
+
+
+    <!-- ==================================================
+         CHAT HISTORY
+         ================================================== -->
+
+    <aside
+      class="chat-history"
+      id="chat-history"
+      aria-label="Previous Chats"
+    >
+
+      <h3>
+        Previous Chats
+      </h3>
+
+
+      <div
+        class="chat-history-list"
+        id="chat-history-list"
+      >
+
+        <p class="chat-history-empty">
+          No previous chats
+        </p>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ==================================================
+         CHAT PANEL
+         ================================================== -->
+
+    <section
+      class="chat-panel"
+      id="chat-panel"
+      aria-label="AI Chatbot"
+    >
+
+
+      <!-- ==================================================
+           CHAT HEADER
+           ================================================== -->
+
+      <header class="chat-header">
+
+
+        <!-- ==================================================
+             HEADER INFO
+             ================================================== -->
+
+        <div class="chat-header-info">
+
+          <div class="chat-avatar">
+            AI
+          </div>
+
+
+          <div class="chat-header-text">
+
+            <h2>
+              AI Assistant
+            </h2>
+
+
+            <span class="chat-status">
+              Online
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             HEADER ACTIONS
+             ================================================== -->
+
+        <div class="chat-header-actions">
+
+
+          <!-- NEW CHAT -->
+
+          <button
+            type="button"
+            class="new-chat-button"
+            id="new-chat-button"
+            aria-label="Start a new chat"
+          >
+            New Chat
+          </button>
+
+
+          <!-- MINIMIZE -->
+
+          <button
+            type="button"
+            class="minimize-button"
+            id="minimize-button"
+            aria-label="Minimize chat"
+            title="Minimize"
+          >
+            −
+          </button>
+
+
+          <!-- CLOSE -->
+
+          <button
+            type="button"
+            class="close-button"
+            id="close-button"
+            aria-label="Close chat"
+            title="Close"
+          >
+            ×
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- ==================================================
+           CHAT WINDOW
+           ================================================== -->
+
+      <div
+        class="chat-window"
+        id="chat-window"
+      >
+
+
+        <!-- ==================================================
+             WELCOME SCREEN
+             ================================================== -->
+
+        <div
+          class="welcome-screen"
+          id="welcome-screen"
+        >
+
+
+          <div class="welcome-icon">
+            AI
+          </div>
+
+
+          <h3>
+            How can I help you?
+          </h3>
+
+
+          <p>
+            Ask me anything and I'll do my best to help you.
+          </p>
+
+
+          <!-- ==================================================
+               SUGGESTIONS
+               ================================================== -->
+
+          <div class="suggestion-list">
+
+
+            <button
+              type="button"
+              class="suggestion"
+              data-message="Tell me about artificial intelligence"
+            >
+              Tell me about AI
+            </button>
+
+
+            <button
+              type="button"
+              class="suggestion"
+              data-message="Explain machine learning"
+            >
+              Explain machine learning
+            </button>
+
+
+            <button
+              type="button"
+              class="suggestion"
+              data-message="Help me with programming"
+            >
+              Help me with programming
+            </button>
+
+
+          </div>
+
+        </div>
+
+
+        <!-- ==================================================
+             TYPING INDICATOR
+             ================================================== -->
+
+        <div
+          class="typing-indicator"
+          id="typing-indicator"
+        >
+
+          <span></span>
+          <span></span>
+          <span></span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ==================================================
+           MESSAGE COMPOSER
+           ================================================== -->
+
+      <form
+        class="composer"
+        id="chat-form"
+      >
+
+
+        <!-- ==================================================
+             MESSAGE INPUT
+             ================================================== -->
+
+        <input
+          type="text"
+          id="message-input"
+          placeholder="Type your message..."
+          autocomplete="off"
+        />
+
+
+        <!-- ==================================================
+             SEND BUTTON
+             ================================================== -->
+
+        <button
+          type="submit"
+          id="send-button"
+        >
+          Send
+        </button>
+
+
+      </form>
+
+
+    </section>
+
+
+  </main>
+
+
+  <!-- ==================================================
+       FLOATING CHAT BUTTON
+       ================================================== -->
+
+  <button
+    type="button"
+    class="chat-toggle"
+    id="chat-toggle"
+    aria-label="Open chat"
+  >
+    💬
+  </button>
+
+
+  <!-- ==================================================
+       JAVASCRIPT
+       ================================================== -->
+
+  <script src="./js/config.js"></script>
+
+  <script src="./js/api.js"></script>
+
+  <script src="./js/ui.js"></script>
+
+  <script src="./js/chatbot.js"></script>
+
+
+</body>
+
+</html>

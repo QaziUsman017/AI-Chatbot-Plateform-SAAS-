@@ -1,0 +1,2950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Analytics - AI Chatbot Platform</title>
+
+<style>
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+}
+
+:root{
+ --navy:#0f172a;
+ --navy-hover:#172033;
+ --cyan:#0ea5e9;
+ --cyan-light:#e0f2fe;
+ --bg:#f8fafc;
+ --white:#fff;
+ --border:#e2e8f0;
+ --text:#0f172a;
+ --muted:#64748b;
+ --green:#16a34a;
+ --green-bg:#dcfce7;
+ --red:#dc2626;
+ --red-bg:#fee2e2;
+ --yellow:#d97706;
+ --yellow-bg:#fef3c7;
+}
+
+body{
+ font-family:Inter,Arial,sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+ position:fixed;
+ inset:0 auto 0 0;
+ width:248px;
+ background:var(--navy);
+ color:#fff;
+ padding:24px 16px;
+ z-index:100;
+}
+
+.brand{
+ display:flex;
+ align-items:center;
+ gap:11px;
+ padding:0 8px 30px;
+}
+
+.brand-icon{
+ width:30px;
+ height:30px;
+ border-radius:9px;
+ background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:11px;
+ font-weight:800;
+}
+
+.brand h2{
+ font-size:16px;
+}
+
+.brand h2 span{
+ color:#38bdf8;
+}
+
+.brand small{
+ display:block;
+ color:#94a3b8;
+ font-size:10px;
+ margin-top:5px;
+}
+
+.menu-label{
+ padding:0 10px 9px;
+ color:#64748b;
+ font-size:9px;
+ font-weight:700;
+ text-transform:uppercase;
+ letter-spacing:.08em;
+}
+
+.nav{
+ display:flex;
+ flex-direction:column;
+ gap:4px;
+}
+
+.nav a{
+ position:relative;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ color:#94a3b8;
+ text-decoration:none;
+ padding:10px 11px;
+ border-radius:9px;
+ font-size:12px;
+ transition:.18s ease;
+}
+
+.nav a:hover,
+.nav a.active{
+ background:var(--navy-hover);
+ color:#fff;
+}
+
+.nav a.active:before{
+ content:"";
+ position:absolute;
+ left:0;
+ top:8px;
+ bottom:8px;
+ width:3px;
+ border-radius:4px;
+ background:#38bdf8;
+}
+
+.nav-icon{
+ width:19px;
+ text-align:center;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+ margin-left:248px;
+ width:calc(100% - 248px);
+ min-height:100vh;
+ padding:30px 32px 40px;
+}
+
+.topbar{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:20px;
+ margin-bottom:22px;
+}
+
+.title-row{
+ display:flex;
+ align-items:center;
+ gap:12px;
+}
+
+.back-button{
+ border:1px solid var(--border);
+ background:#fff;
+ color:#334155;
+ border-radius:9px;
+ padding:9px 12px;
+ cursor:pointer;
+ font-size:11px;
+ font-weight:650;
+ transition:.18s ease;
+}
+
+.back-button:hover{
+ background:#f1f5f9;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.title h1{
+ font-size:29px;
+ letter-spacing:-.6px;
+ margin-bottom:5px;
+}
+
+.title p{
+ color:var(--muted);
+ font-size:12px;
+}
+
+/* =========================
+   USER
+========================= */
+
+.user-box{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:11px;
+ padding:8px 12px;
+}
+
+.user-avatar{
+ width:32px;
+ height:32px;
+ border-radius:50%;
+ background:var(--cyan-light);
+ color:#0284c7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:12px;
+ font-weight:700;
+}
+
+.user-info strong{
+ display:block;
+ font-size:11px;
+}
+
+.user-info span{
+ display:block;
+ color:var(--muted);
+ font-size:9px;
+ margin-top:3px;
+}
+
+/* =========================
+   GLOBAL ERROR
+========================= */
+
+.error{
+ display:none;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ background:var(--red-bg);
+ color:#991b1b;
+ border:1px solid #fecaca;
+ padding:12px 13px;
+ border-radius:10px;
+ margin-bottom:16px;
+ font-size:10px;
+ line-height:1.5;
+}
+
+.error-content{
+ display:flex;
+ align-items:flex-start;
+ gap:9px;
+ flex:1;
+}
+
+.error-icon{
+ font-size:13px;
+ flex-shrink:0;
+}
+
+.error-message{
+ word-break:break-word;
+}
+
+.retry-button{
+ border:1px solid #fca5a5;
+ background:#fff;
+ color:#991b1b;
+ border-radius:7px;
+ padding:7px 10px;
+ cursor:pointer;
+ font-size:9px;
+ font-weight:700;
+ white-space:nowrap;
+ transition:.18s ease;
+}
+
+.retry-button:hover{
+ background:#fef2f2;
+}
+
+.retry-button:disabled{
+ opacity:.6;
+ cursor:not-allowed;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+
+.toolbar{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:13px;
+ padding:13px;
+ margin-bottom:17px;
+}
+
+.toolbar select{
+ min-width:230px;
+ padding:10px 11px;
+ border:1px solid #dbe3ec;
+ border-radius:9px;
+ outline:none;
+ background:#fff;
+ font-size:10px;
+ color:var(--text);
+}
+
+.toolbar select:focus{
+ border-color:#38bdf8;
+ box-shadow:0 0 0 3px rgba(14,165,233,.08);
+}
+
+.toolbar select:disabled{
+ background:#f8fafc;
+ color:#94a3b8;
+ cursor:not-allowed;
+}
+
+.refresh-button{
+ border:1px solid var(--border);
+ background:#fff;
+ color:#334155;
+ border-radius:9px;
+ padding:10px 13px;
+ cursor:pointer;
+ font-size:10px;
+ font-weight:650;
+ min-width:88px;
+ transition:.18s ease;
+}
+
+.refresh-button:hover{
+ background:#f8fafc;
+}
+
+.refresh-button:disabled{
+ opacity:.65;
+ cursor:not-allowed;
+}
+
+.refresh-button.loading{
+ pointer-events:none;
+}
+
+.refresh-spinner{
+ display:inline-block;
+ width:10px;
+ height:10px;
+ border:2px solid #cbd5e1;
+ border-top-color:#0ea5e9;
+ border-radius:50%;
+ animation:spin .7s linear infinite;
+ vertical-align:-1px;
+ margin-right:5px;
+}
+
+@keyframes spin{
+ to{
+  transform:rotate(360deg);
+ }
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:15px;
+ margin-bottom:20px;
+}
+
+.card{
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:14px;
+ padding:20px;
+ box-shadow:0 3px 12px rgba(15,23,42,.025);
+}
+
+.stat-card{
+ transition:.2s ease;
+}
+
+.stat-card:hover{
+ border-color:#bae6fd;
+ transform:translateY(-1px);
+}
+
+.stat-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:13px;
+}
+
+.stat-label{
+ color:var(--muted);
+ font-size:10px;
+ font-weight:650;
+}
+
+.stat-icon{
+ width:36px;
+ height:36px;
+ border-radius:10px;
+ background:var(--cyan-light);
+ color:#0284c7;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:15px;
+}
+
+.stat-value{
+ font-size:26px;
+ font-weight:750;
+ letter-spacing:-.4px;
+}
+
+.status{
+ color:#15803d;
+}
+
+/* =========================
+   SKELETON LOADING
+========================= */
+
+.skeleton{
+ position:relative;
+ overflow:hidden;
+ background:#e2e8f0;
+ border-radius:6px;
+ color:transparent !important;
+}
+
+.skeleton:after{
+ content:"";
+ position:absolute;
+ inset:0;
+ transform:translateX(-100%);
+ background:linear-gradient(
+  90deg,
+  transparent,
+  rgba(255,255,255,.65),
+  transparent
+ );
+ animation:skeleton-shimmer 1.3s infinite;
+}
+
+@keyframes skeleton-shimmer{
+ 100%{
+  transform:translateX(100%);
+ }
+}
+
+.stat-loading{
+ width:95px;
+ height:30px;
+ margin-top:2px;
+}
+
+.performance-loading{
+ width:90px;
+ height:27px;
+ margin-top:8px;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.section{
+ margin-bottom:20px;
+}
+
+.section-header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:12px;
+}
+
+.section-header h2{
+ font-size:16px;
+}
+
+.section-header p{
+ color:var(--muted);
+ font-size:10px;
+ margin-top:4px;
+}
+
+/* =========================
+   CHART
+========================= */
+
+.chart-card{
+ padding:19px;
+}
+
+.chart{
+ height:290px;
+ display:flex;
+ align-items:flex-end;
+ gap:9px;
+ padding:20px 8px 8px;
+ border-top:1px solid #f1f5f9;
+ overflow-x:auto;
+}
+
+.bar-item{
+ flex:1;
+ min-width:35px;
+ height:100%;
+ display:flex;
+ flex-direction:column;
+ justify-content:flex-end;
+ align-items:center;
+ gap:6px;
+}
+
+.bar{
+ width:60%;
+ min-height:3px;
+ background:#0ea5e9;
+ border-radius:6px 6px 2px 2px;
+ opacity:.9;
+}
+
+.bar-label{
+ color:var(--muted);
+ font-size:8px;
+}
+
+.bar-value{
+ color:#334155;
+ font-size:9px;
+ font-weight:650;
+}
+
+/* =========================
+   STATE BOXES
+========================= */
+
+.state{
+ width:100%;
+ min-height:180px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ padding:30px 20px;
+}
+
+.state-inner{
+ max-width:390px;
+ margin:auto;
+}
+
+.state-icon{
+ width:42px;
+ height:42px;
+ margin:0 auto 11px;
+ border-radius:12px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:18px;
+}
+
+.state-icon.empty{
+ background:#f1f5f9;
+ color:#64748b;
+}
+
+.state-icon.error{
+ display:flex;
+ background:#fee2e2;
+ color:#dc2626;
+ border:0;
+ margin-bottom:11px;
+}
+
+.state-icon.loading{
+ background:#e0f2fe;
+ color:#0284c7;
+}
+
+.state-spinner{
+ width:20px;
+ height:20px;
+ border:2px solid #bae6fd;
+ border-top-color:#0ea5e9;
+ border-radius:50%;
+ animation:spin .7s linear infinite;
+}
+
+.state-title{
+ font-size:12px;
+ font-weight:700;
+ color:#334155;
+ margin-bottom:5px;
+}
+
+.state-text{
+ font-size:10px;
+ line-height:1.6;
+ color:#64748b;
+}
+
+.state-action{
+ margin-top:12px;
+ border:1px solid var(--border);
+ background:#fff;
+ color:#334155;
+ border-radius:8px;
+ padding:8px 12px;
+ cursor:pointer;
+ font-size:9px;
+ font-weight:700;
+ transition:.18s ease;
+}
+
+.state-action:hover{
+ background:#f8fafc;
+ border-color:#cbd5e1;
+}
+
+.chart-state{
+ width:100%;
+ height:100%;
+ min-height:220px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrap{
+ overflow-x:auto;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ min-width:600px;
+}
+
+th,
+td{
+ text-align:left;
+ padding:12px 10px;
+ border-bottom:1px solid #f1f5f9;
+ font-size:10px;
+}
+
+th{
+ color:var(--muted);
+ font-weight:650;
+ background:#f8fafc;
+}
+
+td{
+ color:#334155;
+}
+
+.table-status{
+ display:inline-flex;
+ align-items:center;
+ gap:5px;
+ padding:4px 8px;
+ border-radius:20px;
+ background:var(--green-bg);
+ color:#166534;
+ font-size:8px;
+ font-weight:700;
+}
+
+.table-dot{
+ width:5px;
+ height:5px;
+ border-radius:50%;
+ background:#16a34a;
+}
+
+.table-loading-row td{
+ padding:14px 10px;
+}
+
+.table-skeleton{
+ height:12px;
+ width:75%;
+}
+
+.table-skeleton.short{
+ width:45%;
+}
+
+.table-empty{
+ text-align:center;
+ padding:35px 15px !important;
+ color:#64748b;
+}
+
+/* =========================
+   PERFORMANCE
+========================= */
+
+.performance{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:15px;
+}
+
+.performance .card{
+ min-height:105px;
+}
+
+/* =========================
+   SYSTEM
+========================= */
+
+.system{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:15px;
+}
+
+.system-card{
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:13px;
+ padding:16px;
+}
+
+.system-top{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ margin-bottom:8px;
+}
+
+.system-icon{
+ width:33px;
+ height:33px;
+ border-radius:9px;
+ background:#f0fdf4;
+ color:#15803d;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:12px;
+}
+
+.system-card strong{
+ font-size:11px;
+}
+
+.online{
+ color:#15803d;
+ font-size:9px;
+ font-weight:650;
+}
+
+.system-error .system-icon{
+ background:#fee2e2;
+ color:#dc2626;
+}
+
+.system-error .online{
+ color:#dc2626;
+}
+
+.system-warning .system-icon{
+ background:#fef3c7;
+ color:#d97706;
+}
+
+.system-warning .online{
+ color:#d97706;
+}
+
+/* =========================
+   ACCESS / PAGE ERROR
+========================= */
+
+.page-error{
+ display:none;
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:14px;
+ padding:45px 25px;
+ text-align:center;
+ margin-bottom:20px;
+}
+
+.page-error-icon{
+ width:48px;
+ height:48px;
+ border-radius:14px;
+ background:#fee2e2;
+ color:#dc2626;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ margin:0 auto 13px;
+ font-size:20px;
+}
+
+.page-error h2{
+ font-size:16px;
+ margin-bottom:6px;
+}
+
+.page-error p{
+ color:var(--muted);
+ font-size:10px;
+ line-height:1.6;
+ max-width:420px;
+ margin:0 auto;
+}
+
+.page-error button{
+ margin-top:14px;
+ border:1px solid var(--border);
+ background:#fff;
+ color:#334155;
+ border-radius:8px;
+ padding:9px 14px;
+ cursor:pointer;
+ font-size:9px;
+ font-weight:700;
+}
+
+.page-error button:hover{
+ background:#f8fafc;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:1050px){
+
+ .stats,
+ .performance{
+  grid-template-columns:repeat(2,1fr);
+ }
+
+ .system{
+  grid-template-columns:1fr;
+ }
+
+}
+
+@media(max-width:900px){
+
+ .sidebar{
+  width:215px;
+ }
+
+ .main{
+  margin-left:215px;
+  width:calc(100% - 215px);
+ }
+
+}
+
+@media(max-width:700px){
+
+ .sidebar{
+  position:relative;
+  width:100%;
+  height:auto;
+ }
+
+ .main{
+  margin-left:0;
+  width:100%;
+  padding:22px 18px 35px;
+ }
+
+ .topbar{
+  flex-direction:column;
+  align-items:flex-start;
+ }
+
+ .title-row{
+  width:100%;
+  align-items:flex-start;
+ }
+
+ .user-box{
+  width:100%;
+ }
+
+ .toolbar{
+  flex-direction:column;
+  align-items:stretch;
+ }
+
+ .toolbar select{
+  width:100%;
+  min-width:0;
+ }
+
+ .refresh-button{
+  width:100%;
+ }
+
+ .stats,
+ .performance{
+  grid-template-columns:1fr;
+ }
+
+ .error{
+  flex-direction:column;
+  align-items:stretch;
+ }
+
+ .error-content{
+  width:100%;
+ }
+
+ .retry-button{
+  width:100%;
+ }
+
+ .chart{
+  height:260px;
+ }
+
+ .section-header{
+  align-items:flex-start;
+ }
+
+}
+
+@media(max-width:420px){
+
+ .main{
+  padding-left:13px;
+  padding-right:13px;
+ }
+
+ .title h1{
+  font-size:24px;
+ }
+
+ .back-button{
+  padding:8px 10px;
+ }
+
+ .card{
+  padding:16px;
+ }
+
+ .chart-card{
+  padding:14px;
+ }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside class="sidebar">
+
+ <div class="brand">
+  <div class="brand-icon">AI</div>
+
+  <div>
+   <h2>AI <span>Chatbot</span></h2>
+   <small>Admin Platform</small>
+  </div>
+ </div>
+
+ <div class="menu-label">Main Menu</div>
+
+ <nav class="nav">
+
+  <a href="index.html">
+   <span class="nav-icon">📊</span>
+   <span>Dashboard</span>
+  </a>
+
+  <a href="clients.html">
+   <span class="nav-icon">👥</span>
+   <span>Clients</span>
+  </a>
+
+  <a href="chatbot-settings.html">
+   <span class="nav-icon">🤖</span>
+   <span>Chatbot Settings</span>
+  </a>
+
+  <a href="knowledge-base.html">
+   <span class="nav-icon">📚</span>
+   <span>Knowledge Base</span>
+  </a>
+
+  <a href="conversations.html">
+   <span class="nav-icon">💬</span>
+   <span>Conversations</span>
+  </a>
+
+  <a href="analytics.html" class="active">
+   <span class="nav-icon">📈</span>
+   <span>Analytics</span>
+  </a>
+
+ </nav>
+
+</aside>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="main">
+
+ <!-- TOPBAR -->
+
+ <div class="topbar">
+
+  <div class="title-row">
+
+   <button
+    class="back-button"
+    onclick="goBack()"
+    type="button"
+   >
+    ← Back
+   </button>
+
+   <div class="title">
+
+    <h1>Analytics</h1>
+
+    <p>
+     Live analytics from your MongoDB data.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="user-box">
+
+   <div
+    class="user-avatar"
+    id="userAvatar"
+   >
+    U
+   </div>
+
+   <div class="user-info">
+
+    <strong id="userName">
+     Loading...
+    </strong>
+
+    <span id="userRole">
+     Authenticated
+    </span>
+
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <!-- GLOBAL ERROR -->
+
+ <div
+  class="error"
+  id="errorBox"
+  role="alert"
+  aria-live="polite"
+ >
+
+  <div class="error-content">
+
+   <span class="error-icon">⚠</span>
+
+   <span
+    class="error-message"
+    id="errorMessage"
+   >
+    Something went wrong.
+   </span>
+
+  </div>
+
+  <button
+   class="retry-button"
+   id="errorRetryButton"
+   type="button"
+  >
+   Retry
+  </button>
+
+ </div>
+
+
+ <!-- PAGE LEVEL ERROR -->
+
+ <div
+  class="page-error"
+  id="pageError"
+ >
+
+  <div class="page-error-icon">
+   ⚠
+  </div>
+
+  <h2>
+   Unable to load Analytics
+  </h2>
+
+  <p id="pageErrorMessage">
+   Something went wrong while loading analytics.
+   Please try again.
+  </p>
+
+  <button
+   type="button"
+   onclick="initializePage()"
+  >
+   Try Again
+  </button>
+
+ </div>
+
+
+ <!-- TOOLBAR -->
+
+ <div class="toolbar">
+
+  <select
+   id="clientSelect"
+   aria-label="Select client"
+   disabled
+  >
+   <option value="">
+    Loading clients...
+   </option>
+  </select>
+
+  <button
+   class="refresh-button"
+   id="refreshButton"
+   type="button"
+  >
+   ↻ Refresh
+  </button>
+
+ </div>
+
+
+ <!-- =========================
+      STATS
+ ========================= -->
+
+ <div class="stats">
+
+  <!-- Visitors -->
+
+  <div class="card stat-card">
+
+   <div class="stat-top">
+
+    <span class="stat-label">
+     Visitors
+    </span>
+
+    <div class="stat-icon">
+     👤
+    </div>
+
+   </div>
+
+   <div
+    class="stat-value"
+    id="visitors"
+   >
+    <span class="skeleton stat-loading"></span>
+   </div>
+
+  </div>
+
+
+  <!-- Conversations -->
+
+  <div class="card stat-card">
+
+   <div class="stat-top">
+
+    <span class="stat-label">
+     Conversations
+    </span>
+
+    <div class="stat-icon">
+     💬
+    </div>
+
+   </div>
+
+   <div
+    class="stat-value"
+    id="conversations"
+   >
+    <span class="skeleton stat-loading"></span>
+   </div>
+
+  </div>
+
+
+  <!-- Messages -->
+
+  <div class="card stat-card">
+
+   <div class="stat-top">
+
+    <span class="stat-label">
+     Messages
+    </span>
+
+    <div class="stat-icon">
+     ✉
+    </div>
+
+   </div>
+
+   <div
+    class="stat-value"
+    id="messages"
+   >
+    <span class="skeleton stat-loading"></span>
+   </div>
+
+  </div>
+
+
+  <!-- Status -->
+
+  <div class="card stat-card">
+
+   <div class="stat-top">
+
+    <span class="stat-label">
+     Status
+    </span>
+
+    <div class="stat-icon">
+     ✓
+    </div>
+
+   </div>
+
+   <div
+    class="stat-value status"
+    id="status"
+   >
+    Online
+   </div>
+
+  </div>
+
+ </div>
+
+
+ <!-- =========================
+      ACTIVITY OVERVIEW
+ ========================= -->
+
+ <section class="section">
+
+  <div class="section-header">
+
+   <div>
+
+    <h2>
+     Activity Overview
+    </h2>
+
+    <p>
+     Recent activity across the platform.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="card chart-card">
+
+   <div
+    class="chart"
+    id="chart"
+   >
+
+    <div class="state chart-state">
+
+     <div class="state-inner">
+
+      <div class="state-icon loading">
+       <span class="state-spinner"></span>
+      </div>
+
+      <div class="state-title">
+       Loading activity
+      </div>
+
+      <div class="state-text">
+       Fetching your latest analytics data...
+      </div>
+
+     </div>
+
+    </div>
+
+   </div>
+
+  </div>
+
+ </section>
+
+
+ <!-- =========================
+      CLIENT ACTIVITY
+ ========================= -->
+
+ <section class="section">
+
+  <div class="section-header">
+
+   <div>
+
+    <h2>
+     Client Activity
+    </h2>
+
+    <p>
+     Performance and activity by client.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="card">
+
+   <div class="table-wrap">
+
+    <table>
+
+     <thead>
+
+      <tr>
+       <th>Client</th>
+       <th>Visitors</th>
+       <th>Conversations</th>
+       <th>Messages</th>
+       <th>Status</th>
+      </tr>
+
+     </thead>
+
+
+     <tbody id="clientTable">
+
+      <tr class="table-loading-row">
+
+       <td>
+        <span class="skeleton table-skeleton"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+      </tr>
+
+      <tr class="table-loading-row">
+
+       <td>
+        <span class="skeleton table-skeleton"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+       <td>
+        <span class="skeleton table-skeleton short"></span>
+       </td>
+
+      </tr>
+
+     </tbody>
+
+    </table>
+
+   </div>
+
+  </div>
+
+ </section>
+
+
+ <!-- =========================
+      PERFORMANCE
+ ========================= -->
+
+ <section class="section">
+
+  <div class="section-header">
+
+   <div>
+
+    <h2>
+     Performance
+    </h2>
+
+    <p>
+     Current chatbot performance metrics.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="performance">
+
+   <div class="card">
+
+    <div class="stat-label">
+     Average Response Time
+    </div>
+
+    <div
+     class="stat-value"
+     id="responseTime"
+    >
+     <span class="skeleton performance-loading"></span>
+    </div>
+
+   </div>
+
+
+   <div class="card">
+
+    <div class="stat-label">
+     Resolution Rate
+    </div>
+
+    <div
+     class="stat-value"
+     id="resolutionRate"
+    >
+     <span class="skeleton performance-loading"></span>
+    </div>
+
+   </div>
+
+
+   <div class="card">
+
+    <div class="stat-label">
+     Active Clients
+    </div>
+
+    <div
+     class="stat-value"
+     id="activeClients"
+    >
+     <span class="skeleton performance-loading"></span>
+    </div>
+
+   </div>
+
+
+   <div class="card">
+
+    <div class="stat-label">
+     Knowledge Documents
+    </div>
+
+    <div
+     class="stat-value"
+     id="documents"
+    >
+     <span class="skeleton performance-loading"></span>
+    </div>
+
+   </div>
+
+  </div>
+
+ </section>
+
+
+ <!-- =========================
+      SYSTEM STATUS
+ ========================= -->
+
+ <section class="section">
+
+  <div class="section-header">
+
+   <div>
+
+    <h2>
+     System Status
+    </h2>
+
+    <p>
+     Platform services and infrastructure.
+    </p>
+
+   </div>
+
+  </div>
+
+
+  <div class="system">
+
+   <div
+    class="system-card"
+    id="apiSystemCard"
+   >
+
+    <div class="system-top">
+
+     <div class="system-icon">
+      ✓
+     </div>
+
+     <strong>
+      API
+     </strong>
+
+    </div>
+
+    <span
+     class="online"
+     id="apiSystemStatus"
+    >
+     Checking...
+    </span>
+
+   </div>
+
+
+   <div
+    class="system-card"
+    id="chatbotSystemCard"
+   >
+
+    <div class="system-top">
+
+     <div class="system-icon">
+      ✓
+     </div>
+
+     <strong>
+      Chatbot
+     </strong>
+
+    </div>
+
+    <span
+     class="online"
+     id="chatbotSystemStatus"
+    >
+     Operational
+    </span>
+
+   </div>
+
+
+   <div
+    class="system-card"
+    id="mongoSystemCard"
+   >
+
+    <div class="system-top">
+
+     <div class="system-icon">
+      ✓
+     </div>
+
+     <strong>
+      MongoDB Analytics
+     </strong>
+
+    </div>
+
+    <span
+     class="online"
+     id="mongoSystemStatus"
+    >
+     Checking...
+    </span>
+
+   </div>
+
+  </div>
+
+ </section>
+
+</main>
+
+
+<script>
+"use strict";
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const API_BASE = "http://127.0.0.1:8000";
+
+let clients = [];
+let isAnalyticsLoading = false;
+let isInitializing = false;
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function goBack(){
+
+ if(window.history.length > 1){
+  window.history.back();
+ }else{
+  window.location.href = "index.html";
+ }
+
+}
+
+
+/* =========================================================
+   TOKEN
+========================================================= */
+
+function getToken(){
+
+ return (
+  localStorage.getItem("access_token") ||
+  localStorage.getItem("accessToken") ||
+  localStorage.getItem("token") ||
+  sessionStorage.getItem("access_token") ||
+  sessionStorage.getItem("accessToken") ||
+  sessionStorage.getItem("token") ||
+  ""
+ );
+
+}
+
+
+/* =========================================================
+   AUTH HEADERS
+========================================================= */
+
+function authHeaders(){
+
+ const token = getToken();
+
+ return token
+  ? {
+     Authorization:`Bearer ${token}`
+    }
+  : {};
+
+}
+
+
+/* =========================================================
+   API FETCH
+========================================================= */
+
+async function apiFetch(url, options = {}){
+
+ let response;
+
+ try{
+
+  response = await fetch(url,{
+   ...options,
+   headers:{
+    ...authHeaders(),
+    ...(options.headers || {})
+   }
+  });
+
+ }catch(error){
+
+  throw new Error(
+   "Unable to connect to the API. Please make sure the FastAPI server is running."
+  );
+
+ }
+
+
+ if(response.status === 401){
+
+  logout();
+
+  throw new Error(
+   "Authentication expired. Please log in again."
+  );
+
+ }
+
+ return response;
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout(){
+
+ [
+  "access_token",
+  "accessToken",
+  "token",
+  "user"
+ ].forEach(key=>{
+
+  localStorage.removeItem(key);
+  sessionStorage.removeItem(key);
+
+ });
+
+ window.location.href="../frontend/index.html";
+
+}
+
+
+/* =========================================================
+   GLOBAL ERROR
+========================================================= */
+
+function showError(message, options = {}){
+
+ const box = document.getElementById("errorBox");
+ const messageBox = document.getElementById("errorMessage");
+ const retryButton = document.getElementById("errorRetryButton");
+
+ if(!box || !messageBox){
+  return;
+ }
+
+ messageBox.textContent =
+  message ||
+  "Something went wrong.";
+
+ box.style.display = "flex";
+
+ retryButton.disabled = false;
+
+ if(options.retry === false){
+  retryButton.style.display = "none";
+ }else{
+  retryButton.style.display = "block";
+ }
+
+}
+
+
+function clearError(){
+
+ const box = document.getElementById("errorBox");
+
+ if(!box){
+  return;
+ }
+
+ box.style.display = "none";
+
+}
+
+
+/* =========================================================
+   PAGE ERROR
+========================================================= */
+
+function showPageError(message){
+
+ const pageError =
+  document.getElementById("pageError");
+
+ const messageBox =
+  document.getElementById("pageErrorMessage");
+
+ if(!pageError){
+  return;
+ }
+
+ if(messageBox){
+
+  messageBox.textContent =
+   message ||
+   "Something went wrong while loading analytics.";
+
+ }
+
+ pageError.style.display = "block";
+
+}
+
+
+function hidePageError(){
+
+ const pageError =
+  document.getElementById("pageError");
+
+ if(pageError){
+  pageError.style.display = "none";
+ }
+
+}
+
+
+/* =========================================================
+   LOADING STATES
+========================================================= */
+
+function setStatsLoading(){
+
+ document.getElementById("visitors").innerHTML =
+  '<span class="skeleton stat-loading"></span>';
+
+ document.getElementById("conversations").innerHTML =
+  '<span class="skeleton stat-loading"></span>';
+
+ document.getElementById("messages").innerHTML =
+  '<span class="skeleton stat-loading"></span>';
+
+ document.getElementById("responseTime").innerHTML =
+  '<span class="skeleton performance-loading"></span>';
+
+ document.getElementById("resolutionRate").innerHTML =
+  '<span class="skeleton performance-loading"></span>';
+
+ document.getElementById("activeClients").innerHTML =
+  '<span class="skeleton performance-loading"></span>';
+
+ document.getElementById("documents").innerHTML =
+  '<span class="skeleton performance-loading"></span>';
+
+}
+
+
+function setChartLoading(){
+
+ const chart =
+  document.getElementById("chart");
+
+ chart.innerHTML = `
+  <div class="state chart-state">
+   <div class="state-inner">
+
+    <div class="state-icon loading">
+     <span class="state-spinner"></span>
+    </div>
+
+    <div class="state-title">
+     Loading activity
+    </div>
+
+    <div class="state-text">
+     Fetching your latest analytics data...
+    </div>
+
+   </div>
+  </div>
+ `;
+
+}
+
+
+function setTableLoading(){
+
+ const table =
+  document.getElementById("clientTable");
+
+ table.innerHTML = `
+  <tr class="table-loading-row">
+   <td>
+    <span class="skeleton table-skeleton"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+  </tr>
+
+  <tr class="table-loading-row">
+   <td>
+    <span class="skeleton table-skeleton"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+   <td>
+    <span class="skeleton table-skeleton short"></span>
+   </td>
+  </tr>
+ `;
+
+}
+
+
+/* =========================================================
+   USER
+========================================================= */
+
+async function loadUser(){
+
+ const response =
+  await apiFetch(`${API_BASE}/auth/me`);
+
+ if(!response.ok){
+
+  let message =
+   "Failed to load authenticated user.";
+
+  try{
+
+   const error =
+    await response.json();
+
+   message =
+    error.detail ||
+    error.message ||
+    message;
+
+  }catch{}
+
+  throw new Error(message);
+
+ }
+
+ const user =
+  await response.json();
+
+ const name =
+  user.full_name ||
+  user.email ||
+  user.username ||
+  "User";
+
+ document.getElementById("userName").textContent =
+  name;
+
+ document.getElementById("userRole").textContent =
+  user.role ||
+  "Authenticated";
+
+ document.getElementById("userAvatar").textContent =
+  String(name).charAt(0).toUpperCase();
+
+}
+
+
+/* =========================================================
+   CLIENTS
+========================================================= */
+
+async function loadClients(){
+
+ const select =
+  document.getElementById("clientSelect");
+
+ select.disabled = true;
+
+ select.innerHTML =
+  '<option value="">Loading clients...</option>';
+
+ const response =
+  await apiFetch(`${API_BASE}/clients`);
+
+ if(!response.ok){
+
+  let message =
+   "Failed to load clients.";
+
+  try{
+
+   const error =
+    await response.json();
+
+   message =
+    error.detail ||
+    error.message ||
+    message;
+
+  }catch{}
+
+  throw new Error(message);
+
+ }
+
+ const data =
+  await response.json();
+
+ clients =
+  Array.isArray(data)
+   ? data
+   : (
+      data.clients ||
+      data.data ||
+      data.items ||
+      []
+     );
+
+ select.innerHTML = "";
+
+ const allOption =
+  document.createElement("option");
+
+ allOption.value = "";
+ allOption.textContent = "All Clients";
+
+ select.appendChild(allOption);
+
+ clients.forEach(client=>{
+
+  const clientId =
+   client.client_id ||
+   client.id;
+
+  if(!clientId){
+   return;
+  }
+
+  const option =
+   document.createElement("option");
+
+  option.value =
+   clientId;
+
+  option.textContent =
+   client.business_name ||
+   client.name ||
+   clientId;
+
+  select.appendChild(option);
+
+ });
+
+ select.disabled = false;
+
+}
+
+
+/* =========================================================
+   ANALYTICS ENDPOINT
+========================================================= */
+
+function getAnalyticsEndpoint(clientId = ""){
+
+ if(clientId){
+
+  return `${API_BASE}/analytics?client_id=${
+   encodeURIComponent(clientId)
+  }`;
+
+ }
+
+ return `${API_BASE}/analytics`;
+
+}
+
+
+/* =========================================================
+   LOAD ANALYTICS
+========================================================= */
+
+async function loadAnalytics(){
+
+ if(isAnalyticsLoading){
+  return;
+ }
+
+ isAnalyticsLoading = true;
+
+ clearError();
+ hidePageError();
+
+ setStatsLoading();
+ setChartLoading();
+ setTableLoading();
+
+ const refreshButton =
+  document.getElementById("refreshButton");
+
+ const clientSelect =
+  document.getElementById("clientSelect");
+
+ refreshButton.disabled = true;
+ refreshButton.classList.add("loading");
+
+ refreshButton.innerHTML = `
+  <span class="refresh-spinner"></span>
+  Loading...
+ `;
+
+ const clientId =
+  clientSelect.value;
+
+ try{
+
+  const response =
+   await apiFetch(
+    getAnalyticsEndpoint(clientId)
+   );
+
+  if(!response.ok){
+
+   let message =
+    "Failed to load analytics.";
+
+   try{
+
+    const error =
+     await response.json();
+
+    message =
+     error.detail ||
+     error.message ||
+     message;
+
+   }catch{}
+
+   throw new Error(message);
+
+  }
+
+  const data =
+   await response.json();
+
+  updateAnalytics(data);
+
+  updateSystemStatus({
+   api:true,
+   analytics:true
+  });
+
+ }catch(error){
+
+  console.error(
+   "Analytics loading failed:",
+   error
+  );
+
+  showError(
+   error.message ||
+   "Failed to load analytics."
+  );
+
+  renderChartError(
+   "Analytics data could not be loaded."
+  );
+
+  renderClientTableError(
+   "Client activity could not be loaded."
+  );
+
+  setPerformanceError();
+
+  updateSystemStatus({
+   api:false,
+   analytics:false
+  });
+
+ }finally{
+
+  isAnalyticsLoading = false;
+
+  refreshButton.disabled = false;
+
+  refreshButton.classList.remove("loading");
+
+  refreshButton.innerHTML =
+   "↻ Refresh";
+
+ }
+
+}
+
+
+/* =========================================================
+   UPDATE ANALYTICS
+========================================================= */
+
+function updateAnalytics(data){
+
+ const root =
+  data.analytics ||
+  data.data ||
+  data ||
+  {};
+
+ document.getElementById("visitors").textContent =
+  formatNumber(root.visitors);
+
+ document.getElementById("conversations").textContent =
+  formatNumber(root.conversations);
+
+ document.getElementById("messages").textContent =
+  formatNumber(root.messages);
+
+
+ document.getElementById("responseTime").textContent =
+  root.response_time_ms != null
+   ? `${Number(root.response_time_ms).toFixed(0)} ms`
+   : "—";
+
+
+ document.getElementById("resolutionRate").textContent =
+  root.resolution_rate != null
+   ? `${Number(root.resolution_rate).toFixed(1)}%`
+   : "—";
+
+
+ document.getElementById("activeClients").textContent =
+  formatNumber(root.active_clients);
+
+
+ document.getElementById("documents").textContent =
+  formatNumber(root.documents);
+
+
+ renderChart(
+  root.daily_activity ||
+  root.activity ||
+  root.chart ||
+  []
+ );
+
+
+ renderClientTable(
+  root.client_activity ||
+  root.clients ||
+  []
+ );
+
+}
+
+
+/* =========================================================
+   NUMBER FORMAT
+========================================================= */
+
+function formatNumber(value){
+
+ if(value === null || value === undefined){
+  return "—";
+ }
+
+ const number =
+  Number(value);
+
+ if(Number.isNaN(number)){
+  return "—";
+ }
+
+ return number.toLocaleString();
+
+}
+
+
+/* =========================================================
+   CHART
+========================================================= */
+
+function renderChart(items){
+
+ const chart =
+  document.getElementById("chart");
+
+ chart.innerHTML = "";
+
+ if(!Array.isArray(items) || !items.length){
+
+  chart.innerHTML = `
+   <div class="state chart-state">
+
+    <div class="state-inner">
+
+     <div class="state-icon empty">
+      📊
+     </div>
+
+     <div class="state-title">
+      No activity data yet
+     </div>
+
+     <div class="state-text">
+      There is not enough activity to display
+      a chart yet. Once visitors and conversations
+      are recorded, your activity will appear here.
+     </div>
+
+    </div>
+
+   </div>
+  `;
+
+  return;
+ }
+
+ const values =
+  items.map(item=>{
+
+   if(typeof item === "number"){
+    return item;
+   }
+
+   return Number(
+    item.value ||
+    item.conversations ||
+    item.messages ||
+    item.count ||
+    0
+   );
+
+  });
+
+ const max =
+  Math.max(...values,1);
+
+ items.forEach((item,index)=>{
+
+  const value =
+   values[index];
+
+  const wrapper =
+   document.createElement("div");
+
+  wrapper.className =
+   "bar-item";
+
+  const valueLabel =
+   document.createElement("div");
+
+  valueLabel.className =
+   "bar-value";
+
+  valueLabel.textContent =
+   formatNumber(value);
+
+  const bar =
+   document.createElement("div");
+
+  bar.className =
+   "bar";
+
+  bar.style.height =
+   `${Math.max((value / max) * 85,2)}%`;
+
+  const label =
+   document.createElement("div");
+
+  label.className =
+   "bar-label";
+
+  const rawDate =
+   item.date ||
+   item.label ||
+   item.day ||
+   "";
+
+  if(
+   typeof rawDate === "string" &&
+   /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+  ){
+
+   const parts =
+    rawDate.split("-");
+
+   label.textContent =
+    `${parts[1]}/${parts[2]}`;
+
+  }else{
+
+   label.textContent =
+    rawDate ||
+    `Day ${index + 1}`;
+
+  }
+
+  wrapper.appendChild(valueLabel);
+  wrapper.appendChild(bar);
+  wrapper.appendChild(label);
+
+  chart.appendChild(wrapper);
+
+ });
+
+}
+
+
+/* =========================================================
+   CHART ERROR
+========================================================= */
+
+function renderChartError(message){
+
+ const chart =
+  document.getElementById("chart");
+
+ chart.innerHTML = `
+  <div class="state chart-state">
+
+   <div class="state-inner">
+
+    <div class="state-icon error">
+     ⚠
+    </div>
+
+    <div class="state-title">
+     Unable to load activity
+    </div>
+
+    <div class="state-text">
+     ${escapeHtml(message)}
+    </div>
+
+    <button
+     class="state-action"
+     type="button"
+     onclick="loadAnalytics()"
+    >
+     Retry
+    </button>
+
+   </div>
+
+  </div>
+ `;
+
+}
+
+
+/* =========================================================
+   CLIENT TABLE
+========================================================= */
+
+function renderClientTable(items){
+
+ const table =
+  document.getElementById("clientTable");
+
+ table.innerHTML = "";
+
+ if(!Array.isArray(items) || !items.length){
+
+  table.innerHTML = `
+   <tr>
+    <td
+     colspan="5"
+     class="table-empty"
+    >
+
+     <div class="state">
+
+      <div class="state-inner">
+
+       <div class="state-icon empty">
+        👥
+       </div>
+
+       <div class="state-title">
+        No client activity yet
+       </div>
+
+       <div class="state-text">
+        Client activity will appear here
+        once visitors and conversations
+        are recorded.
+       </div>
+
+      </div>
+
+     </div>
+
+    </td>
+   </tr>
+  `;
+
+  return;
+ }
+
+
+ items.forEach(item=>{
+
+  const row =
+   document.createElement("tr");
+
+  const name =
+   item.name ||
+   item.business_name ||
+   item.client_id ||
+   "Unknown";
+
+
+  const visitors =
+   item.visitors ??
+   item.visitor_count ??
+   0;
+
+
+  const conversations =
+   item.conversations ??
+   item.conversation_count ??
+   0;
+
+
+  const messages =
+   item.messages ??
+   item.message_count ??
+   0;
+
+
+  const status =
+   item.status ||
+   "Active";
+
+
+  row.innerHTML = `
+   <td>
+    ${escapeHtml(name)}
+   </td>
+
+   <td>
+    ${formatNumber(visitors)}
+   </td>
+
+   <td>
+    ${formatNumber(conversations)}
+   </td>
+
+   <td>
+    ${formatNumber(messages)}
+   </td>
+
+   <td>
+
+    <span class="table-status">
+
+     <span class="table-dot"></span>
+
+     ${escapeHtml(status)}
+
+    </span>
+
+   </td>
+  `;
+
+  table.appendChild(row);
+
+ });
+
+}
+
+
+/* =========================================================
+   TABLE ERROR
+========================================================= */
+
+function renderClientTableError(message){
+
+ const table =
+  document.getElementById("clientTable");
+
+ table.innerHTML = `
+  <tr>
+
+   <td
+    colspan="5"
+    class="table-empty"
+   >
+
+    <div class="state">
+
+     <div class="state-inner">
+
+      <div class="state-icon error">
+       ⚠
+      </div>
+
+      <div class="state-title">
+       Unable to load client activity
+      </div>
+
+      <div class="state-text">
+       ${escapeHtml(message)}
+      </div>
+
+      <button
+       class="state-action"
+       type="button"
+       onclick="loadAnalytics()"
+      >
+       Retry
+      </button>
+
+     </div>
+
+    </div>
+
+   </td>
+
+  </tr>
+ `;
+
+}
+
+
+/* =========================================================
+   PERFORMANCE ERROR
+========================================================= */
+
+function setPerformanceError(){
+
+ document.getElementById("responseTime").textContent =
+  "—";
+
+ document.getElementById("resolutionRate").textContent =
+  "—";
+
+ document.getElementById("activeClients").textContent =
+  "—";
+
+ document.getElementById("documents").textContent =
+  "—";
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(value){
+
+ const div =
+  document.createElement("div");
+
+ div.textContent =
+  String(value ?? "");
+
+ return div.innerHTML;
+
+}
+
+
+/* =========================================================
+   SYSTEM STATUS
+========================================================= */
+
+function updateSystemStatus(status){
+
+ const apiCard =
+  document.getElementById("apiSystemCard");
+
+ const apiStatus =
+  document.getElementById("apiSystemStatus");
+
+ const mongoCard =
+  document.getElementById("mongoSystemCard");
+
+ const mongoStatus =
+  document.getElementById("mongoSystemStatus");
+
+
+ if(status.api === true){
+
+  apiCard.classList.remove(
+   "system-error",
+   "system-warning"
+  );
+
+  apiStatus.textContent =
+   "Operational";
+
+ }else if(status.api === false){
+
+  apiCard.classList.remove(
+   "system-warning"
+  );
+
+  apiCard.classList.add(
+   "system-error"
+  );
+
+  apiStatus.textContent =
+   "Unavailable";
+
+ }
+
+
+ if(status.analytics === true){
+
+  mongoCard.classList.remove(
+   "system-error",
+   "system-warning"
+  );
+
+  mongoStatus.textContent =
+   "Connected";
+
+ }else if(status.analytics === false){
+
+  mongoCard.classList.remove(
+   "system-warning"
+  );
+
+  mongoCard.classList.add(
+   "system-error"
+  );
+
+  mongoStatus.textContent =
+   "Unavailable";
+
+ }
+
+}
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+async function initializePage(){
+
+ if(isInitializing){
+  return;
+ }
+
+ isInitializing = true;
+
+ clearError();
+ hidePageError();
+
+ if(!getToken()){
+
+  window.location.href =
+   "../frontend/index.html";
+
+  return;
+
+ }
+
+ const clientSelect =
+  document.getElementById("clientSelect");
+
+ clientSelect.disabled = true;
+
+ try{
+
+  setStatsLoading();
+  setChartLoading();
+  setTableLoading();
+
+  updateSystemStatus({
+   api:true
+  });
+
+  await loadUser();
+
+  try{
+
+   await loadClients();
+
+  }catch(clientError){
+
+   console.error(
+    "Client loading failed:",
+    clientError
+   );
+
+   showError(
+    clientError.message ||
+    "Failed to load clients."
+   );
+
+   clientSelect.disabled = true;
+
+   clientSelect.innerHTML = `
+    <option value="">
+     Unable to load clients
+    </option>
+   `;
+
+  }
+
+  await loadAnalytics();
+
+ }catch(error){
+
+  console.error(
+   "Analytics initialization failed:",
+   error
+  );
+
+  showError(
+   error.message ||
+   "Failed to initialize analytics."
+  );
+
+  showPageError(
+   error.message ||
+   "Failed to initialize analytics."
+  );
+
+  updateSystemStatus({
+   api:false,
+   analytics:false
+  });
+
+ }finally{
+
+  isInitializing = false;
+
+ }
+
+}
+
+
+/* =========================================================
+   CLIENT CHANGE
+========================================================= */
+
+document
+ .getElementById("clientSelect")
+ .addEventListener(
+  "change",
+  ()=>{
+   loadAnalytics();
+  }
+ );
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+document
+ .getElementById("refreshButton")
+ .addEventListener(
+  "click",
+  ()=>{
+   loadAnalytics();
+  }
+ );
+
+
+/* =========================================================
+   GLOBAL RETRY
+========================================================= */
+
+document
+ .getElementById("errorRetryButton")
+ .addEventListener(
+  "click",
+  ()=>{
+   initializePage();
+  }
+ );
+
+
+/* =========================================================
+   DOM READY
+========================================================= */
+
+document.addEventListener(
+ "DOMContentLoaded",
+ ()=>{
+  initializePage();
+ }
+);
+
+</script>
+
+</body>
+</html>

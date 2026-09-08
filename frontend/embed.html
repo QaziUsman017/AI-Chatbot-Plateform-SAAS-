@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Chatbot</title>
+
+    <link rel="stylesheet" href="./css/global.css">
+    <link rel="stylesheet" href="./css/chatbot.css">
+    <link rel="stylesheet" href="./css/animations.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+</head>
+
+<body>
+
+    <section
+        class="chat-panel is-open"
+        id="chat-panel"
+        aria-label="AI Chatbot"
+    >
+
+        <header class="chat-header">
+
+            <div class="chat-header-info">
+
+                <div class="chat-avatar">
+                    AI
+                </div>
+
+                <div class="chat-header-text">
+
+                    <h2>AI Assistant</h2>
+
+                    <span class="chat-status">
+                        Online
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <div
+            class="chat-window"
+            id="chat-window"
+        >
+
+            <div
+                class="welcome-screen"
+                id="welcome-screen"
+            >
+
+                <div class="welcome-icon">
+                    AI
+                </div>
+
+                <h3>
+                    How can I help you?
+                </h3>
+
+                <p>
+                    Ask me anything about Urban Bites.
+                </p>
+
+            </div>
+
+            <div
+                class="typing-indicator"
+                id="typing-indicator"
+            >
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+        </div>
+
+
+        <form
+            class="composer"
+            id="chat-form"
+        >
+
+            <input
+                type="text"
+                id="message-input"
+                placeholder="Ask about Urban Bites..."
+                autocomplete="off"
+            >
+
+            <button
+                type="submit"
+                id="send-button"
+            >
+                Send
+            </button>
+
+        </form>
+
+    </section>
+
+
+<script>
+
+const API_BASE_URL = "http://127.0.0.1:8000";
+
+/*
+ * Client whose chatbot is being embedded.
+ */
+const CLIENT_ID = "client_001";
+
+
+const form =
+    document.getElementById("chat-form");
+
+const input =
+    document.getElementById("message-input");
+
+const chatWindow =
+    document.getElementById("chat-window");
+
+const welcomeScreen =
+    document.getElementById("welcome-screen");
+
+const typingIndicator =
+    document.getElementById("typing-indicator");
+
+const sendButton =
+    document.getElementById("send-button");
+
+
+let conversationId = null;
+
+
+/* =========================================================
+   ADD MESSAGE
+========================================================= */
+
+function addMessage(text, type) {
+
+    const message =
+        document.createElement("div");
+
+    message.className =
+        `message ${type}`;
+
+    message.textContent =
+        text;
+
+    chatWindow.insertBefore(
+        message,
+        typingIndicator
+    );
+
+    chatWindow.scrollTop =
+        chatWindow.scrollHeight;
+}
+
+
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
+
+form.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+        const userMessage =
+            input.value.trim();
+
+        if (!userMessage) {
+            return;
+        }
+
+
+        welcomeScreen.style.display =
+            "none";
+
+        addMessage(
+            userMessage,
+            "user"
+        );
+
+        input.value = "";
+
+        sendButton.disabled = true;
+
+        sendButton.textContent =
+            "...";
+
+        typingIndicator.style.display =
+            "flex";
+
+
+        try {
+
+            const payload = {
+
+                message:
+                    userMessage,
+
+                client_id:
+                    CLIENT_ID
+
+            };
+
+
+            if (conversationId) {
+
+                payload.conversation_id =
+                    conversationId;
+
+            }
+
+
+            const response =
+                await fetch(
+                    `${API_BASE_URL}/chat`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(payload)
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.detail ||
+                    "Chat request failed."
+                );
+
+            }
+
+
+            if (
+                data.conversation_id
+            ) {
+
+                conversationId =
+                    data.conversation_id;
+
+            }
+
+
+            addMessage(
+                data.response ||
+                "No response available.",
+                "bot"
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Embed chatbot error:",
+                error
+            );
+
+            addMessage(
+                "Sorry, I could not connect to the chatbot.",
+                "bot"
+            );
+
+        } finally {
+
+            typingIndicator.style.display =
+                "none";
+
+            sendButton.disabled =
+                false;
+
+            sendButton.textContent =
+                "Send";
+
+            input.focus();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>

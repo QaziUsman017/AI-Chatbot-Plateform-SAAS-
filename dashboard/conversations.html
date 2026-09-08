@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Conversations - AI Chatbot Platform</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+ --navy:#0f172a;
+ --navy-hover:#172033;
+ --cyan:#0ea5e9;
+ --cyan-light:#e0f2fe;
+ --bg:#f8fafc;
+ --white:#fff;
+ --border:#e2e8f0;
+ --text:#0f172a;
+ --muted:#64748b;
+}
+
+body{
+ font-family:Inter,Arial,sans-serif;
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
+}
+
+.sidebar{
+ position:fixed;
+ inset:0 auto 0 0;
+ width:248px;
+ background:var(--navy);
+ color:#fff;
+ padding:24px 16px;
+ z-index:100;
+ overflow-y:auto;
+}
+
+.brand{
+ display:flex;
+ align-items:center;
+ gap:11px;
+ padding:0 8px 30px;
+}
+
+.brand-icon{
+ width:30px;height:30px;border-radius:9px;
+ background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+ display:flex;align-items:center;justify-content:center;
+ font-size:11px;font-weight:800;
+}
+
+.brand h2{font-size:16px}
+.brand h2 span{color:#38bdf8}
+.brand small{display:block;color:#94a3b8;font-size:10px;margin-top:5px}
+
+.menu-label{
+ padding:0 10px 9px;
+ color:#64748b;
+ font-size:9px;
+ font-weight:700;
+ text-transform:uppercase;
+ letter-spacing:.08em;
+}
+
+.nav{display:flex;flex-direction:column;gap:4px}
+
+.nav a{
+ position:relative;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ color:#94a3b8;
+ text-decoration:none;
+ padding:10px 11px;
+ border-radius:9px;
+ font-size:12px;
+ transition:.2s;
+}
+
+.nav a:hover,.nav a.active{
+ background:var(--navy-hover);
+ color:#fff;
+}
+
+.nav a.active:before{
+ content:"";
+ position:absolute;
+ left:0;top:8px;bottom:8px;
+ width:3px;
+ border-radius:4px;
+ background:#38bdf8;
+}
+
+.nav-icon{width:19px;text-align:center}
+
+.main{
+ margin-left:248px;
+ width:calc(100% - 248px);
+ min-height:100vh;
+ padding:30px 32px 40px;
+}
+
+.topbar{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:20px;
+ margin-bottom:22px;
+}
+
+.title-row{display:flex;align-items:center;gap:12px}
+
+.back-button{
+ border:1px solid var(--border);
+ background:#fff;
+ color:#334155;
+ border-radius:9px;
+ padding:9px 12px;
+ cursor:pointer;
+ font-size:11px;
+ font-weight:650;
+ transition:.2s;
+}
+
+.back-button:hover{background:#f1f5f9}
+
+.title h1{
+ font-size:29px;
+ letter-spacing:-.6px;
+ margin-bottom:5px;
+}
+
+.title p{color:var(--muted);font-size:12px}
+
+.user-box{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:11px;
+ padding:8px 12px;
+}
+
+.user-avatar{
+ width:32px;height:32px;border-radius:50%;
+ background:var(--cyan-light);
+ color:#0284c7;
+ display:flex;align-items:center;justify-content:center;
+ font-size:12px;font-weight:700;
+}
+
+.user-info strong{display:block;font-size:11px}
+.user-info span{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+
+.workspace{
+ display:grid;
+ grid-template-columns:340px minmax(0,1fr);
+ gap:16px;
+ min-height:650px;
+}
+
+.card{
+ background:#fff;
+ border:1px solid var(--border);
+ border-radius:14px;
+ box-shadow:0 3px 12px rgba(15,23,42,.025);
+ overflow:hidden;
+}
+
+.history{
+ display:flex;
+ flex-direction:column;
+}
+
+.card-header{
+ padding:18px 18px 14px;
+ border-bottom:1px solid #eef2f6;
+}
+
+.card-header h2{font-size:15px}
+.card-header p{color:var(--muted);font-size:10px;margin-top:4px}
+
+.search{
+ margin-top:14px;
+ width:100%;
+ padding:10px 11px;
+ border:1px solid var(--border);
+ border-radius:9px;
+ outline:none;
+ font-size:11px;
+}
+
+.search:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(14,165,233,.08)}
+
+.conversation-list{
+ overflow-y:auto;
+ flex:1;
+}
+
+.conversation-item{
+ padding:14px 17px;
+ border-bottom:1px solid #f1f5f9;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.conversation-item:hover{background:#f8fafc}
+
+.conversation-item.active{
+ background:#f0f9ff;
+ border-left:3px solid #0ea5e9;
+ padding-left:14px;
+}
+
+.conversation-item strong{
+ display:block;
+ font-size:11px;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+
+.conversation-item p{
+ color:var(--muted);
+ font-size:10px;
+ margin-top:5px;
+ white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+
+.conversation-item small{
+ display:block;
+ color:#94a3b8;
+ font-size:9px;
+ margin-top:7px;
+}
+
+.chat{
+ display:flex;
+ flex-direction:column;
+ min-width:0;
+}
+
+.chat-header{
+ padding:18px;
+ border-bottom:1px solid #eef2f6;
+}
+
+.chat-header h2{font-size:15px}
+.chat-header p{font-size:10px;color:var(--muted);margin-top:4px}
+
+.messages{
+ flex:1;
+ overflow-y:auto;
+ padding:22px;
+ background:#fbfdff;
+}
+
+.message{
+ max-width:78%;
+ margin-bottom:14px;
+}
+
+.message.user{margin-left:auto}
+
+.message-bubble{
+ padding:11px 13px;
+ border-radius:11px;
+ font-size:11px;
+ line-height:1.55;
+ white-space:pre-wrap;
+ word-break:break-word;
+}
+
+.message.assistant .message-bubble{
+ background:#fff;
+ border:1px solid var(--border);
+ color:#334155;
+}
+
+.message.user .message-bubble{
+ background:var(--navy);
+ color:#fff;
+}
+
+.message-role{
+ font-size:9px;
+ color:var(--muted);
+ margin-bottom:5px;
+}
+
+.message.user .message-role{text-align:right}
+
+.empty{
+ height:100%;
+ min-height:180px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ color:var(--muted);
+ font-size:11px;
+ padding:30px;
+}
+
+.empty strong{
+ display:block;
+ color:#334155;
+ font-size:12px;
+ margin-bottom:5px;
+}
+
+.loading{
+ padding:30px;
+ text-align:center;
+ color:var(--muted);
+ font-size:11px;
+}
+
+.error{
+ display:none;
+ margin-bottom:15px;
+ padding:11px 13px;
+ border-radius:9px;
+ background:#fee2e2;
+ color:#991b1b;
+ border:1px solid #fecaca;
+ font-size:11px;
+}
+
+@media(max-width:1000px){
+ .workspace{grid-template-columns:280px minmax(0,1fr)}
+}
+
+@media(max-width:900px){
+ .sidebar{width:215px}
+ .main{margin-left:215px;width:calc(100% - 215px)}
+}
+
+@media(max-width:760px){
+ .sidebar{
+  position:relative;
+  width:100%;
+  height:auto;
+ }
+ .main{
+  margin-left:0;
+  width:100%;
+  padding:22px 18px 35px;
+ }
+ .topbar{flex-direction:column;align-items:flex-start}
+ .user-box{width:100%}
+ .workspace{
+  grid-template-columns:1fr;
+  min-height:700px;
+ }
+ .history{height:320px}
+}
+
+@media(max-width:500px){
+ .title-row{align-items:flex-start}
+ .message{max-width:90%}
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+<div class="brand">
+ <div class="brand-icon">AI</div>
+ <div>
+  <h2>AI <span>Chatbot</span></h2>
+  <small>Admin Platform</small>
+ </div>
+</div>
+
+<div class="menu-label">Main Menu</div>
+
+<nav class="nav">
+ <a href="index.html"><span class="nav-icon">📊</span><span>Dashboard</span></a>
+ <a href="clients.html"><span class="nav-icon">👥</span><span>Clients</span></a>
+ <a href="chatbot-settings.html"><span class="nav-icon">🤖</span><span>Chatbot Settings</span></a>
+ <a href="knowledge-base.html"><span class="nav-icon">📚</span><span>Knowledge Base</span></a>
+ <a href="conversations.html" class="active"><span class="nav-icon">💬</span><span>Conversations</span></a>
+ <a href="analytics.html"><span class="nav-icon">📈</span><span>Analytics</span></a>
+</nav>
+
+</aside>
+
+<main class="main">
+
+<div class="topbar">
+
+<div class="title-row">
+ <button class="back-button" onclick="goBack()">← Back</button>
+ <div class="title">
+  <h1>Conversations</h1>
+  <p>View and review your chatbot conversations.</p>
+ </div>
+</div>
+
+<div class="user-box">
+ <div class="user-avatar" id="userAvatar">U</div>
+ <div class="user-info">
+  <strong id="userName">Loading...</strong>
+  <span id="userRole">Authenticated</span>
+ </div>
+</div>
+
+</div>
+
+<div class="error" id="errorBox"></div>
+
+<div class="workspace">
+
+<section class="card history">
+
+<div class="card-header">
+ <h2>Conversation History</h2>
+ <p>Select a conversation to view its messages.</p>
+
+ <input
+  class="search"
+  id="searchInput"
+  type="search"
+  placeholder="Search conversations..."
+ >
+</div>
+
+<div class="conversation-list" id="conversationList">
+ <div class="loading">Loading conversations...</div>
+</div>
+
+</section>
+
+<section class="card chat">
+
+<div class="chat-header">
+ <h2 id="chatTitle">Conversation</h2>
+ <p id="chatSubtitle">Select a conversation from the history.</p>
+</div>
+
+<div class="messages" id="messages">
+ <div class="empty">
+  <div>
+   <strong>No conversation selected</strong>
+   Select a conversation from the left to view messages.
+  </div>
+ </div>
+</div>
+
+</section>
+
+</div>
+
+</main>
+
+<script>
+"use strict";
+
+const API_BASE="http://127.0.0.1:8000";
+
+let conversations=[];
+let selectedConversationId=null;
+
+function goBack(){
+ if(window.history.length>1) window.history.back();
+ else window.location.href="index.html";
+}
+
+function getToken(){
+ return localStorage.getItem("access_token") ||
+ localStorage.getItem("accessToken") ||
+ localStorage.getItem("token") ||
+ sessionStorage.getItem("access_token") ||
+ sessionStorage.getItem("accessToken") ||
+ sessionStorage.getItem("token") || "";
+}
+
+function authHeaders(){
+ const token=getToken();
+ return token ? {Authorization:`Bearer ${token}`} : {};
+}
+
+async function apiFetch(url,options={}){
+ const response=await fetch(url,{
+  ...options,
+  headers:{...authHeaders(),...(options.headers||{})}
+ });
+
+ if(response.status===401){
+  logout();
+  throw new Error("Authentication expired.");
+ }
+
+ return response;
+}
+
+function logout(){
+ ["access_token","accessToken","token","user"].forEach(k=>{
+  localStorage.removeItem(k);
+  sessionStorage.removeItem(k);
+ });
+ window.location.href="../frontend/index.html";
+}
+
+function escapeHtml(value){
+ const div=document.createElement("div");
+ div.textContent=String(value??"");
+ return div.innerHTML;
+}
+
+async function loadUser(){
+ const response=await apiFetch(`${API_BASE}/auth/me`);
+ if(!response.ok) throw new Error("Failed to load user.");
+
+ const user=await response.json();
+ const name=user.full_name||user.email||user.username||"User";
+
+ document.getElementById("userName").textContent=name;
+ document.getElementById("userRole").textContent=user.role||"Authenticated";
+ document.getElementById("userAvatar").textContent=String(name).charAt(0).toUpperCase();
+}
+
+function getConversationId(item){
+ return item.conversation_id||item.id||item._id;
+}
+
+function getConversationTitle(item){
+ return item.title||
+  item.name||
+  item.first_message||
+  item.preview||
+  item.last_message||
+  `Conversation ${getConversationId(item)||""}`;
+}
+
+function getConversationPreview(item){
+ return item.preview||
+  item.last_message||
+  item.first_message||
+  "No preview available";
+}
+
+function getConversationDate(item){
+ return item.updated_at||
+  item.created_at||
+  item.timestamp||
+  "";
+}
+
+function renderConversations(list=conversations){
+
+ const container=document.getElementById("conversationList");
+ container.innerHTML="";
+
+ if(!list.length){
+  container.innerHTML=`
+   <div class="empty">
+    <div>
+     <strong>No conversations</strong>
+     No conversations have been found.
+    </div>
+   </div>`;
+  return;
+ }
+
+ list.forEach(item=>{
+  const id=getConversationId(item);
+  if(!id) return;
+
+  const element=document.createElement("div");
+  element.className="conversation-item"+
+   (String(id)===String(selectedConversationId)?" active":"");
+
+  element.innerHTML=`
+   <strong>${escapeHtml(getConversationTitle(item))}</strong>
+   <p>${escapeHtml(getConversationPreview(item))}</p>
+   <small>${escapeHtml(getConversationDate(item))}</small>
+  `;
+
+  element.addEventListener("click",()=>openConversation(id));
+  container.appendChild(element);
+ });
+}
+
+async function loadConversations(){
+
+ const container=document.getElementById("conversationList");
+ container.innerHTML=`<div class="loading">Loading conversations...</div>`;
+
+ const response=await apiFetch(`${API_BASE}/chat/history`);
+
+ if(!response.ok){
+  throw new Error("Failed to load conversations.");
+ }
+
+ const data=await response.json();
+
+ conversations=Array.isArray(data)
+  ? data
+  : (
+    data.conversations||
+    data.history||
+    data.data||
+    data.items||
+    []
+  );
+
+ renderConversations();
+}
+
+function normalizeMessages(data){
+
+ if(Array.isArray(data)) return data;
+
+ if(Array.isArray(data.messages)) return data.messages;
+
+ if(data.conversation && Array.isArray(data.conversation.messages)){
+  return data.conversation.messages;
+ }
+
+ if(data.data && Array.isArray(data.data.messages)){
+  return data.data.messages;
+ }
+
+ return [];
+}
+
+function messageRole(message){
+ return message.role||message.sender||message.type||"assistant";
+}
+
+function messageText(message){
+ return message.content||
+  message.message||
+  message.text||
+  message.response||
+  "";
+}
+
+async function openConversation(id){
+
+ selectedConversationId=id;
+ renderConversations();
+
+ const messages=document.getElementById("messages");
+ messages.innerHTML=`<div class="loading">Loading conversation...</div>`;
+
+ try{
+
+  const response=await apiFetch(
+   `${API_BASE}/chat/${encodeURIComponent(id)}`
+  );
+
+  if(!response.ok){
+   throw new Error("Failed to load conversation.");
+  }
+
+  const data=await response.json();
+  const list=normalizeMessages(data);
+
+  const conversation=
+   data.conversation||
+   conversations.find(c=>String(getConversationId(c))===String(id))||
+   {};
+
+  document.getElementById("chatTitle").textContent=
+   getConversationTitle(conversation);
+
+  document.getElementById("chatSubtitle").textContent=
+   `Conversation ID: ${id}`;
+
+  messages.innerHTML="";
+
+  if(!list.length){
+   messages.innerHTML=`
+    <div class="empty">
+     <div>
+      <strong>No messages</strong>
+      This conversation has no messages.
+     </div>
+    </div>`;
+   return;
+  }
+
+  list.forEach(message=>{
+   const role=messageRole(message).toLowerCase();
+   const isUser=role==="user"||role==="human";
+
+   const wrapper=document.createElement("div");
+   wrapper.className="message "+(isUser?"user":"assistant");
+
+   wrapper.innerHTML=`
+    <div class="message-role">
+     ${isUser?"User":"AI Assistant"}
+    </div>
+    <div class="message-bubble">
+     ${escapeHtml(messageText(message))}
+    </div>
+   `;
+
+   messages.appendChild(wrapper);
+  });
+
+  messages.scrollTop=messages.scrollHeight;
+
+ }catch(error){
+  messages.innerHTML=`
+   <div class="empty">
+    <div>
+     <strong>Unable to load conversation</strong>
+     ${escapeHtml(error.message)}
+    </div>
+   </div>`;
+ }
+}
+
+document.getElementById("searchInput").addEventListener("input",event=>{
+ const term=event.target.value.toLowerCase().trim();
+
+ if(!term){
+  renderConversations();
+  return;
+ }
+
+ renderConversations(
+  conversations.filter(item=>{
+   return JSON.stringify(item).toLowerCase().includes(term);
+  })
+ );
+});
+
+document.addEventListener("DOMContentLoaded",async()=>{
+ if(!getToken()){
+  window.location.href="../frontend/index.html";
+  return;
+ }
+
+ try{
+  await loadUser();
+  await loadConversations();
+ }catch(error){
+  console.error(error);
+  document.getElementById("errorBox").textContent=
+   error.message||"Failed to initialize conversations.";
+  document.getElementById("errorBox").style.display="block";
+ }
+});
+</script>
+
+</body>
+</html>
