@@ -1,4 +1,6 @@
-"""Routes for client-specific document uploads."""
+"""
+Routes for client-specific document uploads.
+"""
 
 from pathlib import Path
 
@@ -9,6 +11,7 @@ from fastapi import (
     HTTPException,
     UploadFile,
 )
+
 from qdrant_client.models import (
     Filter,
     FieldCondition,
@@ -16,19 +19,24 @@ from qdrant_client.models import (
 )
 
 from backend.config import UPLOAD_DIR
+
 from backend.database.mongodb import (
     delete_document,
     get_client,
+    get_client_documents,
     save_document,
 )
+
 from backend.database.vector_db import (
     COLLECTION_NAME,
     client as qdrant_client,
     create_collection,
 )
+
 from backend.services.documents.text_processor import (
     extract_text,
 )
+
 from backend.services.rag.rag_service import (
     index_text,
 )
@@ -59,6 +67,7 @@ ALLOWED_EXTENSIONS = {
 
 @router.get("/health")
 async def upload_health() -> dict[str, str]:
+
     return {
         "status": "ok",
         "module": "upload",
@@ -77,11 +86,12 @@ async def upload_document(
 
     client_id = client_id.strip()
 
-    # ==========================================
-    # Validate client
-    # ==========================================
+    # =====================================================
+    # VALIDATE CLIENT
+    # =====================================================
 
     if not client_id:
+
         raise HTTPException(
             status_code=400,
             detail="client_id cannot be empty.",
@@ -92,16 +102,18 @@ async def upload_document(
     )
 
     if not existing_client:
+
         raise HTTPException(
             status_code=404,
             detail="Client not found.",
         )
 
-    # ==========================================
-    # Validate file
-    # ==========================================
+    # =====================================================
+    # VALIDATE FILE
+    # =====================================================
 
     if not file.filename:
+
         raise HTTPException(
             status_code=400,
             detail="No file selected.",
@@ -112,6 +124,7 @@ async def upload_document(
     ).suffix.lower()
 
     if extension not in ALLOWED_EXTENSIONS:
+
         raise HTTPException(
             status_code=400,
             detail=(
@@ -120,17 +133,17 @@ async def upload_document(
             ),
         )
 
-    # ==========================================
-    # Safe filename
-    # ==========================================
+    # =====================================================
+    # SAFE FILENAME
+    # =====================================================
 
     safe_filename = Path(
         file.filename
     ).name
 
-    # ==========================================
-    # Client-specific folder
-    # ==========================================
+    # =====================================================
+    # CLIENT-SPECIFIC TEMPORARY DIRECTORY
+    # =====================================================
 
     client_upload_dir = (
         UPLOAD_DIR / client_id
@@ -145,9 +158,9 @@ async def upload_document(
         client_upload_dir / safe_filename
     )
 
-    # ==========================================
-    # Delete old Qdrant chunks
-    # ==========================================
+    # =====================================================
+    # DELETE OLD QDRANT CHUNKS
+    # =====================================================
 
     try:
 
@@ -180,9 +193,9 @@ async def upload_document(
             error,
         )
 
-    # ==========================================
-    # Save file
-    # ==========================================
+    # =====================================================
+    # SAVE UPLOADED FILE TEMPORARILY
+    # =====================================================
 
     try:
 
@@ -199,9 +212,9 @@ async def upload_document(
             detail=f"Could not save file: {error}",
         ) from error
 
-    # ==========================================
-    # Extract text
-    # ==========================================
+    # =====================================================
+    # EXTRACT + PROCESS + INDEX
+    # =====================================================
 
     try:
 
@@ -211,11 +224,13 @@ async def upload_document(
 
         if not text.strip():
 
-            # Remove invalid/empty uploaded file.
             try:
+
                 if destination.exists():
                     destination.unlink()
+
             except Exception as cleanup_error:
+
                 print(
                     "Warning: Could not remove empty file:",
                     cleanup_error,
@@ -229,9 +244,9 @@ async def upload_document(
                 ),
             )
 
-        # ==========================================
-        # Index into client-specific RAG
-        # ==========================================
+        # =================================================
+        # INDEX INTO CLIENT-SPECIFIC RAG
+        # =================================================
 
         chunks_indexed = index_text(
             text,
@@ -241,13 +256,13 @@ async def upload_document(
 
         if chunks_indexed <= 0:
 
-            # Remove file because nothing useful was
-            # indexed into the knowledge base.
-
             try:
+
                 if destination.exists():
                     destination.unlink()
+
             except Exception as cleanup_error:
+
                 print(
                     "Warning: Could not remove "
                     "unindexed file:",
@@ -263,17 +278,18 @@ async def upload_document(
             )
 
     except HTTPException:
+
         raise
 
     except Exception as error:
 
-        # Best-effort cleanup of the physical file
-        # when document processing fails.
-
         try:
+
             if destination.exists():
                 destination.unlink()
+
         except Exception as cleanup_error:
+
             print(
                 "Warning: Could not clean up "
                 "failed upload:",
@@ -285,9 +301,9 @@ async def upload_document(
             detail=f"Could not process file: {error}",
         ) from error
 
-    # ==========================================
-    # Save document metadata to MongoDB
-    # ==========================================
+    # =====================================================
+    # SAVE DOCUMENT METADATA TO MONGODB
+    # =====================================================
 
     try:
 
@@ -304,12 +320,9 @@ async def upload_document(
 
     except Exception as error:
 
-        # -------------------------------------------------
-        # MongoDB metadata save failed.
-        #
-        # Roll back the physical file and Qdrant chunks
-        # so we don't leave an incomplete document.
-        # -------------------------------------------------
+        # =================================================
+        # ROLLBACK PHYSICAL FILE
+        # =================================================
 
         try:
 
@@ -323,6 +336,10 @@ async def upload_document(
                 "after MongoDB failure:",
                 cleanup_error,
             )
+
+        # =================================================
+        # ROLLBACK QDRANT
+        # =================================================
 
         try:
 
@@ -360,13 +377,14 @@ async def upload_document(
             status_code=500,
             detail=(
                 "Document was indexed, but its "
-                f"database metadata could not be saved: {error}"
+                "database metadata could not be saved: "
+                f"{error}"
             ),
         ) from error
 
-    # ==========================================
-    # Response
-    # ==========================================
+    # =====================================================
+    # RESPONSE
+    # =====================================================
 
     return {
         "message": (
@@ -381,19 +399,28 @@ async def upload_document(
 # =========================================================
 # GET CLIENT DOCUMENTS
 # =========================================================
+#
+# IMPORTANT:
+# MongoDB is now the SOURCE OF TRUTH.
+#
+# Do NOT read the local filesystem here.
+#
+# Vercel/serverless filesystems are not persistent.
+# =========================================================
 
 @router.get("/{client_id}")
-async def get_client_documents(
+async def get_client_documents_route(
     client_id: str,
-) -> list[dict[str, str | int]]:
+) -> list[dict]:
 
     client_id = client_id.strip()
 
-    # ==========================================
-    # Validate client
-    # ==========================================
+    # =====================================================
+    # VALIDATE CLIENT
+    # =====================================================
 
     if not client_id:
+
         raise HTTPException(
             status_code=400,
             detail="client_id cannot be empty.",
@@ -404,83 +431,72 @@ async def get_client_documents(
     )
 
     if not existing_client:
+
         raise HTTPException(
             status_code=404,
             detail="Client not found.",
         )
 
-    # ==========================================
-    # Client directory
-    # ==========================================
+    # =====================================================
+    # LOAD DOCUMENTS FROM MONGODB
+    # =====================================================
 
-    client_upload_dir = (
-        UPLOAD_DIR / client_id
-    )
+    try:
 
-    if not client_upload_dir.exists():
-        return []
+        documents = await get_client_documents(
+            client_id
+        )
 
-    documents = []
+    except Exception as error:
 
-    for file_path in client_upload_dir.iterdir():
+        print(
+            "Knowledge Base document lookup failed:",
+            error,
+        )
 
-        if not file_path.is_file():
-            continue
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Could not load knowledge-base documents."
+            ),
+        ) from error
 
-        extension = file_path.suffix.lower()
+    # =====================================================
+    # NORMALIZE RESPONSE
+    # =====================================================
 
-        # Ignore unsupported files that may have been
-        # placed manually inside the upload directory.
+    result = []
 
-        if extension not in ALLOWED_EXTENSIONS:
-            continue
+    for document in documents:
 
-        # ================================================
-        # BACKFILL / SYNC DOCUMENT METADATA
-        # ================================================
-        #
-        # Older documents may already exist physically
-        # and inside Qdrant but were uploaded before
-        # MongoDB document metadata was implemented.
-        #
-        # Register them now.
-        #
-        # save_document() uses upsert, so repeated
-        # Knowledge Base page loads will NOT create
-        # duplicate records.
-        # ================================================
+        filename = (
+            document.get("filename")
+            or document.get("file_name")
+            or document.get("name")
+            or "Document"
+        )
 
-        try:
-
-            await save_document(
-                client_id=client_id,
-                filename=file_path.name,
-                filetype=extension.lstrip("."),
-                path=str(file_path),
-                status="processed",
-            )
-
-        except Exception as error:
-
-            print(
-                "Warning: Could not sync document "
-                "metadata to MongoDB:",
-                file_path.name,
-                error,
-            )
-
-        documents.append(
+        result.append(
             {
-                "filename": file_path.name,
-                "status": "processed",
+                "filename": str(filename),
+                "status": (
+                    document.get("status")
+                    or "processed"
+                ),
+                "filetype": (
+                    document.get("filetype")
+                    or ""
+                ),
+                "created_at": document.get(
+                    "created_at"
+                ),
+                "updated_at": document.get(
+                    "updated_at"
+                ),
             }
         )
 
-    documents.sort(
-        key=lambda document: document["filename"]
-    )
-
-    return documents
+    return result
 
 
 # =========================================================
@@ -495,11 +511,12 @@ async def delete_client_document(
 
     client_id = client_id.strip()
 
-    # ==========================================
-    # Validate client
-    # ==========================================
+    # =====================================================
+    # VALIDATE CLIENT
+    # =====================================================
 
     if not client_id:
+
         raise HTTPException(
             status_code=400,
             detail="client_id cannot be empty.",
@@ -510,28 +527,34 @@ async def delete_client_document(
     )
 
     if not existing_client:
+
         raise HTTPException(
             status_code=404,
             detail="Client not found.",
         )
 
-    # ==========================================
-    # Safe filename
-    # ==========================================
+    # =====================================================
+    # SAFE FILENAME
+    # =====================================================
 
     safe_filename = Path(
         filename
     ).name
 
     if safe_filename != filename:
+
         raise HTTPException(
             status_code=400,
             detail="Invalid filename.",
         )
 
-    # ==========================================
-    # File path
-    # ==========================================
+    # =====================================================
+    # DELETE PHYSICAL FILE - BEST EFFORT ONLY
+    # =====================================================
+    #
+    # The physical file may already be gone on Vercel.
+    # Therefore its absence must NOT cause deletion to fail.
+    # =====================================================
 
     file_path = (
         UPLOAD_DIR
@@ -539,32 +562,22 @@ async def delete_client_document(
         / safe_filename
     )
 
-    if not file_path.exists():
-        raise HTTPException(
-            status_code=404,
-            detail="Document not found.",
-        )
+    if file_path.exists():
 
-    # ==========================================
-    # Delete file
-    # ==========================================
+        try:
 
-    try:
+            file_path.unlink()
 
-        file_path.unlink()
+        except Exception as error:
 
-    except Exception as error:
+            print(
+                "Warning: Could not delete physical file:",
+                error,
+            )
 
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                f"Could not delete document: {error}"
-            ),
-        ) from error
-
-    # ==========================================
-    # Delete Qdrant chunks
-    # ==========================================
+    # =====================================================
+    # DELETE QDRANT CHUNKS
+    # =====================================================
 
     try:
 
@@ -597,35 +610,38 @@ async def delete_client_document(
             error,
         )
 
-    # ==========================================
-    # Delete MongoDB document metadata
-    # ==========================================
+    # =====================================================
+    # DELETE MONGODB DOCUMENT METADATA
+    # =====================================================
 
     try:
 
-        await delete_document(
+        deleted = await delete_document(
             client_id=client_id,
             filename=safe_filename,
         )
 
     except Exception as error:
 
-        # The physical file has already been deleted.
-        # Report the metadata problem clearly rather
-        # than silently hiding it.
-
         raise HTTPException(
             status_code=500,
             detail=(
-                "Document file and vector data were deleted, "
+                "Document vector data was processed, "
                 "but MongoDB metadata could not be deleted: "
                 f"{error}"
             ),
         ) from error
 
-    # ==========================================
-    # Response
-    # ==========================================
+    if not deleted:
+
+        raise HTTPException(
+            status_code=404,
+            detail="Document metadata not found.",
+        )
+
+    # =====================================================
+    # RESPONSE
+    # =====================================================
 
     return {
         "message": "Document deleted successfully.",
