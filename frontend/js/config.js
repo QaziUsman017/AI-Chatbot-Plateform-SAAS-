@@ -1,5 +1,5 @@
 window.chatbotConfig = {
-  apiBaseUrl: "https://fastapi-five-alpha.vercel.app",
+  apiBaseUrl: "https://ai-chatbot-saas-three.vercel.app",
   widgetId: "ai-chatbot-platform-widget",
   streamingEnabled: false,
 };
