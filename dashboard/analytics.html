@@ -1035,8 +1035,6 @@ td{
 
 <main class="main">
 
- <!-- TOPBAR -->
-
  <div class="topbar">
 
   <div class="title-row">
@@ -1176,13 +1174,9 @@ td{
  </div>
 
 
- <!-- =========================
-      STATS
- ========================= -->
+ <!-- STATS -->
 
  <div class="stats">
-
-  <!-- Visitors -->
 
   <div class="card stat-card">
 
@@ -1208,8 +1202,6 @@ td{
   </div>
 
 
-  <!-- Conversations -->
-
   <div class="card stat-card">
 
    <div class="stat-top">
@@ -1234,8 +1226,6 @@ td{
   </div>
 
 
-  <!-- Messages -->
-
   <div class="card stat-card">
 
    <div class="stat-top">
@@ -1259,8 +1249,6 @@ td{
 
   </div>
 
-
-  <!-- Status -->
 
   <div class="card stat-card">
 
@@ -1288,9 +1276,7 @@ td{
  </div>
 
 
- <!-- =========================
-      ACTIVITY OVERVIEW
- ========================= -->
+ <!-- ACTIVITY -->
 
  <section class="section">
 
@@ -1345,9 +1331,7 @@ td{
  </section>
 
 
- <!-- =========================
-      CLIENT ACTIVITY
- ========================= -->
+ <!-- CLIENT ACTIVITY -->
 
  <section class="section">
 
@@ -1448,9 +1432,7 @@ td{
  </section>
 
 
- <!-- =========================
-      PERFORMANCE
- ========================= -->
+ <!-- PERFORMANCE -->
 
  <section class="section">
 
@@ -1541,9 +1523,7 @@ td{
  </section>
 
 
- <!-- =========================
-      SYSTEM STATUS
- ========================= -->
+ <!-- SYSTEM STATUS -->
 
  <section class="section">
 
@@ -1658,9 +1638,26 @@ td{
 
 /* =========================================================
    CONFIG
+   =========================================================
+   Local:
+   http://127.0.0.1:8001
+
+   Production:
+   https://ai-chatbot-saas-three.vercel.app
 ========================================================= */
 
-const API_BASE = "http://127.0.0.1:8000";
+const isLocalhost =
+ window.location.hostname === "127.0.0.1" ||
+ window.location.hostname === "localhost";
+
+const API_BASE = isLocalhost
+ ? "http://127.0.0.1:8001"
+ : window.location.origin;
+
+
+/* =========================================================
+   STATE
+========================================================= */
 
 let clients = [];
 let isAnalyticsLoading = false;
@@ -1738,8 +1735,13 @@ async function apiFetch(url, options = {}){
 
  }catch(error){
 
+  console.error(
+   "API connection error:",
+   error
+  );
+
   throw new Error(
-   "Unable to connect to the API. Please make sure the FastAPI server is running."
+   "Unable to connect to the API. Please check your connection and try again."
   );
 
  }
@@ -1789,9 +1791,14 @@ function logout(){
 
 function showError(message, options = {}){
 
- const box = document.getElementById("errorBox");
- const messageBox = document.getElementById("errorMessage");
- const retryButton = document.getElementById("errorRetryButton");
+ const box =
+  document.getElementById("errorBox");
+
+ const messageBox =
+  document.getElementById("errorMessage");
+
+ const retryButton =
+  document.getElementById("errorRetryButton");
 
  if(!box || !messageBox){
   return;
@@ -1816,7 +1823,8 @@ function showError(message, options = {}){
 
 function clearError(){
 
- const box = document.getElementById("errorBox");
+ const box =
+  document.getElementById("errorBox");
 
  if(!box){
   return;
@@ -2081,7 +2089,9 @@ async function loadClients(){
   document.createElement("option");
 
  allOption.value = "";
- allOption.textContent = "All Clients";
+
+ allOption.textContent =
+  "All Clients";
 
  select.appendChild(allOption);
 
@@ -2160,6 +2170,7 @@ async function loadAnalytics(){
   document.getElementById("clientSelect");
 
  refreshButton.disabled = true;
+
  refreshButton.classList.add("loading");
 
  refreshButton.innerHTML = `
