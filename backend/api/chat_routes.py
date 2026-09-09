@@ -13,7 +13,6 @@ from backend.database.mongodb import (
     get_conversation,
     get_conversation_for_client,
     get_client_conversations,
-    delete_conversation,
     delete_client_conversation,
     save_conversation,
 )
@@ -60,18 +59,6 @@ async def chat_health() -> dict[str, str]:
 # =========================================================
 # CHAT HISTORY
 # =========================================================
-#
-# IMPORTANT:
-#
-# Dashboard conversation history is CLIENT scoped.
-#
-# We do NOT filter conversations using the dashboard
-# user's user_id because visitor conversations can belong
-# to different visitor/user IDs.
-#
-# The authenticated dashboard user still receives only
-# conversations belonging to their own client_id.
-# =========================================================
 
 @router.get("/history")
 async def chat_history(
@@ -106,12 +93,6 @@ async def chat_history(
 
 # =========================================================
 # GET SINGLE CONVERSATION
-# =========================================================
-#
-# Dashboard needs client-scoped access.
-#
-# This allows the authenticated client owner/admin to view
-# conversations created by visitors of that client.
 # =========================================================
 
 @router.get("/{conversation_id}")
@@ -164,9 +145,6 @@ async def get_single_conversation(
 
 # =========================================================
 # DELETE CONVERSATION
-# =========================================================
-#
-# Dashboard deletion is client-scoped.
 # =========================================================
 
 @router.delete("/{conversation_id}")
@@ -223,9 +201,9 @@ async def chat(
     print("AUTHENTICATED CLIENT-SPECIFIC CHAT")
     print("========================================")
 
-    # ==========================================
+    # =========================================================
     # GET AUTHENTICATED USER
-    # ==========================================
+    # =========================================================
 
     user_id = current_user.get("user_id")
     client_id = current_user.get("client_id")
@@ -245,9 +223,9 @@ async def chat(
     user_id = user_id.strip()
     client_id = client_id.strip()
 
-    # ==========================================
+    # =========================================================
     # VALIDATE MESSAGE
-    # ==========================================
+    # =========================================================
 
     message = request.message.strip()
 
@@ -257,9 +235,9 @@ async def chat(
             detail="Message cannot be empty.",
         )
 
-    # ==========================================
+    # =========================================================
     # LOAD AGENT CONFIGURATION
-    # ==========================================
+    # =========================================================
 
     agent_config = await get_agent_config(
         client_id,
@@ -284,9 +262,9 @@ async def chat(
     print(agent_config.get("agent_name"))
     print("========================================")
 
-    # ==========================================
+    # =========================================================
     # CONVERSATION ID
-    # ==========================================
+    # =========================================================
 
     conversation_id = request.conversation_id
 
@@ -307,9 +285,9 @@ async def chat(
         print(client_id)
         print("========================================")
 
-    # ==========================================
+    # =========================================================
     # LOAD CONVERSATION FROM MONGODB
-    # ==========================================
+    # =========================================================
 
     stored_conversation = await get_conversation(
         conversation_id=conversation_id,
@@ -317,9 +295,9 @@ async def chat(
         user_id=user_id,
     )
 
-    # ==========================================
+    # =========================================================
     # PREVENT ACCESS TO ANOTHER CONVERSATION
-    # ==========================================
+    # =========================================================
 
     if request.conversation_id and not stored_conversation:
 
@@ -328,9 +306,9 @@ async def chat(
             detail="Conversation not found.",
         )
 
-    # ==========================================
+    # =========================================================
     # GET PREVIOUS MESSAGES
-    # ==========================================
+    # =========================================================
 
     conversation_history: list[dict[str, str]] = []
 
@@ -348,7 +326,6 @@ async def chat(
                 continue
 
             role = stored_message.get("role")
-
             content = stored_message.get("content")
 
             if role and content:
@@ -368,9 +345,17 @@ async def chat(
     print(conversation_id)
     print("========================================")
 
-    # ==========================================
-    # RAG
-    # ==========================================
+    # =========================================================
+    # RAG RETRIEVAL
+    # =========================================================
+
+    print("========================================")
+    print("STARTING RAG RETRIEVAL")
+    print("Query:")
+    print(repr(message))
+    print("Client ID:")
+    print(repr(client_id))
+    print("========================================")
 
     chunks = retrieve_chunks(
         message,
@@ -379,42 +364,48 @@ async def chat(
     )
 
     print("========================================")
-    print("CHAT MESSAGE:")
-    print(message)
-    print("CLIENT ID:")
-    print(client_id)
-    print("RAG CHUNKS:")
-    print(chunks)
+    print("CHAT RAG RESULTS")
+    print("Chunk count:")
+    print(len(chunks))
     print("========================================")
 
-    # ==========================================
+    # =========================================================
     # BUILD RAG CONTEXT
-    # ==========================================
+    # =========================================================
 
     context_parts: list[str] = []
 
     for chunk in chunks:
 
-        text = chunk.get(
-            "text",
-            "",
+        text = str(
+            chunk.get(
+                "text",
+                "",
+            )
         ).strip()
 
         if text:
-            context_parts.append(text)
+            context_parts.append(
+                text
+            )
 
     context = "\n\n".join(
         context_parts
     )
 
     print("========================================")
-    print("RAG CONTEXT:")
-    print(repr(context))
+    print("RAG CONTEXT")
+    print("Available:")
+    print(bool(context.strip()))
+    print("Length:")
+    print(len(context))
+    print("Content:")
+    print(repr(context[:3000]))
     print("========================================")
 
-    # ==========================================
+    # =========================================================
     # GENERATE AI RESPONSE
-    # ==========================================
+    # =========================================================
 
     response = await generate_response(
         message,
@@ -428,11 +419,13 @@ async def chat(
     print(repr(response))
     print("========================================")
 
-    # ==========================================
+    # =========================================================
     # PREPARE NEW MESSAGES
-    # ==========================================
+    # =========================================================
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(
+        timezone.utc
+    )
 
     user_message = {
         "role": "user",
@@ -446,9 +439,9 @@ async def chat(
         "created_at": now,
     }
 
-    # ==========================================
+    # =========================================================
     # BUILD COMPLETE CONVERSATION
-    # ==========================================
+    # =========================================================
 
     updated_messages: list[dict] = []
 
@@ -476,9 +469,9 @@ async def chat(
         assistant_message
     )
 
-    # ==========================================
+    # =========================================================
     # SAVE COMPLETE CONVERSATION
-    # ==========================================
+    # =========================================================
 
     try:
 
@@ -521,9 +514,9 @@ async def chat(
             detail="Failed to save conversation.",
         )
 
-    # ==========================================
+    # =========================================================
     # RESPONSE
-    # ==========================================
+    # =========================================================
 
     return {
         "response": response,
@@ -588,9 +581,9 @@ async def retrieve(
         authenticated_client_id.strip()
     )
 
-    # ==========================================
+    # =========================================================
     # SECURITY CHECK
-    # ==========================================
+    # =========================================================
 
     if (
         request.client_id.strip()
@@ -599,7 +592,10 @@ async def retrieve(
 
         raise HTTPException(
             status_code=403,
-            detail="You are not authorized to access this client's knowledge base.",
+            detail=(
+                "You are not authorized to access "
+                "this client's knowledge base."
+            ),
         )
 
     if not request.query.strip():
@@ -609,9 +605,9 @@ async def retrieve(
             detail="Query cannot be empty.",
         )
 
-    # ==========================================
+    # =========================================================
     # RAG RETRIEVAL
-    # ==========================================
+    # =========================================================
 
     chunks = retrieve_chunks(
         request.query,

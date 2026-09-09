@@ -19,7 +19,11 @@ from backend.database.vector_db import (
 from backend.services.rag.embeddings import generate_embedding
 
 
-async def retrieve_chunks(
+# =========================================================
+# CLIENT-SPECIFIC RETRIEVAL
+# =========================================================
+
+def retrieve_chunks(
     query: str,
     limit: int = 5,
     client_id: str = "",
@@ -28,7 +32,11 @@ async def retrieve_chunks(
     Retrieve relevant knowledge-base chunks for a specific client.
 
     Every retrieval is strictly filtered by client_id so that
-    one client's knowledge base can never be returned to another client.
+    one client's knowledge base can never be returned to another
+    client.
+
+    This function is intentionally synchronous because both
+    QdrantClient and generate_embedding() are synchronous.
     """
 
     # =========================================================
@@ -36,32 +44,66 @@ async def retrieve_chunks(
     # =========================================================
 
     if not query or not query.strip():
+        print("RAG: Empty query.")
         return []
 
     if limit <= 0:
+        print("RAG: Invalid limit.")
         return []
 
-    client_id = client_id.strip()
+    client_id = str(
+        client_id or ""
+    ).strip()
 
     if not client_id:
+        print("RAG: Missing client_id.")
         return []
+
+    query = query.strip()
 
     # =========================================================
     # ENSURE COLLECTION EXISTS
     # =========================================================
 
-    create_collection()
+    try:
+
+        create_collection()
+
+    except Exception as exc:
+
+        print("========================================")
+        print("RAG COLLECTION ERROR")
+        print(repr(exc))
+        print("========================================")
+
+        return []
 
     # =========================================================
     # GENERATE QUERY EMBEDDING
     # =========================================================
 
-    query_embedding = generate_embedding(
-        query.strip()
-    )
+    try:
+
+        query_embedding = generate_embedding(
+            query
+        )
+
+    except Exception as exc:
+
+        print("========================================")
+        print("RAG EMBEDDING ERROR")
+        print(type(exc).__name__)
+        print(repr(exc))
+        print("========================================")
+
+        return []
 
     if not query_embedding:
-        print("RAG: Failed to generate query embedding.")
+
+        print(
+            "RAG: Failed to generate query embedding."
+        )
+
         return []
 
     print("========================================")
@@ -110,6 +152,7 @@ async def retrieve_chunks(
 
         print("========================================")
         print("QDRANT RETRIEVAL ERROR")
+        print(type(exc).__name__)
         print(repr(exc))
         print("========================================")
 
@@ -126,7 +169,10 @@ async def retrieve_chunks(
 
     chunks: list[dict] = []
 
-    for index, result in enumerate(results, start=1):
+    for index, result in enumerate(
+        results,
+        start=1,
+    ):
 
         payload = result.payload or {}
 
@@ -165,27 +211,34 @@ async def retrieve_chunks(
         print(repr(text[:500]))
         print("----------------------------------------")
 
-        # -----------------------------------------------------
-        # Ignore empty chunks
-        # -----------------------------------------------------
+        # =====================================================
+        # IGNORE EMPTY CHUNKS
+        # =====================================================
 
         if not text:
+
+            print(
+                "RAG: Skipping empty text chunk."
+            )
+
             continue
 
-        # -----------------------------------------------------
-        # Extra client isolation check
-        # -----------------------------------------------------
+        # =====================================================
+        # EXTRA CLIENT ISOLATION CHECK
+        # =====================================================
 
         if result_client_id != client_id:
+
             print(
                 "RAG: Skipping chunk because client_id "
-                "does not match."
+                "does not match authenticated client."
             )
+
             continue
 
-        # -----------------------------------------------------
-        # Store valid chunk
-        # -----------------------------------------------------
+        # =====================================================
+        # STORE VALID CHUNK
+        # =====================================================
 
         chunks.append(
             {
@@ -208,6 +261,7 @@ async def retrieve_chunks(
         chunks,
         start=1,
     ):
+
         print(
             f"[{index}] "
             f"score={chunk.get('score')} "
@@ -215,7 +269,10 @@ async def retrieve_chunks(
         )
 
         print(
-            chunk.get("text", "")[:500]
+            chunk.get(
+                "text",
+                "",
+            )[:500]
         )
 
     print("========================================")
