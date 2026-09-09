@@ -686,8 +686,6 @@ body{
 
 <main class="main">
 
-  <!-- TOP BAR -->
-
   <div class="topbar">
 
     <div class="title">
@@ -701,7 +699,6 @@ body{
       </p>
 
     </div>
-
 
     <div class="user-box">
 
@@ -907,7 +904,6 @@ body{
 
   <div class="grid-2">
 
-
     <!-- PLATFORM STATUS -->
 
     <section class="section">
@@ -930,7 +926,6 @@ body{
 
 
       <div class="card">
-
 
         <div class="activity-item">
 
@@ -1043,7 +1038,6 @@ body{
 
       <div class="card">
 
-
         <div class="activity-item">
 
           <div class="activity-icon">
@@ -1140,7 +1134,6 @@ body{
 
       <div class="quick-actions">
 
-
         <a
           class="quick-action"
           href="/dashboard/clients.html"
@@ -1212,7 +1205,6 @@ body{
 
         </a>
 
-
       </div>
 
     </div>
@@ -1231,16 +1223,25 @@ body{
 <script>
 
 /*
- * Local FastAPI server
+ * API BASE URL
  *
- * Current local server:
- * http://127.0.0.1:8001
+ * LOCAL:
+ *   http://127.0.0.1:8001
  *
- * Do NOT use /frontend/index.html.
- * The frontend is served by FastAPI at "/".
+ * PRODUCTION:
+ *   https://ai-chatbot-saas-three.vercel.app
+ *
+ * This automatically detects whether the dashboard
+ * is running locally or on Vercel.
  */
 
-const API_BASE = "http://127.0.0.1:8001";
+const isLocalhost =
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname === "localhost";
+
+const API_BASE = isLocalhost
+  ? "http://127.0.0.1:8001"
+  : "https://ai-chatbot-saas-three.vercel.app";
 
 
 /* =========================
@@ -1285,31 +1286,47 @@ function authHeaders(){
 
 async function apiFetch(url, options = {}){
 
-  const response = await fetch(url, {
+  try{
 
-    ...options,
+    const response = await fetch(url, {
 
-    headers: {
+      ...options,
 
-      ...authHeaders(),
+      headers: {
 
-      ...(options.headers || {})
+        ...authHeaders(),
+
+        ...(options.headers || {})
+
+      }
+
+    });
+
+
+    if(response.status === 401){
+
+      logout();
+
+      throw new Error("Not authenticated");
 
     }
 
-  });
 
-
-  if(response.status === 401){
-
-    logout();
-
-    throw new Error("Not authenticated");
+    return response;
 
   }
 
+  catch(error){
 
-  return response;
+    if(error.message === "Not authenticated"){
+      throw error;
+    }
+
+    throw new Error(
+      "Unable to connect to the API."
+    );
+
+  }
 
 }
 
@@ -1354,7 +1371,9 @@ function logout(){
 
 function showError(message){
 
-  const box = document.getElementById("errorBox");
+  const box =
+    document.getElementById("errorBox");
+
 
   if(!box){
     return;
@@ -1440,7 +1459,8 @@ async function loadUser(){
   }
 
 
-  const user = await response.json();
+  const user =
+    await response.json();
 
 
   const name =
@@ -1498,7 +1518,8 @@ async function loadClients(){
   }
 
 
-  const data = await response.json();
+  const data =
+    await response.json();
 
 
   const clients =
@@ -1563,7 +1584,6 @@ async function loadClients(){
   clients
     .slice(0,5)
     .forEach(client => {
-
 
       const id =
         client.client_id ||
@@ -1722,7 +1742,6 @@ async function loadAnalytics(){
 document.addEventListener(
   "DOMContentLoaded",
   async () => {
-
 
     /*
      * If user isn't logged in,
