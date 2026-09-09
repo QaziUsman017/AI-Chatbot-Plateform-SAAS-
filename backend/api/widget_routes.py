@@ -338,9 +338,9 @@ async def widget_chat(
 
     started_at = time.perf_counter()
 
-    # -----------------------------------------------------
-    # Normalize request
-    # -----------------------------------------------------
+    # =====================================================
+    # NORMALIZE REQUEST
+    # =====================================================
 
     message = request.message.strip()
 
@@ -354,9 +354,9 @@ async def widget_chat(
         else ""
     )
 
-    # -----------------------------------------------------
-    # Validate request
-    # -----------------------------------------------------
+    # =====================================================
+    # VALIDATE REQUEST
+    # =====================================================
 
     if not message:
         raise HTTPException(
@@ -376,9 +376,9 @@ async def widget_chat(
             detail="visitor_id is required.",
         )
 
-    # -----------------------------------------------------
-    # Validate client
-    # -----------------------------------------------------
+    # =====================================================
+    # VALIDATE CLIENT
+    # =====================================================
 
     client = await get_client(
         client_id
@@ -390,18 +390,18 @@ async def widget_chat(
             detail="Client not found.",
         )
 
-    # -----------------------------------------------------
-    # Create conversation ID
-    # -----------------------------------------------------
+    # =====================================================
+    # CREATE CONVERSATION ID
+    # =====================================================
 
     if not conversation_id:
         conversation_id = str(
             uuid4()
         )
 
-    # -----------------------------------------------------
-    # Register visitor
-    # -----------------------------------------------------
+    # =====================================================
+    # REGISTER VISITOR
+    # =====================================================
 
     await register_visitor(
         visitor_id=visitor_id,
@@ -492,9 +492,9 @@ async def widget_chat(
         ):
             history = existing_messages
 
-    # -----------------------------------------------------
-    # Fallback to frontend history
-    # -----------------------------------------------------
+    # =====================================================
+    # FALLBACK TO FRONTEND HISTORY
+    # =====================================================
 
     if not history:
 
@@ -509,12 +509,9 @@ async def widget_chat(
         ):
             history = request_history
 
-    # -----------------------------------------------------
-    # Clean history
-    #
-    # Only send valid role/content pairs
-    # to the AI service.
-    # -----------------------------------------------------
+    # =====================================================
+    # CLEAN HISTORY
+    # =====================================================
 
     cleaned_history = []
 
@@ -559,78 +556,132 @@ async def widget_chat(
     history = cleaned_history
 
     # =====================================================
-    # RAG
+    # RAG RETRIEVAL
     # =====================================================
 
     context = ""
 
+    print("========================================")
+    print("WIDGET RAG RETRIEVAL")
+    print("========================================")
+    print("QUERY:")
+    print(repr(message))
+    print("CLIENT ID:")
+    print(repr(client_id))
+    print("LIMIT:")
+    print(5)
+    print("========================================")
+
     try:
 
-        chunks = await retrieve_chunks(
+        # IMPORTANT:
+        #
+        # retrieve_chunks() is SYNCHRONOUS.
+        #
+        # Do NOT use:
+        #
+        #     await retrieve_chunks(...)
+        #
+        # Also use named arguments so client_id can never
+        # accidentally be passed as the limit parameter.
+
+        chunks = retrieve_chunks(
             query=message,
+            limit=5,
             client_id=client_id,
         )
 
-        if chunks:
-
-            context = "\n\n".join(
-                str(chunk)
-                for chunk in chunks
-            )
-
-    except TypeError:
-
-        # Compatibility fallback for an older
-        # retrieve_chunks positional signature.
-        try:
-
-            chunks = await retrieve_chunks(
-                message,
-                client_id,
-            )
-
-            if chunks:
-
-                context = "\n\n".join(
-                    str(chunk)
-                    for chunk in chunks
-                )
-
-        except Exception as exc:
-
+        if not isinstance(
+            chunks,
+            list,
+        ):
             print(
-                "RAG retrieval fallback failed:",
-                repr(exc),
+                "RAG: retrieve_chunks() did not return a list."
+            )
+            chunks = []
+
+        print("========================================")
+        print("WIDGET RAG RESULT")
+        print("CHUNK COUNT:")
+        print(len(chunks))
+        print("========================================")
+
+        # -------------------------------------------------
+        # Build clean AI context.
+        #
+        # Only the actual chunk text is sent to the AI.
+        # -------------------------------------------------
+
+        context_parts = []
+
+        for index, chunk in enumerate(
+            chunks,
+            start=1,
+        ):
+
+            if not isinstance(
+                chunk,
+                dict,
+            ):
+                print(
+                    f"RAG: Skipping invalid chunk #{index}."
+                )
+                continue
+
+            text = str(
+                chunk.get(
+                    "text",
+                    "",
+                )
+            ).strip()
+
+            if not text:
+                print(
+                    f"RAG: Skipping empty chunk #{index}."
+                )
+                continue
+
+            context_parts.append(
+                text
             )
 
-            context = ""
+        context = "\n\n".join(
+            context_parts
+        )
 
     except Exception as exc:
 
-        print(
-            "RAG retrieval failed:",
-            repr(exc),
-        )
+        print("========================================")
+        print("WIDGET RAG RETRIEVAL ERROR")
+        print("========================================")
+        print("TYPE:")
+        print(type(exc).__name__)
+        print("ERROR:")
+        print(repr(exc))
+        print("========================================")
 
         context = ""
+
+    # =====================================================
+    # RAG CONTEXT LOG
+    # =====================================================
+
+    print("========================================")
+    print("WIDGET RAG CONTEXT")
+    print("========================================")
+    print("AVAILABLE:")
+    print(bool(context.strip()))
+    print("LENGTH:")
+    print(len(context))
+    print("CONTENT:")
+    print(repr(context[:3000]))
+    print("========================================")
 
     # =====================================================
     # AI RESPONSE
     # =====================================================
 
     try:
-
-        # IMPORTANT:
-        #
-        # generate_response() accepts:
-        #
-        #   message
-        #   conversation_history
-        #   context
-        #   agent_config
-        #
-        # Do NOT pass client_id or history here.
-        #
 
         response = await generate_response(
             message=message,
@@ -654,9 +705,9 @@ async def widget_chat(
             ),
         ) from exc
 
-    # -----------------------------------------------------
-    # Normalize AI response
-    # -----------------------------------------------------
+    # =====================================================
+    # NORMALIZE AI RESPONSE
+    # =====================================================
 
     if isinstance(
         response,

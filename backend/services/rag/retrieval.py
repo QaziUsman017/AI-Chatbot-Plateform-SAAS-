@@ -32,18 +32,23 @@ def retrieve_chunks(
     client_id: str = "",
 ) -> list[dict]:
     """
-    Retrieve relevant knowledge-base chunks for a specific client.
+    Retrieve relevant knowledge-base chunks for one client.
 
-    Uses Qdrant's search endpoint and strictly filters results
-    by client_id.
+    This function is synchronous.
 
-    This function is intentionally synchronous because the
-    QdrantClient and embedding function are synchronous.
+    Qdrant client version:
+        qdrant-client 1.19.0
+
+    Uses:
+        client.query_points()
+
+    Client isolation is enforced at the Qdrant filter level
+    and again when processing returned payloads.
     """
 
-    # =========================================================
+    # =====================================================
     # VALIDATE QUERY
-    # =========================================================
+    # =====================================================
 
     if not query or not str(query).strip():
         print("RAG: Empty query.")
@@ -51,9 +56,9 @@ def retrieve_chunks(
 
     query = str(query).strip()
 
-    # =========================================================
+    # =====================================================
     # NORMALIZE LIMIT
-    # =========================================================
+    # =====================================================
 
     try:
         limit = int(limit)
@@ -71,12 +76,12 @@ def retrieve_chunks(
         )
         limit = 5
 
-    # Prevent unnecessarily large retrieval requests.
+    # Prevent unnecessarily large requests.
     limit = min(limit, 20)
 
-    # =========================================================
+    # =====================================================
     # NORMALIZE CLIENT ID
-    # =========================================================
+    # =====================================================
 
     client_id = str(client_id or "").strip()
 
@@ -84,9 +89,9 @@ def retrieve_chunks(
         print("RAG: Missing client_id.")
         return []
 
-    # =========================================================
+    # =====================================================
     # ENSURE COLLECTION EXISTS
-    # =========================================================
+    # =====================================================
 
     try:
         create_collection()
@@ -94,14 +99,17 @@ def retrieve_chunks(
     except Exception as exc:
         print("========================================")
         print("RAG COLLECTION ERROR")
+        print("TYPE:")
         print(type(exc).__name__)
+        print("ERROR:")
         print(repr(exc))
         print("========================================")
+
         return []
 
-    # =========================================================
+    # =====================================================
     # GENERATE QUERY EMBEDDING
-    # =========================================================
+    # =====================================================
 
     try:
         query_embedding = generate_embedding(query)
@@ -109,9 +117,12 @@ def retrieve_chunks(
     except Exception as exc:
         print("========================================")
         print("RAG EMBEDDING ERROR")
+        print("TYPE:")
         print(type(exc).__name__)
+        print("ERROR:")
         print(repr(exc))
         print("========================================")
+
         return []
 
     if not query_embedding:
@@ -120,24 +131,32 @@ def retrieve_chunks(
         )
         return []
 
-    # =========================================================
-    # VALIDATE EMBEDDING DIMENSION
-    # =========================================================
+    # =====================================================
+    # VALIDATE EMBEDDING
+    # =====================================================
 
-    embedding_dimension = len(query_embedding)
+    try:
+        embedding_dimension = len(query_embedding)
+    except Exception:
+        print(
+            "RAG: Could not determine embedding dimension."
+        )
+        return []
 
     if embedding_dimension != 384:
         print("========================================")
         print("RAG EMBEDDING DIMENSION ERROR")
         print(
-            f"Expected: 384 | Received: {embedding_dimension}"
+            f"Expected: 384 | Received: "
+            f"{embedding_dimension}"
         )
         print("========================================")
+
         return []
 
-    # =========================================================
+    # =====================================================
     # RETRIEVAL LOG
-    # =========================================================
+    # =====================================================
 
     print("========================================")
     print("RAG RETRIEVAL")
@@ -154,9 +173,9 @@ def retrieve_chunks(
     print(COLLECTION_NAME)
     print("========================================")
 
-    # =========================================================
-    # CLIENT-SPECIFIC FILTER
-    # =========================================================
+    # =====================================================
+    # STRICT CLIENT FILTER
+    # =====================================================
 
     client_filter = Filter(
         must=[
@@ -169,24 +188,28 @@ def retrieve_chunks(
         ]
     )
 
-    # =========================================================
-    # QDRANT SEARCH
-    # =========================================================
+    # =====================================================
+    # QDRANT QUERY
+    # =====================================================
 
     try:
-        print("RAG: Sending search request to Qdrant...")
+        print(
+            "RAG: Sending query_points request to Qdrant..."
+        )
 
-        search_result = client.search(
+        query_response = client.query_points(
             collection_name=COLLECTION_NAME,
-            query_vector=query_embedding,
+            query=query_embedding,
             query_filter=client_filter,
             limit=limit,
             with_payload=True,
         )
 
-        results = search_result or []
+        results = query_response.points
 
-        print("RAG: Qdrant search request completed.")
+        print(
+            "RAG: Qdrant query_points request completed."
+        )
 
     except Exception as exc:
         print("========================================")
@@ -197,7 +220,7 @@ def retrieve_chunks(
         print("ERROR:")
         print(repr(exc))
 
-        # Some Qdrant exceptions expose the raw server response.
+        # Print raw response information when available.
         if hasattr(exc, "content"):
             try:
                 print("QDRANT RESPONSE CONTENT:")
@@ -212,22 +235,29 @@ def retrieve_chunks(
             except Exception:
                 pass
 
+        if hasattr(exc, "response"):
+            try:
+                print("QDRANT RESPONSE:")
+                print(exc.response)
+            except Exception:
+                pass
+
         print("========================================")
 
         return []
 
-    # =========================================================
+    # =====================================================
     # RESULTS COUNT
-    # =========================================================
+    # =====================================================
 
     print("========================================")
     print("QDRANT RESULTS COUNT:")
     print(len(results))
     print("========================================")
 
-    # =========================================================
+    # =====================================================
     # PROCESS RESULTS
-    # =========================================================
+    # =====================================================
 
     chunks: list[dict] = []
 
@@ -276,9 +306,9 @@ def retrieve_chunks(
         print(repr(text[:500]))
         print("----------------------------------------")
 
-        # =====================================================
-        # IGNORE EMPTY TEXT
-        # =====================================================
+        # -------------------------------------------------
+        # Ignore empty text
+        # -------------------------------------------------
 
         if not text:
             print(
@@ -286,20 +316,20 @@ def retrieve_chunks(
             )
             continue
 
-        # =====================================================
-        # EXTRA CLIENT ISOLATION
-        # =====================================================
+        # -------------------------------------------------
+        # Extra client isolation
+        # -------------------------------------------------
 
         if result_client_id != client_id:
             print(
                 "RAG: Skipping result because client_id "
-                "does not match authenticated client."
+                "does not match requested client."
             )
             continue
 
-        # =====================================================
-        # STORE VALID RESULT
-        # =====================================================
+        # -------------------------------------------------
+        # Store valid chunk
+        # -------------------------------------------------
 
         chunks.append(
             {
@@ -310,9 +340,9 @@ def retrieve_chunks(
             }
         )
 
-    # =========================================================
+    # =====================================================
     # FINAL RESULTS
-    # =========================================================
+    # =====================================================
 
     print("========================================")
     print("FINAL RETRIEVED CHUNKS:")
