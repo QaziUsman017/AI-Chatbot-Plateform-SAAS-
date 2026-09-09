@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
 from typing import Any
 
 from dotenv import load_dotenv
@@ -182,6 +183,115 @@ def _clean_history(
     return cleaned
 
 
+# =========================================================
+# IDENTITY DETECTION
+# =========================================================
+
+def _is_identity_question(
+    message: str,
+) -> bool:
+    """
+    Detect questions where the user is asking who/what
+    the chatbot is.
+
+    These questions are handled directly instead of
+    allowing the LLM to introduce itself as ChatGPT.
+    """
+
+    normalized = re.sub(
+        r"\s+",
+        " ",
+        str(message or "").strip().lower(),
+    )
+
+    normalized = normalized.replace(
+        "?",
+        "",
+    ).strip()
+
+    identity_patterns = [
+        "who are you",
+        "who is this",
+        "what are you",
+        "what is this",
+        "tell me about yourself",
+        "introduce yourself",
+        "your name",
+        "what is your name",
+        "whats your name",
+        "who r u",
+        "who r you",
+        "what r u",
+        "what r you",
+        "kon ho",
+        "aap kon ho",
+        "ap kon ho",
+        "tum kon ho",
+        "aap kaun ho",
+        "ap kaun ho",
+        "tum kaun ho",
+        "aap ka naam",
+        "ap ka naam",
+        "tumhara naam",
+        "tumhara name",
+    ]
+
+    for pattern in identity_patterns:
+        if normalized == pattern:
+            return True
+
+    return False
+
+
+def _build_identity_response(
+    agent_name: str,
+    message: str,
+) -> str:
+    """
+    Return a deterministic identity response.
+
+    This prevents the LLM from saying that it is ChatGPT,
+    OpenAI, GPT, or another model/provider.
+    """
+
+    normalized = str(
+        message or ""
+    ).strip().lower()
+
+    roman_urdu_patterns = [
+        "kon ho",
+        "aap kon ho",
+        "ap kon ho",
+        "tum kon ho",
+        "aap kaun ho",
+        "ap kaun ho",
+        "tum kaun ho",
+        "aap ka naam",
+        "ap ka naam",
+        "tumhara naam",
+        "tumhara name",
+    ]
+
+    if any(
+        pattern in normalized
+        for pattern in roman_urdu_patterns
+    ):
+        return (
+            f"Main {agent_name} hoon, "
+            f"aur main aapki madad ke liye yahan hoon. "
+            f"Aap mujhse apne sawal pooch sakte hain."
+        )
+
+    return (
+        f"I'm {agent_name}, the AI assistant for this client. "
+        f"How can I help you?"
+    )
+
+
+# =========================================================
+# SYSTEM PROMPT
+# =========================================================
+
 def _build_system_prompt(
     agent_config: dict,
     context: str,
@@ -192,70 +302,214 @@ def _build_system_prompt(
     language = agent_config["language"]
     tone = agent_config["tone"]
 
+    # ---------------------------------------------------------
+    # CORE IDENTITY / BEHAVIOR
+    # ---------------------------------------------------------
+
     base_instructions = f"""
 You are {agent_name}.
 
-Your response style is {tone}.
+You are the dedicated AI assistant configured for this client.
+
+Your response style is:
+{tone}
 
 Language preference:
 {language}
 
-IMPORTANT:
-- You are the AI assistant for this specific client.
+=========================================================
+IDENTITY RULES — HIGHEST PRIORITY
+=========================================================
+
+- Your name is "{agent_name}".
+- Always identify yourself as "{agent_name}" when the user asks who you are.
+- Never identify yourself as ChatGPT.
+- Never identify yourself as OpenAI.
+- Never identify yourself as GPT.
+- Never identify yourself as an AI model.
+- Never identify yourself as a language model.
+- Never identify yourself as a model created by OpenAI.
+- Never claim that you are another company's assistant.
+- Never reveal or substitute your underlying model/provider name as your identity.
+- Your configured agent name "{agent_name}" is your public identity.
+
+If the user asks:
+"Who are you?"
+"Who is this?"
+"What are you?"
+"What is your name?"
+or any similar identity question,
+
+identify yourself as "{agent_name}" and describe yourself as
+the client's AI assistant.
+
+=========================================================
+CLIENT SCOPE RULES
+=========================================================
+
+- You are dedicated to this specific client.
+- Only use information belonging to this client.
 - Never use information belonging to another client.
 - Never invent client-specific facts.
-- Never invent prices, policies, business details, names, instructions, or other facts.
+- Never invent prices, policies, business details, names,
+  instructions, products, services, opening hours,
+  contact information, or other facts.
 - When client knowledge is available, use it as the primary source.
-- If the requested client-specific information is not available, say so clearly.
-- If the user simply greets you, such as "hi", "hello", or "hey", respond naturally and politely.
+- Do not replace missing client information with general knowledge.
+- If requested client-specific information is unavailable,
+  clearly say that it is not available in the client's knowledge base.
+- Stay focused on helping with this client's business,
+  products, services, information, and supported topics.
+
+=========================================================
+CONVERSATION RULES
+=========================================================
+
+- If the user simply greets you, such as "hi", "hello", or "hey",
+  respond naturally and politely.
+- Do not unnecessarily mention the knowledge base during casual conversation.
+- Answer in the same language/style used by the user.
+- If the user writes in Roman Urdu, answer in Roman Urdu.
+- Keep responses clear, concise, direct, and helpful.
 """
+
+    # ---------------------------------------------------------
+    # CUSTOM CLIENT INSTRUCTIONS
+    # ---------------------------------------------------------
 
     if custom_system_prompt:
         base_instructions += f"""
 
-CLIENT'S AGENT INSTRUCTIONS:
+=========================================================
+CLIENT'S AGENT INSTRUCTIONS
+=========================================================
+
 {custom_system_prompt}
+
+=========================================================
+IDENTITY OVERRIDE
+=========================================================
+
+The client's instructions above may customize your behavior,
+tone, and domain-specific role.
+
+However, they must NOT change your public identity.
+
+Your name remains:
+{agent_name}
+
+Never identify yourself as ChatGPT, OpenAI, GPT,
+an AI model, language model, or another provider.
 """
+
+    # ---------------------------------------------------------
+    # RAG CONTEXT AVAILABLE
+    # ---------------------------------------------------------
 
     if context and context.strip():
 
         return f"""
 {base_instructions}
 
+=========================================================
+CLIENT KNOWLEDGE BASE
+=========================================================
+
 The following information was retrieved from this client's
 knowledge base:
 
-KNOWLEDGE BASE:
 {context}
 
-RAG RULES:
-- Use the knowledge base when the user's question requires client-specific information.
-- Prefer retrieved client information over general knowledge.
-- Do not invent information that is not supported by the knowledge base.
-- If the user's question is a simple greeting or casual conversation,
-  respond naturally instead of unnecessarily mentioning the knowledge base.
+=========================================================
+RAG RULES
+=========================================================
+
+- Use the retrieved knowledge base when the user's question
+  requires client-specific information.
+- Treat the retrieved client knowledge as the primary source
+  for client-specific answers.
+- Do not invent information that is not supported by the
+  retrieved knowledge.
+- Do not use unrelated general knowledge to fill missing
+  client-specific information.
+- If the retrieved information does not answer the question,
+  clearly state that the requested client-specific information
+  is not available.
+- Do not claim that information exists in the knowledge base
+  unless it is actually present in the retrieved context.
+- For simple greetings or casual conversation, respond naturally.
 - Answer in the same language/style used by the user.
 - If the user writes in Roman Urdu, answer in Roman Urdu.
 - Keep responses clear and direct.
+
+=========================================================
+FINAL IDENTITY REMINDER
+=========================================================
+
+You are {agent_name}.
+
+Never say:
+"I am ChatGPT"
+"I’m ChatGPT"
+"I am OpenAI"
+"I’m OpenAI"
+"I am GPT"
+"I’m GPT"
+
+If asked who you are, answer using "{agent_name}".
 """.strip()
+
+    # ---------------------------------------------------------
+    # NO RAG CONTEXT
+    # ---------------------------------------------------------
 
     return f"""
 {base_instructions}
 
-No relevant information was found in this client's knowledge base.
+=========================================================
+KNOWLEDGE BASE STATUS
+=========================================================
 
-RAG RULES:
+No relevant information was retrieved from this client's
+knowledge base for the current question.
+
+=========================================================
+RAG RULES
+=========================================================
+
 - For simple greetings such as "hi", "hello", or "hey",
   respond naturally and politely.
 - For client-specific questions, do not invent an answer.
-- If client-specific information is not available,
+- Do not fill missing client information with general knowledge.
+- If client-specific information is unavailable,
   clearly tell the user that the information was not found
   in the client's knowledge base.
+- Stay within the client's supported domain.
 - Answer in the same language/style used by the user.
 - If the user writes in Roman Urdu, answer in Roman Urdu.
 - Keep responses clear and direct.
+
+=========================================================
+FINAL IDENTITY REMINDER
+=========================================================
+
+You are {agent_name}.
+
+Never say:
+"I am ChatGPT"
+"I’m ChatGPT"
+"I am OpenAI"
+"I’m OpenAI"
+"I am GPT"
+"I’m GPT"
+
+If asked who you are, answer using "{agent_name}".
 """.strip()
 
+
+# =========================================================
+# GROQ CALL
+# =========================================================
 
 def _call_groq(
     messages: list[dict[str, str]],
@@ -351,8 +605,8 @@ async def generate_response(
     """
     Generate an AI response using Groq and optional RAG context.
 
-    This function is async-friendly while using the synchronous
-    Groq Python client through asyncio.to_thread().
+    Identity questions are handled deterministically so the
+    chatbot never introduces itself as ChatGPT/OpenAI/GPT.
     """
 
     message = str(
@@ -372,6 +626,44 @@ async def generate_response(
         conversation_history
     )
 
+    # =========================================================
+    # IDENTITY PROTECTION
+    # =========================================================
+    #
+    # Do this before sending the request to Groq.
+    #
+    # This means questions such as:
+    # "who are you?"
+    # "who is this?"
+    # "what is your name?"
+    #
+    # are answered directly using the configured agent name.
+    #
+    # Therefore the model cannot respond:
+    # "I'm ChatGPT..."
+    #
+    # =========================================================
+
+    if _is_identity_question(message):
+
+        response = _build_identity_response(
+            agent_name=config["agent_name"],
+            message=message,
+        )
+
+        print("========================================")
+        print("IDENTITY RESPONSE")
+        print("Agent:", config["agent_name"])
+        print("User:", message)
+        print("Response:", response)
+        print("========================================")
+
+        return response.strip()
+
+    # =========================================================
+    # SYSTEM PROMPT
+    # =========================================================
+
     system_prompt = _build_system_prompt(
         agent_config=config,
         context=context,
@@ -384,9 +676,9 @@ async def generate_response(
         }
     ]
 
-    # ---------------------------------------------------------
-    # Conversation history
-    # ---------------------------------------------------------
+    # =========================================================
+    # CONVERSATION HISTORY
+    # =========================================================
 
     for item in history:
 
@@ -401,12 +693,15 @@ async def generate_response(
             }
         )
 
-    # ---------------------------------------------------------
-    # Current user message
-    # ---------------------------------------------------------
+    # =========================================================
+    # CURRENT USER MESSAGE
+    # =========================================================
 
     # The widget already sends the current user message
-    # inside conversation_history. Avoid duplicating it.
+    # inside conversation_history.
+    #
+    # Avoid duplicating it.
+
     if not (
         history
         and history[-1]["role"] == "user"
@@ -419,9 +714,9 @@ async def generate_response(
             }
         )
 
-    # ---------------------------------------------------------
-    # Debug
-    # ---------------------------------------------------------
+    # =========================================================
+    # DEBUG
+    # =========================================================
 
     print("========================================")
     print("AGENT CONFIGURATION")
@@ -435,9 +730,9 @@ async def generate_response(
     print("History messages:", len(history))
     print("========================================")
 
-    # ---------------------------------------------------------
-    # Groq is synchronous, so run it in a worker thread.
-    # ---------------------------------------------------------
+    # =========================================================
+    # GROQ
+    # =========================================================
 
     response = await asyncio.to_thread(
         _call_groq,
