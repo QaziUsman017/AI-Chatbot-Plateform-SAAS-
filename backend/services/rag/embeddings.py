@@ -26,7 +26,7 @@ HF_API_URL = (
     f"{MODEL_NAME}/pipeline/feature-extraction"
 )
 
-HF_API_KEY = os.getenv("HF_API_KEY")
+HF_API_KEY = os.getenv("Token")
 
 VECTOR_SIZE = 384
 
