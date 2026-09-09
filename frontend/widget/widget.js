@@ -42,6 +42,15 @@
 
   let config = {};
 
+  /*
+   * Tracks whether the dashboard has already sent
+   * the latest preview configuration.
+   *
+   * This is used ONLY in preview mode so the default
+   * config never overwrites the dashboard configuration.
+   */
+  let previewConfigReceived = false;
+
   let conversationId = null;
   let messages = [];
 
@@ -465,12 +474,20 @@
 
   async function loadWidgetConfig() {
     if (IS_PREVIEW) {
-      config = {
-        ...DEFAULT_CONFIG,
-        ...config
-      };
+      /*
+       * In preview mode, the dashboard is the source of truth.
+       *
+       * Do not overwrite a configuration that has already
+       * arrived through postMessage from the dashboard.
+       */
+      if (!previewConfigReceived) {
+        config = {
+          ...DEFAULT_CONFIG,
+          ...config
+        };
 
-      applyConfig();
+        applyConfig();
+      }
 
       return;
     }
@@ -2168,6 +2185,12 @@
     if (!IS_PREVIEW) {
       return;
     }
+
+    /*
+     * The dashboard has now provided the actual
+     * configuration for this preview.
+     */
+    previewConfigReceived = true;
 
     config = {
       ...DEFAULT_CONFIG,
