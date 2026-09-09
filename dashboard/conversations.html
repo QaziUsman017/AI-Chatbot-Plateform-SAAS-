@@ -508,7 +508,7 @@ function logout(){
   localStorage.removeItem(k);
   sessionStorage.removeItem(k);
  });
- window.location.href="../frontend/index.html";
+ window.location.href="/";
 }
 
 function escapeHtml(value){
@@ -740,7 +740,7 @@ document.getElementById("searchInput").addEventListener("input",event=>{
 
 document.addEventListener("DOMContentLoaded",async()=>{
  if(!getToken()){
-  window.location.href="../frontend/index.html";
+  window.location.href="/";
   return;
  }
 

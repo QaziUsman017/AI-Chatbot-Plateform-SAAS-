@@ -6,7 +6,11 @@
 <title>Dashboard - AI Chatbot Platform</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 :root{
   --navy:#0f172a;
@@ -31,7 +35,13 @@ body{
   min-height:100vh;
 }
 
-.dashboard{min-height:100vh}
+.dashboard{
+  min-height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
 
 .sidebar{
   position:fixed;
@@ -65,8 +75,15 @@ body{
   font-weight:800;
 }
 
-.brand h2{font-size:16px;line-height:1}
-.brand h2 span{color:#38bdf8}
+.brand h2{
+  font-size:16px;
+  line-height:1;
+}
+
+.brand h2 span{
+  color:#38bdf8;
+}
+
 .brand small{
   display:block;
   margin-top:5px;
@@ -154,6 +171,10 @@ body{
   color:#fff;
 }
 
+/* =========================
+   MAIN
+========================= */
+
 .main{
   margin-left:248px;
   width:calc(100% - 248px);
@@ -215,6 +236,10 @@ body{
   font-size:9px;
 }
 
+/* =========================
+   ERROR
+========================= */
+
 .error{
   display:none;
   background:var(--red-bg);
@@ -225,6 +250,10 @@ body{
   margin-bottom:18px;
   font-size:12px;
 }
+
+/* =========================
+   STATS
+========================= */
 
 .stats{
   display:grid;
@@ -241,7 +270,10 @@ body{
   box-shadow:0 3px 12px rgba(15,23,42,.025);
 }
 
-.stat-card{transition:.2s}
+.stat-card{
+  transition:.2s;
+}
+
 .stat-card:hover{
   border-color:#cbd5e1;
   transform:translateY(-1px);
@@ -279,7 +311,13 @@ body{
   letter-spacing:-.5px;
 }
 
-.section{margin-bottom:20px}
+/* =========================
+   SECTIONS
+========================= */
+
+.section{
+  margin-bottom:20px;
+}
 
 .section-header{
   display:flex;
@@ -297,6 +335,10 @@ body{
   font-size:11px;
   margin-top:4px;
 }
+
+/* =========================
+   CLIENT SUMMARY
+========================= */
 
 .client-summary{
   display:flex;
@@ -333,6 +375,10 @@ body{
   font-size:11px;
 }
 
+/* =========================
+   STATUS
+========================= */
+
 .status{
   display:inline-flex;
   align-items:center;
@@ -352,6 +398,10 @@ body{
   background:#16a34a;
 }
 
+/* =========================
+   BUTTON
+========================= */
+
 .link-btn{
   border:0;
   background:var(--navy);
@@ -361,15 +411,27 @@ body{
   text-decoration:none;
   font-size:10px;
   font-weight:650;
+  display:inline-block;
+  cursor:pointer;
 }
 
-.link-btn:hover{background:#1e293b}
+.link-btn:hover{
+  background:#1e293b;
+}
+
+/* =========================
+   GRID
+========================= */
 
 .grid-2{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:16px;
 }
+
+/* =========================
+   ACTIVITY
+========================= */
 
 .activity-item{
   display:flex;
@@ -378,7 +440,9 @@ body{
   border-bottom:1px solid #f1f5f9;
 }
 
-.activity-item:last-child{border-bottom:0}
+.activity-item:last-child{
+  border-bottom:0;
+}
 
 .activity-icon{
   width:32px;
@@ -403,6 +467,10 @@ body{
   font-size:10px;
   margin-top:3px;
 }
+
+/* =========================
+   QUICK ACTIONS
+========================= */
 
 .quick-actions{
   display:grid;
@@ -450,20 +518,37 @@ body{
   margin-top:3px;
 }
 
+/* =========================
+   RESPONSIVE
+========================= */
+
 @media(max-width:1050px){
-  .stats{grid-template-columns:repeat(2,1fr)}
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
 }
 
 @media(max-width:900px){
-  .sidebar{width:215px}
+
+  .sidebar{
+    width:215px;
+  }
+
   .main{
     margin-left:215px;
     width:calc(100% - 215px);
   }
-  .grid-2{grid-template-columns:1fr}
+
+  .grid-2{
+    grid-template-columns:1fr;
+  }
+
 }
 
 @media(max-width:760px){
+
   .sidebar{
     position:relative;
     width:100%;
@@ -487,16 +572,27 @@ body{
     flex-direction:column;
   }
 
-  .user-box{width:100%}
+  .user-box{
+    width:100%;
+  }
+
 }
 
 @media(max-width:500px){
-  .stats{grid-template-columns:1fr}
-  .quick-actions{grid-template-columns:1fr}
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .quick-actions{
+    grid-template-columns:1fr;
+  }
+
   .client-summary{
     align-items:flex-start;
     flex-direction:column;
   }
+
 }
 </style>
 </head>
@@ -505,210 +601,509 @@ body{
 
 <div class="dashboard">
 
+<!-- =========================
+     SIDEBAR
+========================= -->
+
 <aside class="sidebar">
 
   <div class="brand">
-    <div class="brand-icon">AI</div>
-    <div>
-      <h2>AI <span>Chatbot</span></h2>
-      <small>Admin Platform</small>
+
+    <div class="brand-icon">
+      AI
     </div>
+
+    <div>
+
+      <h2>
+        AI <span>Chatbot</span>
+      </h2>
+
+      <small>
+        Admin Platform
+      </small>
+
+    </div>
+
   </div>
 
-  <div class="menu-label">Main Menu</div>
+  <div class="menu-label">
+    Main Menu
+  </div>
 
   <nav class="nav">
-    <a href="index.html" class="active">
+
+    <a href="/dashboard/" class="active">
       <span class="nav-icon">📊</span>
       <span>Dashboard</span>
     </a>
 
-    <a href="clients.html">
+    <a href="/dashboard/clients.html">
       <span class="nav-icon">👥</span>
       <span>Clients</span>
     </a>
 
-    <a href="chatbot-settings.html">
+    <a href="/dashboard/chatbot-settings.html">
       <span class="nav-icon">🤖</span>
       <span>Chatbot Settings</span>
     </a>
 
-    <a href="knowledge-base.html">
+    <a href="/dashboard/knowledge-base.html">
       <span class="nav-icon">📚</span>
       <span>Knowledge Base</span>
     </a>
 
-    <a href="conversations.html">
+    <a href="/dashboard/conversations.html">
       <span class="nav-icon">💬</span>
       <span>Conversations</span>
     </a>
 
-    <a href="analytics.html">
+    <a href="/dashboard/analytics.html">
       <span class="nav-icon">📈</span>
       <span>Analytics</span>
     </a>
+
   </nav>
 
   <div class="logout-area">
-    <button class="logout-btn" onclick="logout()">↪ &nbsp; Logout</button>
+
+    <button
+      class="logout-btn"
+      type="button"
+      onclick="logout()"
+    >
+      ↪ &nbsp; Logout
+    </button>
+
   </div>
 
 </aside>
 
+
+<!-- =========================
+     MAIN
+========================= -->
+
 <main class="main">
 
+  <!-- TOP BAR -->
+
   <div class="topbar">
+
     <div class="title">
-      <h1>Dashboard</h1>
-      <p>Overview of your AI chatbot platform.</p>
+
+      <h1>
+        Dashboard
+      </h1>
+
+      <p>
+        Overview of your AI chatbot platform.
+      </p>
+
     </div>
+
 
     <div class="user-box">
-      <div class="user-avatar" id="userAvatar">U</div>
-      <div class="user-info">
-        <strong id="userName">Loading...</strong>
-        <span id="userRole">Authenticated</span>
+
+      <div
+        class="user-avatar"
+        id="userAvatar"
+      >
+        U
       </div>
+
+      <div class="user-info">
+
+        <strong id="userName">
+          Loading...
+        </strong>
+
+        <span id="userRole">
+          Authenticated
+        </span>
+
+      </div>
+
     </div>
+
   </div>
 
-  <div class="error" id="errorBox"></div>
+
+  <!-- ERROR -->
+
+  <div
+    class="error"
+    id="errorBox"
+  ></div>
+
+
+  <!-- =========================
+       STATS
+  ========================= -->
 
   <div class="stats">
 
     <div class="card stat-card">
+
       <div class="stat-top">
-        <span class="stat-label">Clients</span>
-        <div class="stat-icon">👥</div>
+
+        <span class="stat-label">
+          Clients
+        </span>
+
+        <div class="stat-icon">
+          👥
+        </div>
+
       </div>
-      <div class="stat-value" id="clientCount">—</div>
+
+      <div
+        class="stat-value"
+        id="clientCount"
+      >
+        —
+      </div>
+
     </div>
 
-    <div class="card stat-card">
-      <div class="stat-top">
-        <span class="stat-label">Visitors</span>
-        <div class="stat-icon">👤</div>
-      </div>
-      <div class="stat-value" id="visitorCount">—</div>
-    </div>
 
     <div class="card stat-card">
+
       <div class="stat-top">
-        <span class="stat-label">Conversations</span>
-        <div class="stat-icon">💬</div>
+
+        <span class="stat-label">
+          Visitors
+        </span>
+
+        <div class="stat-icon">
+          👤
+        </div>
+
       </div>
-      <div class="stat-value" id="conversationCount">—</div>
+
+      <div
+        class="stat-value"
+        id="visitorCount"
+      >
+        —
+      </div>
+
     </div>
 
+
     <div class="card stat-card">
+
       <div class="stat-top">
-        <span class="stat-label">Documents</span>
-        <div class="stat-icon">📚</div>
+
+        <span class="stat-label">
+          Conversations
+        </span>
+
+        <div class="stat-icon">
+          💬
+        </div>
+
       </div>
-      <div class="stat-value" id="documentCount">—</div>
+
+      <div
+        class="stat-value"
+        id="conversationCount"
+      >
+        —
+      </div>
+
+    </div>
+
+
+    <div class="card stat-card">
+
+      <div class="stat-top">
+
+        <span class="stat-label">
+          Documents
+        </span>
+
+        <div class="stat-icon">
+          📚
+        </div>
+
+      </div>
+
+      <div
+        class="stat-value"
+        id="documentCount"
+      >
+        —
+      </div>
+
     </div>
 
   </div>
 
+
+  <!-- =========================
+       CLIENTS
+  ========================= -->
+
   <section class="section">
 
     <div class="section-header">
+
       <div>
-        <h2>Clients</h2>
-        <p>Manage your connected client chatbots.</p>
+
+        <h2>
+          Clients
+        </h2>
+
+        <p>
+          Manage your connected client chatbots.
+        </p>
+
       </div>
-      <a class="link-btn" href="clients.html">View All</a>
+
+      <a
+        class="link-btn"
+        href="/dashboard/clients.html"
+      >
+        View All
+      </a>
+
     </div>
 
-    <div class="card" id="clientsContainer">
+
+    <div
+      class="card"
+      id="clientsContainer"
+    >
+
       <div class="activity-item">
-        <div class="activity-icon">⏳</div>
-        <div>
-          <strong>Loading clients...</strong>
-          <span>Please wait.</span>
+
+        <div class="activity-icon">
+          ⏳
         </div>
+
+        <div>
+
+          <strong>
+            Loading clients...
+          </strong>
+
+          <span>
+            Please wait.
+          </span>
+
+        </div>
+
       </div>
+
     </div>
 
   </section>
 
+
+  <!-- =========================
+       GRID 2
+  ========================= -->
+
   <div class="grid-2">
+
+
+    <!-- PLATFORM STATUS -->
 
     <section class="section">
 
       <div class="section-header">
+
         <div>
-          <h2>Platform Status</h2>
-          <p>Current service status.</p>
+
+          <h2>
+            Platform Status
+          </h2>
+
+          <p>
+            Current service status.
+          </p>
+
         </div>
+
       </div>
+
 
       <div class="card">
 
-        <div class="activity-item">
-          <div class="activity-icon">✓</div>
-          <div>
-            <strong>API</strong>
-            <span>Operational</span>
-          </div>
-          <span class="status" style="margin-left:auto">Online</span>
-        </div>
 
         <div class="activity-item">
-          <div class="activity-icon">🤖</div>
-          <div>
-            <strong>AI Chatbot</strong>
-            <span>Response service</span>
+
+          <div class="activity-icon">
+            ✓
           </div>
-          <span class="status" style="margin-left:auto">Online</span>
+
+          <div>
+
+            <strong>
+              API
+            </strong>
+
+            <span>
+              Operational
+            </span>
+
+          </div>
+
+          <span
+            class="status"
+            style="margin-left:auto"
+          >
+            Online
+          </span>
+
         </div>
 
+
         <div class="activity-item">
-          <div class="activity-icon">🗄️</div>
-          <div>
-            <strong>MongoDB</strong>
-            <span>Database connection</span>
+
+          <div class="activity-icon">
+            🤖
           </div>
-          <span class="status" style="margin-left:auto">Online</span>
+
+          <div>
+
+            <strong>
+              AI Chatbot
+            </strong>
+
+            <span>
+              Response service
+            </span>
+
+          </div>
+
+          <span
+            class="status"
+            style="margin-left:auto"
+          >
+            Online
+          </span>
+
+        </div>
+
+
+        <div class="activity-item">
+
+          <div class="activity-icon">
+            🗄️
+          </div>
+
+          <div>
+
+            <strong>
+              MongoDB
+            </strong>
+
+            <span>
+              Database connection
+            </span>
+
+          </div>
+
+          <span
+            class="status"
+            style="margin-left:auto"
+          >
+            Online
+          </span>
+
         </div>
 
       </div>
 
     </section>
 
+
+    <!-- RECENT ACTIVITY -->
+
     <section class="section">
 
       <div class="section-header">
+
         <div>
-          <h2>Recent Activity</h2>
-          <p>Latest platform activity.</p>
+
+          <h2>
+            Recent Activity
+          </h2>
+
+          <p>
+            Latest platform activity.
+          </p>
+
         </div>
+
       </div>
+
 
       <div class="card">
 
-        <div class="activity-item">
-          <div class="activity-icon">💬</div>
-          <div>
-            <strong>Conversations</strong>
-            <span>Chatbot conversations are being recorded.</span>
-          </div>
-        </div>
 
         <div class="activity-item">
-          <div class="activity-icon">📊</div>
-          <div>
-            <strong>Analytics</strong>
-            <span>Live MongoDB analytics are available.</span>
+
+          <div class="activity-icon">
+            💬
           </div>
+
+          <div>
+
+            <strong>
+              Conversations
+            </strong>
+
+            <span>
+              Chatbot conversations are being recorded.
+            </span>
+
+          </div>
+
         </div>
 
+
         <div class="activity-item">
-          <div class="activity-icon">🔐</div>
-          <div>
-            <strong>Authentication</strong>
-            <span>Your dashboard session is active.</span>
+
+          <div class="activity-icon">
+            📊
           </div>
+
+          <div>
+
+            <strong>
+              Analytics
+            </strong>
+
+            <span>
+              Live MongoDB analytics are available.
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="activity-item">
+
+          <div class="activity-icon">
+            🔐
+          </div>
+
+          <div>
+
+            <strong>
+              Authentication
+            </strong>
+
+            <span>
+              Your dashboard session is active.
+            </span>
+
+          </div>
+
         </div>
 
       </div>
@@ -717,232 +1112,660 @@ body{
 
   </div>
 
+
+  <!-- =========================
+       QUICK ACTIONS
+  ========================= -->
+
   <section class="section">
 
     <div class="section-header">
+
       <div>
-        <h2>Quick Actions</h2>
-        <p>Jump directly to common platform tasks.</p>
+
+        <h2>
+          Quick Actions
+        </h2>
+
+        <p>
+          Jump directly to common platform tasks.
+        </p>
+
       </div>
+
     </div>
 
+
     <div class="card">
+
       <div class="quick-actions">
 
-        <a class="quick-action" href="clients.html">
-          <div class="quick-action-icon">👥</div>
-          <div>
-            <strong>Manage Clients</strong>
-            <span>View and configure clients</span>
+
+        <a
+          class="quick-action"
+          href="/dashboard/clients.html"
+        >
+
+          <div class="quick-action-icon">
+            👥
           </div>
+
+          <div>
+
+            <strong>
+              Manage Clients
+            </strong>
+
+            <span>
+              View and configure clients
+            </span>
+
+          </div>
+
         </a>
 
-        <a class="quick-action" href="chatbot-settings.html">
-          <div class="quick-action-icon">🤖</div>
-          <div>
-            <strong>Chatbot Settings</strong>
-            <span>Configure your AI agent</span>
+
+        <a
+          class="quick-action"
+          href="/dashboard/chatbot-settings.html"
+        >
+
+          <div class="quick-action-icon">
+            🤖
           </div>
+
+          <div>
+
+            <strong>
+              Chatbot Settings
+            </strong>
+
+            <span>
+              Configure your AI agent
+            </span>
+
+          </div>
+
         </a>
 
-        <a class="quick-action" href="knowledge-base.html">
-          <div class="quick-action-icon">📚</div>
-          <div>
-            <strong>Knowledge Base</strong>
-            <span>Upload AI knowledge</span>
+
+        <a
+          class="quick-action"
+          href="/dashboard/knowledge-base.html"
+        >
+
+          <div class="quick-action-icon">
+            📚
           </div>
+
+          <div>
+
+            <strong>
+              Knowledge Base
+            </strong>
+
+            <span>
+              Upload AI knowledge
+            </span>
+
+          </div>
+
         </a>
+
 
       </div>
+
     </div>
 
   </section>
 
 </main>
+
 </div>
 
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
 <script>
-const API_BASE="http://127.0.0.1:8000";
+
+/*
+ * Local FastAPI server
+ *
+ * Current local server:
+ * http://127.0.0.1:8001
+ *
+ * Do NOT use /frontend/index.html.
+ * The frontend is served by FastAPI at "/".
+ */
+
+const API_BASE = "http://127.0.0.1:8001";
+
+
+/* =========================
+   TOKEN
+========================= */
 
 function getToken(){
-  return localStorage.getItem("access_token") ||
+
+  return (
+    localStorage.getItem("access_token") ||
     localStorage.getItem("accessToken") ||
     localStorage.getItem("token") ||
     sessionStorage.getItem("access_token") ||
     sessionStorage.getItem("accessToken") ||
-    sessionStorage.getItem("token") || "";
+    sessionStorage.getItem("token") ||
+    ""
+  );
+
 }
+
+
+/* =========================
+   AUTH HEADERS
+========================= */
 
 function authHeaders(){
-  const token=getToken();
-  return token ? {Authorization:`Bearer ${token}`} : {};
+
+  const token = getToken();
+
+  return token
+    ? {
+        Authorization: `Bearer ${token}`
+      }
+    : {};
+
 }
 
-async function apiFetch(url,options={}){
-  const response=await fetch(url,{
+
+/* =========================
+   API FETCH
+========================= */
+
+async function apiFetch(url, options = {}){
+
+  const response = await fetch(url, {
+
     ...options,
-    headers:{
+
+    headers: {
+
       ...authHeaders(),
-      ...(options.headers||{})
+
+      ...(options.headers || {})
+
     }
+
   });
 
-  if(response.status===401){
+
+  if(response.status === 401){
+
     logout();
+
     throw new Error("Not authenticated");
+
   }
 
+
   return response;
+
 }
 
+
+/* =========================
+   LOGOUT
+========================= */
+
 function logout(){
-  [
+
+  const keys = [
+
     "access_token",
     "accessToken",
     "token",
     "user"
-  ].forEach(k=>{
-    localStorage.removeItem(k);
-    sessionStorage.removeItem(k);
+
+  ];
+
+
+  keys.forEach(key => {
+
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+
   });
 
-  window.location.href="../frontend/index.html";
+
+  /*
+   * Frontend is served at "/"
+   * NOT /frontend/index.html
+   */
+
+  window.location.href = "/";
+
 }
+
+
+/* =========================
+   SHOW ERROR
+========================= */
 
 function showError(message){
-  const box=document.getElementById("errorBox");
-  box.textContent=message;
-  box.style.display="block";
+
+  const box = document.getElementById("errorBox");
+
+  if(!box){
+    return;
+  }
+
+
+  box.textContent = message;
+
+  box.style.display = "block";
+
 }
+
+
+/* =========================
+   FORMAT NUMBER
+========================= */
 
 function formatNumber(value){
-  if(value===null || value===undefined) return "—";
-  const n=Number(value);
-  return Number.isNaN(n) ? "—" : n.toLocaleString();
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+
+    return "—";
+
+  }
+
+
+  const n = Number(value);
+
+
+  if(Number.isNaN(n)){
+
+    return "—";
+
+  }
+
+
+  return n.toLocaleString();
+
 }
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
 
 function escapeHtml(value){
-  return String(value??"")
+
+  return String(value ?? "")
+
     .replace(/&/g,"&amp;")
+
     .replace(/</g,"&lt;")
+
     .replace(/>/g,"&gt;")
+
     .replace(/"/g,"&quot;")
+
     .replace(/'/g,"&#039;");
+
 }
+
+
+/* =========================
+   LOAD USER
+========================= */
 
 async function loadUser(){
-  const response=await apiFetch(`${API_BASE}/auth/me`);
-  if(!response.ok) throw new Error("Failed to load user.");
 
-  const user=await response.json();
+  const response = await apiFetch(
+    `${API_BASE}/auth/me`
+  );
 
-  const name=user.full_name || user.email || user.username || "User";
 
-  document.getElementById("userName").textContent=name;
-  document.getElementById("userRole").textContent=user.role || "Authenticated";
-  document.getElementById("userAvatar").textContent=
-    String(name).charAt(0).toUpperCase();
+  if(!response.ok){
 
-  localStorage.setItem("user",JSON.stringify(user));
+    throw new Error(
+      "Failed to load user."
+    );
+
+  }
+
+
+  const user = await response.json();
+
+
+  const name =
+    user.full_name ||
+    user.email ||
+    user.username ||
+    "User";
+
+
+  document.getElementById(
+    "userName"
+  ).textContent = name;
+
+
+  document.getElementById(
+    "userRole"
+  ).textContent =
+    user.role ||
+    "Authenticated";
+
+
+  document.getElementById(
+    "userAvatar"
+  ).textContent =
+    String(name)
+      .charAt(0)
+      .toUpperCase();
+
+
+  localStorage.setItem(
+    "user",
+    JSON.stringify(user)
+  );
+
 }
+
+
+/* =========================
+   LOAD CLIENTS
+========================= */
 
 async function loadClients(){
-  const response=await apiFetch(`${API_BASE}/clients`);
 
-  if(!response.ok) throw new Error("Failed to load clients.");
+  const response = await apiFetch(
+    `${API_BASE}/clients`
+  );
 
-  const data=await response.json();
 
-  const clients=Array.isArray(data)
-    ? data
-    : (data.clients || data.data || data.items || []);
+  if(!response.ok){
 
-  document.getElementById("clientCount").textContent=
-    formatNumber(clients.length);
+    throw new Error(
+      "Failed to load clients."
+    );
 
-  const container=document.getElementById("clientsContainer");
+  }
+
+
+  const data = await response.json();
+
+
+  const clients =
+    Array.isArray(data)
+      ? data
+      : (
+          data.clients ||
+          data.data ||
+          data.items ||
+          []
+        );
+
+
+  document.getElementById(
+    "clientCount"
+  ).textContent =
+    formatNumber(
+      clients.length
+    );
+
+
+  const container =
+    document.getElementById(
+      "clientsContainer"
+    );
+
 
   if(!clients.length){
-    container.innerHTML=`
+
+    container.innerHTML = `
+
       <div class="activity-item">
-        <div class="activity-icon">👥</div>
+
+        <div class="activity-icon">
+          👥
+        </div>
+
         <div>
-          <strong>No clients yet</strong>
-          <span>Create your first client to get started.</span>
+
+          <strong>
+            No clients yet
+          </strong>
+
+          <span>
+            Create your first client to get started.
+          </span>
+
         </div>
-      </div>`;
-    return;
-  }
 
-  container.innerHTML="";
-
-  clients.slice(0,5).forEach(client=>{
-    const id=client.client_id || client.id || client._id || "";
-    const name=client.business_name || client.name || id || "Client";
-    const website=client.website || "No website";
-
-    const item=document.createElement("div");
-    item.className="client-summary";
-
-    item.innerHTML=`
-      <div class="client-summary-left">
-        <div class="client-icon">
-          ${escapeHtml(String(name).charAt(0).toUpperCase())}
-        </div>
-        <div>
-          <h3>${escapeHtml(name)}</h3>
-          <p>${escapeHtml(website)}</p>
-        </div>
       </div>
 
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="status">
-          <span class="status-dot"></span>
-          Active
-        </span>
-        <a class="link-btn"
-           href="chatbot-settings.html?client_id=${encodeURIComponent(id)}">
-          Configure
-        </a>
-      </div>`;
+    `;
 
-    container.appendChild(item);
-  });
+    return;
+
+  }
+
+
+  container.innerHTML = "";
+
+
+  clients
+    .slice(0,5)
+    .forEach(client => {
+
+
+      const id =
+        client.client_id ||
+        client.id ||
+        client._id ||
+        "";
+
+
+      const name =
+        client.business_name ||
+        client.name ||
+        id ||
+        "Client";
+
+
+      const website =
+        client.website ||
+        "No website";
+
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "client-summary";
+
+
+      item.innerHTML = `
+
+        <div class="client-summary-left">
+
+          <div class="client-icon">
+
+            ${escapeHtml(
+              String(name)
+                .charAt(0)
+                .toUpperCase()
+            )}
+
+          </div>
+
+          <div>
+
+            <h3>
+              ${escapeHtml(name)}
+            </h3>
+
+            <p>
+              ${escapeHtml(website)}
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          style="
+            display:flex;
+            align-items:center;
+            gap:10px
+          "
+        >
+
+          <span class="status">
+
+            <span class="status-dot"></span>
+
+            Active
+
+          </span>
+
+
+          <a
+            class="link-btn"
+            href="/dashboard/chatbot-settings.html?client_id=${encodeURIComponent(id)}"
+          >
+            Configure
+          </a>
+
+        </div>
+
+      `;
+
+
+      container.appendChild(item);
+
+    });
+
 }
+
+
+/* =========================
+   LOAD ANALYTICS
+========================= */
 
 async function loadAnalytics(){
-  const response=await apiFetch(`${API_BASE}/analytics`);
 
-  if(!response.ok) throw new Error("Failed to load analytics.");
+  const response = await apiFetch(
+    `${API_BASE}/analytics`
+  );
 
-  const data=await response.json();
-  const root=data.analytics || data.data || data;
 
-  document.getElementById("visitorCount").textContent=
-    formatNumber(root.visitors);
+  if(!response.ok){
 
-  document.getElementById("conversationCount").textContent=
-    formatNumber(root.conversations);
+    throw new Error(
+      "Failed to load analytics."
+    );
 
-  document.getElementById("documentCount").textContent=
-    formatNumber(root.documents);
+  }
+
+
+  const data =
+    await response.json();
+
+
+  const root =
+    data.analytics ||
+    data.data ||
+    data;
+
+
+  document.getElementById(
+    "visitorCount"
+  ).textContent =
+    formatNumber(
+      root.visitors
+    );
+
+
+  document.getElementById(
+    "conversationCount"
+  ).textContent =
+    formatNumber(
+      root.conversations
+    );
+
+
+  document.getElementById(
+    "documentCount"
+  ).textContent =
+    formatNumber(
+      root.documents
+    );
+
 }
 
-document.addEventListener("DOMContentLoaded",async()=>{
-  if(!getToken()){
-    window.location.href="../frontend/index.html";
-    return;
-  }
 
-  try{
-    await loadUser();
-    await loadClients();
-    await loadAnalytics();
-  }catch(error){
-    console.error(error);
-    showError(error.message || "Failed to load dashboard.");
+/* =========================
+   INITIALIZE DASHBOARD
+========================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
+
+
+    /*
+     * If user isn't logged in,
+     * return to frontend homepage.
+     */
+
+    if(!getToken()){
+
+      window.location.href = "/";
+
+      return;
+
+    }
+
+
+    try{
+
+      await loadUser();
+
+      await loadClients();
+
+      await loadAnalytics();
+
+    }
+
+    catch(error){
+
+      console.error(
+        "Dashboard error:",
+        error
+      );
+
+
+      showError(
+        error.message ||
+        "Failed to load dashboard."
+      );
+
+    }
+
   }
-});
+);
+
 </script>
 
 </body>

@@ -1,9 +1,12 @@
 """Application entry point for the AI Chatbot Platform backend."""
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from backend.api.chat_routes import router as chat_router
 from backend.api.upload_routes import router as upload_router
@@ -22,6 +25,16 @@ from backend.database.mongodb import (
 
 
 # =========================================================
+# PATHS
+# =========================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+FRONTEND_DIR = BASE_DIR / "frontend"
+DASHBOARD_DIR = BASE_DIR / "dashboard"
+
+
+# =========================================================
 # APPLICATION LIFESPAN
 # =========================================================
 
@@ -29,15 +42,17 @@ from backend.database.mongodb import (
 async def lifespan(app: FastAPI):
     """Manage application startup and shutdown."""
 
-    # Startup
     await connect_to_mongodb()
     await create_database_indexes()
 
     yield
 
-    # Shutdown
     await close_mongodb_connection()
 
+
+# =========================================================
+# APPLICATION
+# =========================================================
 
 app = FastAPI(
     title="AI Chatbot Platform",
@@ -61,6 +76,39 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# =========================================================
+# STATIC FRONTEND FILES
+# =========================================================
+
+if (FRONTEND_DIR / "css").exists():
+    app.mount(
+        "/css",
+        StaticFiles(directory=str(FRONTEND_DIR / "css")),
+        name="frontend-css",
+    )
+
+if (FRONTEND_DIR / "js").exists():
+    app.mount(
+        "/js",
+        StaticFiles(directory=str(FRONTEND_DIR / "js")),
+        name="frontend-js",
+    )
+
+if (FRONTEND_DIR / "assets").exists():
+    app.mount(
+        "/assets",
+        StaticFiles(directory=str(FRONTEND_DIR / "assets")),
+        name="frontend-assets",
+    )
+
+if (FRONTEND_DIR / "widget").exists():
+    app.mount(
+        "/frontend-widget",
+        StaticFiles(directory=str(FRONTEND_DIR / "widget")),
+        name="frontend-widget",
+    )
 
 
 # =========================================================
@@ -90,11 +138,54 @@ async def healthcheck() -> dict[str, str]:
 
 
 # =========================================================
-# ROOT
+# DASHBOARD PAGES
+# =========================================================
+
+@app.get("/dashboard")
+@app.get("/dashboard/")
+async def dashboard_home():
+    return FileResponse(
+        DASHBOARD_DIR / "index.html"
+    )
+
+
+@app.get("/dashboard/{page_name}")
+async def dashboard_page(page_name: str):
+    page_path = DASHBOARD_DIR / page_name
+
+    if page_path.suffix.lower() != ".html":
+        page_path = DASHBOARD_DIR / f"{page_name}.html"
+
+    if not page_path.is_file():
+        return FileResponse(
+            DASHBOARD_DIR / "index.html"
+        )
+
+    return FileResponse(page_path)
+
+
+# =========================================================
+# FAVICON
+# =========================================================
+
+@app.get("/favicon.ico")
+async def favicon():
+    favicon_path = FRONTEND_DIR / "favicon.ico"
+
+    if favicon_path.is_file():
+        return FileResponse(favicon_path)
+
+    return {
+        "message": "favicon not found"
+    }
+
+
+# =========================================================
+# FRONTEND
 # =========================================================
 
 @app.get("/")
-async def root() -> dict[str, str]:
-    return {
-        "message": "AI Chatbot Platform is running",
-    }
+async def frontend_home():
+    return FileResponse(
+        FRONTEND_DIR / "index.html"
+    )
