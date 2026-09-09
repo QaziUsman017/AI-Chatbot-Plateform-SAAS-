@@ -5,7 +5,11 @@ from __future__ import annotations
 import os
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams
+from qdrant_client.models import (
+    Distance,
+    VectorParams,
+    PayloadSchemaType,
+)
 
 
 COLLECTION_NAME = "chatbot_documents"
@@ -30,7 +34,13 @@ client = QdrantClient(
 
 
 def create_collection() -> None:
-    """Create the document collection if it does not already exist."""
+    """
+    Create the document collection if it does not already exist.
+
+    Also ensures that the client_id payload field has a
+    keyword index, which is required for client-specific
+    Qdrant filtering.
+    """
 
     collections = client.get_collections().collections
 
@@ -39,6 +49,7 @@ def create_collection() -> None:
         for collection in collections
     }
 
+    # Create collection if it does not exist.
     if COLLECTION_NAME not in existing_names:
         client.create_collection(
             collection_name=COLLECTION_NAME,
@@ -47,6 +58,38 @@ def create_collection() -> None:
                 distance=Distance.COSINE,
             ),
         )
+
+    # Ensure client_id has a keyword payload index.
+    try:
+        client.create_payload_index(
+            collection_name=COLLECTION_NAME,
+            field_name="client_id",
+            field_schema=PayloadSchemaType.KEYWORD,
+        )
+
+        print(
+            "QDRANT: client_id payload index created/ensured."
+        )
+
+    except Exception as exc:
+        error_text = str(exc).lower()
+
+        # Qdrant may report that the index already exists.
+        # That is safe and should not stop the application.
+        if (
+            "already exists" in error_text
+            or "index already exists" in error_text
+        ):
+            print(
+                "QDRANT: client_id payload index already exists."
+            )
+        else:
+            print(
+                "QDRANT: Failed to create client_id payload index."
+            )
+            print(
+                f"QDRANT INDEX ERROR: {exc}"
+            )
 
 
 def collection_exists() -> bool:
